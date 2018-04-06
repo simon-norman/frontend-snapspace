@@ -1,0 +1,20 @@
+{
+  "name": "snapspace",
+  "version": "1.0.0",
+  "description": "Application for gathering feedback from users of space",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpacelabUK/snapspace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SpacelabUK/snapspace/issues"
+  },
+  "homepage": "https://github.com/SpacelabUK/snapspace#readme"
+}

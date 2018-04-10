@@ -4,7 +4,6 @@
   "description": "Application for gathering feedback from users of space",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js",
     "start": "node server.js"
   },
   "repository": {

@@ -9,7 +9,7 @@ app.use("/scripts", express.static(__dirname + '/scripts'));
 
 // viewed at based directory http://localhost:8080/
 app.get('/', function (req, res) {
-  res.send("Hello world, it's me!");
+  res.send("Hello world, it's me, Github!");
 });
 
 app.listen(process.env.PORT || 8080);

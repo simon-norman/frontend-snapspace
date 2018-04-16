@@ -3,13 +3,10 @@ var app = express();
 var path = require('path');
 
 app.use(express.static(path.join(__dirname)));
-app.use("/styles", express.static(__dirname));
-app.use("/images", express.static(__dirname + '/images'));
-app.use("/scripts", express.static(__dirname + '/scripts'));
 
 // viewed at based directory http://localhost:8080/
 app.get('/', function (req, res) {
-  res.send("Hello world, it's me, Github, with credentials, Codeship Build, and final Heroku, and now from home - changing branch!");
+  res.sendFile('./views/snapshot_view.html');
 });
 
 app.listen(process.env.PORT || 8080);

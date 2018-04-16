@@ -1,4 +1,4 @@
 
 function sendSnapshot(evt) {
-    console.log("evt");
+    console.log(evt);
 }

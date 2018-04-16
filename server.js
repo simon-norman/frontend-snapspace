@@ -8,7 +8,6 @@ const sendFileOptions = {
 
 app.use(express.static(path.join(__dirname)));
 
-// viewed at based directory http://localhost:8080/
 app.get('/', function (req, res) {
   res.sendFile('./views/snapshot_view.html', sendFileOptions);
 });

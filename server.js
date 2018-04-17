@@ -1,15 +1,17 @@
-var express = require('express');
-var app = express();
-var path = require('path');
+const express = require('express');
+const app = express();
+const path = require('path');
+
+const sendFileOptions = {
+  root: __dirname
+}
 
 app.use(express.static(path.join(__dirname)));
-app.use("/styles", express.static(__dirname));
-app.use("/images", express.static(__dirname + '/images'));
-app.use("/scripts", express.static(__dirname + '/scripts'));
 
-// viewed at based directory http://localhost:8080/
 app.get('/', function (req, res) {
-  res.send("Hello world, it's me, Github, with credentials, Codeship Build, and final Heroku!");
+  res.sendFile('./views/snapshot_view.html', sendFileOptions);
 });
 
 app.listen(process.env.PORT || 8080);
+
+console.log("Listening at 8080")

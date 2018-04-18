@@ -3,14 +3,6 @@ function Snapshot(image, comment) {
     this.comment = comment;
 }
 
-// document.getElementById('addphoto').addEventListener('change', function () {
-//     const img = this.files[0];
-//     console.log(img);
-//     imgToBase64(img, function (imgBase64) {
-//         snapshot = new Snapshot(imgBase64);
-//     });
-// });
-
 function imgToBase64(img, returnBase64) {
     const reader = new FileReader();
     reader.onload = function () {
@@ -20,3 +12,10 @@ function imgToBase64(img, returnBase64) {
     };
     reader.readAsDataURL(img);
 }
+
+document.getElementById('addphoto').addEventListener('change', function () {
+    const img = this.files[0];
+    imgToBase64(img, function (imgBase64) {
+        snapshot = new Snapshot(imgBase64);
+    });
+});

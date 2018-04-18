@@ -1,14 +1,13 @@
 const expect = chai.expect;
+chai.should();
 
 describe('Mocha', function () {
-    // Test spec (unit test)
     it('should run our tests using NPM', function() {
        expect(true).to.be.ok;
     });
   })
 
-describe('takePhoto', function () {
-
+describe('imgToBase64', function () {
     it('should convert an image file object into Base 64 for transfer to server', function (done) {
         const testFile = new File(["test"], "test.jpg", {
             type: "image/jpeg",
@@ -22,6 +21,11 @@ describe('takePhoto', function () {
 });
 
 describe('postSnapshot', function () {
+        let data;
+
+    before(function () {
+        data = { image: 'image', comment: 'comment' };
+    });
 
     beforeEach(function() {
         this.xhr = sinon.useFakeXMLHttpRequest();
@@ -37,11 +41,21 @@ describe('postSnapshot', function () {
     });
 
     it('should send snapshot object to the server as JSON body', function () {
-
-        var data = { image: 'image', comment: 'comment' };
         var dataJson = JSON.stringify(data);
 
         postSnapshot(data, function () { });
 
+        this.requests[0].requestBody.should.equal(dataJson);
+    });
+
+    it('should return appropriate code when request failed', function (done) {
+        var dataJson = JSON.stringify(data);
+
+        postSnapshot(data, function(err, result) {
+            err.should.exist;
+            done();
+        });
+
+        this.requests[0].respond(500);
     });
 });

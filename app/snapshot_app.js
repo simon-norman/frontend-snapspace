@@ -16,5 +16,9 @@ document.getElementById('addphoto').addEventListener('change', function () {
     const img = this.files[0];
     imgToBase64(img, function (imgBase64) {
         snapshot = new Snapshot(imgBase64);
+        postSnapshot(snapshot, 
+            () => {
+                //placeholder to handle response
+            });
     });
 });

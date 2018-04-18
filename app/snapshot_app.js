@@ -1,15 +1,13 @@
 
-function Snapshot(image, comment) {
+Snapshot = function(image, comment) {
     this.image = image;
     this.comment = comment;
 }
 
-function imgToBase64(img, returnBase64) {
+imgToBase64 = (img, returnBase64) => {
     const reader = new FileReader();
-    reader.onload = function () {
-        let base64 = reader.result;
-        console.log(base64);
-        returnBase64(base64);
+    reader.onload = () => {
+        returnBase64(reader.result);
     };
     reader.readAsDataURL(img);
 }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Application for gathering feedback from users of space",
   "dependencies": {
+    "aws-sdk": "^2.224.1",
     "express": "^4.14.0",
     "file-system": "^2.2.2"
   },
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/SpacelabUK/snapspace#readme",
   "devDependencies": {
+    "aws-sdk": "^2.224.1",
     "chai": "^4.1.2",
     "file-api": "^0.10.4",
     "jquery": "^3.3.1",

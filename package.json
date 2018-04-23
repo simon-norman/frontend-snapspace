@@ -9,6 +9,7 @@
     "express": "^4.14.0",
     "express-winston": "^2.5.1",
     "file-system": "^2.2.2",
+    "mongoose": "^5.0.15",
     "winston": "^2.4.1"
   },
   "main": "server.js",

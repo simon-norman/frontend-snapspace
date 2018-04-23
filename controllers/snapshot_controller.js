@@ -1,9 +1,23 @@
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk'),
+      Snapshot = require('../models/snapshots.js'),
+      mongoose = require('mongoose'),
       config = require('../config.js').get(process.env.NODE_ENV);
 
+mongoose.Promise = global.Promise;
+
 saveSnapshot = (req, res) => {
-    console.log('saveSnapshot called');
+    const snapshot = new Snapshot({
+        imageURL: req.body.imageURL, 
+        comment: req.body.comment
+    });
+    snapshot.save( (err, result) => {
+        if (err) {
+            //placeholder for error handling
+        } else {
+            res.sendStatus(200);
+        }
+    });
 }
 
 getAmazonConfig = (req, res) => {

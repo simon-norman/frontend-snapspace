@@ -10,6 +10,13 @@ const express = require('express'),
       snapshotController = require
       ("./controllers/snapshot_controller.js");
 
+mongoose.connect(config.database.uri);
+mongoose.connection
+      .once('open', () => { done(); })
+      .on('error', (error) => {
+          console.log(error);
+      });
+
 const sendFileOptions = {
   root: __dirname
 }

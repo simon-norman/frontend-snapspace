@@ -7,20 +7,7 @@ describe('Mocha', function () {
     });
   })
 
-describe('imgToBase64', function () {
-    it('should convert an image file object into Base 64 for transfer to server', function (done) {
-        const testFile = new File(["test"], "test.jpg", {
-            type: "image/jpeg",
-        });
-
-        imgToBase64(testFile, function (base64File) {
-            expect(base64File).to.equal('data:image/jpeg;base64,dGVzdA==');
-            done();
-        })
-    });
-});
-
-describe('postSnapshot', function () {
+describe('saveSnapshot', function () {
         let data;
 
     before(function () {
@@ -43,7 +30,7 @@ describe('postSnapshot', function () {
     it('should send snapshot object to the server as JSON body', function () {
         var dataJson = JSON.stringify(data);
 
-        postSnapshot(data, function () { });
+        saveSnapshot(data, function () { });
 
         this.requests[0].requestBody.should.equal(dataJson);
     });
@@ -51,7 +38,7 @@ describe('postSnapshot', function () {
     it('should return appropriate code when request failed', function (done) {
         var dataJson = JSON.stringify(data);
 
-        postSnapshot(data, function(err, result) {
+        saveSnapshot(data, function(err, result) {
             err.should.exist;
             done();
         });

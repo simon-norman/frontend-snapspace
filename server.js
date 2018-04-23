@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express'),
       app = express(),
       bodyParser = require('body-parser'),
-      config = require('./config.js').get(process.env.NODE_ENV),
+      config = require("./config.js").get(process.env.NODE_ENV),
       path = require('path'),
       snapshotController = require
       ("./controllers/snapshot_controller.js");
@@ -22,6 +22,8 @@ app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 app.get('/', (req, res) => {
   res.sendFile('./views/snapshot_view.html', sendFileOptions);
 });
+
+app.get('/amazon-config', snapshotController.getAmazonConfig);
 
 app.post('/snapshot', snapshotController.saveSnapshot);
 

@@ -6,7 +6,7 @@ var config = {
       bucketname: 'snapspace',
       url: 'https://s3.eu-west-2.amazonaws.com/'
     },
-    db: {
+    database: {
       uri: process.env.MONGODB_URI
     }
   },
@@ -16,7 +16,7 @@ var config = {
       bucketname: 'snapspace-test',
       url: 'https://s3.eu-west-2.amazonaws.com/'
     },
-    db: {
+    database: {
       uri: process.env.MONGODB_URI
     }
   },

@@ -1,7 +1,8 @@
 
 postSnapshot = (data, callback) => {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://snapspace-test.herokuapp.com/snapshot', true);
+    xhr.open('POST', '/snapshot', true);
+    xhr.setRequestHeader('Content-Type', 'application/json')
 
     xhr.onreadystatechange = function() {
         if(xhr.readyState == 4) {
@@ -14,5 +15,6 @@ postSnapshot = (data, callback) => {
         }
     };
 
+    console.log(data);
     xhr.send(JSON.stringify(data));
 };

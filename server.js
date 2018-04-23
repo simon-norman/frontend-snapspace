@@ -1,6 +1,14 @@
-const express = require('express');
-const app = express();
-const path = require('path');
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').load();
+}
+const express = require('express'),
+      app = express(),
+      bodyParser = require('body-parser'),
+      config = require('./config.js').get(process.env.NODE_ENV),
+      path = require('path'),
+      snapshotController = require
+      ("./controllers/snapshot_controller.js");
 
 const sendFileOptions = {
   root: __dirname
@@ -8,10 +16,13 @@ const sendFileOptions = {
 
 app.use(express.static(path.join(__dirname)));
 
-app.get('/', function (req, res) {
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
+
+app.get('/', (req, res) => {
   res.sendFile('./views/snapshot_view.html', sendFileOptions);
 });
 
-app.listen(process.env.PORT || 8080);
+app.post('/snapshot', snapshotController.saveSnapshot);
 
-console.log("Listening at 8080")
+app.listen(process.env.PORT || config.app.port);

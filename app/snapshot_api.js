@@ -11,7 +11,6 @@ saveImage = (file, callback) => {
                 const s3 = new AWS.S3();
                 const imageKey = Date.now() + ".jpg";
                 const bucketName = amazonConfig.bucketName;
-                console.log(bucketName);
                 const params = {
                     Bucket: bucketName,
                     Key: imageKey,

@@ -28,11 +28,15 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
 app.get('/', (req, res) => {
+  res.redirect('/upload-snapshot');
+});
+
+app.get('/upload-snapshot', (req, res) => {
   res.sendFile('./views/snapshot_upload.html', sendFileOptions);
 });
 
-app.get('/viewsnapshots', (req, res) => {
-  res.sendFile('./views/snapshot_browse.html', sendFileOptions);
+app.get('/view-snapshots', (req, res) => {
+  res.send('./views/snapshot_browse.html', sendFileOptions);
 });
 
 app.get('/amazon-config', snapshotController.getAmazonConfig);
@@ -40,3 +44,7 @@ app.get('/amazon-config', snapshotController.getAmazonConfig);
 app.post('/snapshot', snapshotController.saveSnapshot);
 
 app.listen(process.env.PORT || config.app.port);
+
+console.log('Snapspace app listening');
+
+module.exports = app;

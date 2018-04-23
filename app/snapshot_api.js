@@ -5,11 +5,13 @@ saveImage = (file, callback) => {
                 AWS.config.update({
                     "accessKeyId": amazonConfig.accessKey,
                     "secretAccessKey": amazonConfig.secretKey,
-                    signatureVersion: 'v4'
+                    "signatureVersion": 'v4',
+                    "region": amazonConfig.region
                 });
                 const s3 = new AWS.S3();
                 const imageKey = Date.now() + ".jpg";
                 const bucketName = amazonConfig.bucketName;
+                console.log(bucketName);
                 const params = {
                     Bucket: bucketName,
                     Key: imageKey,
@@ -57,7 +59,6 @@ getAmazonConfig = (callback) => {
     xhr.onreadystatechange = function() {
         if(xhr.readyState == 4) {
             if(xhr.status == 200) {
-                console.log(JSON.parse(xhr.responseText));
                 callback(JSON.parse(xhr.responseText));
             }
             else {

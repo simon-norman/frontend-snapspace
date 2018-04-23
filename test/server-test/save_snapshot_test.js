@@ -31,5 +31,14 @@ describe('createSnapshotRecord', () => {
             done();
         });
     });
+
+    it('should be invalid if image URL is empty', function(done) {
+        const snapshot = new Snapshot({comment: 'comment'});
+ 
+        snapshot.validate(function(err) {
+            expect(err.errors.imageURL).to.exist;
+            done();
+        });
+    });
 });
 

@@ -6,7 +6,8 @@ var config = {
       bucketName: 'snapspace',
       url: 'https://s3.eu-west-2.amazonaws.com/',
       accessKey: process.env.AWS_ACCESS_KEY_ID,
-      secretKey: process.env.AWS_SECRET_ACCESS_KEY
+      secretKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: "eu-west-2"
     },
     database: {
       uri: process.env.MONGODB_URI
@@ -18,7 +19,8 @@ var config = {
       bucketName: 'snapspace-test',
       url: 'https://s3.eu-west-2.amazonaws.com/',
       accessKey: process.env.AWS_ACCESS_KEY_ID,
-      secretKey: process.env.AWS_SECRET_ACCESS_KEY
+      secretKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: "eu-west-2"
     },
     database: {
       uri: process.env.MONGODB_URI
@@ -30,7 +32,8 @@ var config = {
       bucketName: 'snapspace-dev',
       url: 'https://s3.eu-west-2.amazonaws.com/',
       accessKey: process.env.AWS_ACCESS_KEY_ID,
-      secretKey: process.env.AWS_SECRET_ACCESS_KEY
+      secretKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: "eu-west-2"
     },
     app: {
       port: 8080

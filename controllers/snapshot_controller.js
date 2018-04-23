@@ -11,11 +11,13 @@ saveSnapshot = (req, res) => {
         imageURL: req.body.imageURL, 
         comment: req.body.comment
     });
+    console.log(snapshot);
     snapshot.save( (err, result) => {
         if (err) {
             console.log(err);
         } else {
             res.sendStatus(200);
+            console.log(result);
         }
     });
 }
@@ -25,6 +27,7 @@ getAmazonConfig = (req, res) => {
     '", "bucketName" :"' + config.aws.bucketName + 
     '", "secretKey":"' + config.aws.secretKey +
     '", "accessKey":"' + config.aws.accessKey +
+    '", "region":"' + config.aws.region +
     '"}';
     console.log(amazonConfig);
     amazonConfig = JSON.parse(amazonConfig);

@@ -22,9 +22,9 @@ saveSnapshot = (req, res) => {
 
 getAmazonConfig = (req, res) => {
     let amazonConfig = '{ "url":"' + config.aws.url +
-    '", "bucketName" :"' + config.aws.bucketname + 
-    '", "secretKey":"' + process.env.AWS_SECRET_ACCESS_KEY +
-    '", "accessKey":"' + process.env.AWS_ACCESS_KEY_ID +
+    '", "bucketName" :"' + config.aws.bucketName + 
+    '", "secretKey":"' + config.aws.secretKey +
+    '", "accessKey":"' + config.aws.accessKey +
     '"}';
     console.log(amazonConfig);
     amazonConfig = JSON.parse(amazonConfig);

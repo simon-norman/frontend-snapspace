@@ -9,8 +9,9 @@ saveImage = (file, callback) => {
                 });
                 const s3 = new AWS.S3();
                 const imageKey = Date.now() + ".jpg";
+                const bucketName = amazonConfig.bucketName;
                 const params = {
-                    Bucket: amazonConfig.bucketName,
+                    Bucket: bucketName,
                     Key: imageKey,
                     ContentType: file.type,
                     Body: file,
@@ -20,7 +21,8 @@ saveImage = (file, callback) => {
                     if (err) {
                         console.log(err);
                     } else {
-                        callback('https://s3.eu-west-2.amazonaws.com/snapspace-dev/' + imageKey);
+                        callback('https://s3.eu-west-2.amazonaws.com/' + bucketName + 
+                        '/' + imageKey);
                     }
                 });
             });            

@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const express = require('express'),
       app = express(),
+      mongoose = require('mongoose'),
       bodyParser = require('body-parser'),
       config = require("./config.js").get(process.env.NODE_ENV),
       path = require('path'),
@@ -12,7 +13,7 @@ const express = require('express'),
 
 mongoose.connect(config.database.uri);
 mongoose.connection
-      .once('open', () => { done(); })
+      .once('open', () => { console.log("DB connection complete") })
       .on('error', (error) => {
           console.log(error);
       });

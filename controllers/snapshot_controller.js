@@ -13,7 +13,7 @@ saveSnapshot = (req, res) => {
     });
     snapshot.save( (err, result) => {
         if (err) {
-            //placeholder for error handling
+            console.log(err);
         } else {
             res.sendStatus(200);
         }

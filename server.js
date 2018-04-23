@@ -28,7 +28,11 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
 app.get('/', (req, res) => {
-  res.sendFile('./views/snapshot_view.html', sendFileOptions);
+  res.sendFile('./views/snapshot_upload.html', sendFileOptions);
+});
+
+app.get('/viewsnapshots', (req, res) => {
+  res.sendFile('./views/snapshot_browse.html', sendFileOptions);
 });
 
 app.get('/amazon-config', snapshotController.getAmazonConfig);

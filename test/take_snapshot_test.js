@@ -30,7 +30,7 @@ describe('saveSnapshot', function () {
     it('should send snapshot object to the server as JSON body', function () {
         var dataJson = JSON.stringify(data);
 
-        saveSnapshot(data, function () { });
+        snapshotModuleAPI.saveSnapshot(data, function () { });
 
         this.requests[0].requestBody.should.equal(dataJson);
     });
@@ -38,7 +38,7 @@ describe('saveSnapshot', function () {
     it('should return appropriate code when request failed', function (done) {
         var dataJson = JSON.stringify(data);
 
-        saveSnapshot(data, function(err, result) {
+        snapshotModuleAPI.saveSnapshot(data, function(err, result) {
             err.should.exist;
             done();
         });

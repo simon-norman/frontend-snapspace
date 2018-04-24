@@ -1,16 +1,27 @@
 
-Snapshot = function(imageURL, comment) {
-    this.imageURL = imageURL;
-    this.comment = comment;
-}
+var snapshotModule = ( function() {
+    'use strict';
+    
+    var snapshot = {
+        "imageURL": '',
+        "comment": '',
+    };
 
-document.getElementById('addphoto').addEventListener('change', function () {
-    const img = this.files[0];
-    saveImage(img, (imageURL) => {
-        snapshot = new Snapshot(imageURL);
-        saveSnapshot(snapshot, 
-            () => {
-                //placeholder to handle response
-            });
+    var image = '';
+
+    function saveSnapshot(image) {
+        snapshotModuleAPI.saveImage(image, (imageURL) => {
+            snapshot.imageURL = imageURL;
+            snapshotModuleAPI.saveSnapshot(snapshot,
+                () => {
+                    //placeholder to handle response
+                });
+        });
+    }
+
+    document.getElementById('addphoto').addEventListener('change', function () {
+        image = this.files[0];
+        saveSnapshot(image);
     });
-});
+
+}());

@@ -11,7 +11,7 @@ const expect = require('chai').expect,
 
 mongoose.Promise = global.Promise;
 
-describe('loading express', () => {
+describe('loadExpress', () => {
     it('should respond to /', (done) => {
         request(app)
           .get('/')
@@ -28,6 +28,19 @@ describe('loading express', () => {
             .expect(404, done);
     });
 });
+
+describe('loadSnapshotUpload', () => {
+    it('should send HTML file', (done) => {
+        request(app)
+          .get('/upload-snapshot')
+          .end((err, res) => {
+            expect(res.statusCode).to.equal(200); 
+            expect(res.header['content-type']).to.equal('text/html; charset=UTF-8');
+            done();
+      });
+    });
+});
+
 
 describe('createSnapshotRecord', () => {
     before((done) => {
@@ -46,7 +59,10 @@ describe('createSnapshotRecord', () => {
     });
 
     it('should create a new snapshot record if image URL is a valid URL', (done) => {
-        const snapshot = new Snapshot({ imageURL: "https://s3.eu-west-2.amazonaws.com/snapspace-dev/1524242200913.jpg", comment: 'comment' });
+        const snapshot = new Snapshot({ 
+            imageURL: "https://s3.eu-west-2.amazonaws.com/snapspace-dev/1524242200913.jpg", 
+            comment: 'comment' 
+        });
         snapshot.save()
             .then(() => {
                 assert(!snapshot.isNew);

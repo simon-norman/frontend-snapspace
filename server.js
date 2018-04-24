@@ -1,6 +1,22 @@
-const express = require('express');
-const app = express();
-const path = require('path');
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').load();
+}
+const express = require('express'),
+      app = express(),
+      mongoose = require('mongoose'),
+      bodyParser = require('body-parser'),
+      config = require("./config.js").get(process.env.NODE_ENV),
+      path = require('path'),
+      snapshotController = require
+      ("./controllers/snapshot_controller.js");
+
+mongoose.connect(config.database.uri);
+mongoose.connection
+      .once('open', () => { console.log("DB connection complete") })
+      .on('error', (error) => {
+          console.log(error);
+      });
 
 const sendFileOptions = {
   root: __dirname
@@ -8,10 +24,27 @@ const sendFileOptions = {
 
 app.use(express.static(path.join(__dirname)));
 
-app.get('/', function (req, res) {
-  res.sendFile('./views/snapshot_view.html', sendFileOptions);
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
+
+app.get('/', (req, res) => {
+  res.redirect('/upload-snapshot');
 });
 
-app.listen(process.env.PORT || 8080);
+app.get('/upload-snapshot', (req, res) => {
+  res.sendFile('./views/snapshot_upload.html', sendFileOptions);
+});
 
-console.log("Listening at 8080")
+app.get('/view-snapshots', (req, res) => {
+  res.send('./views/snapshot_browse.html', sendFileOptions);
+});
+
+app.get('/amazon-config', snapshotController.getAmazonConfig);
+
+app.post('/snapshot', snapshotController.saveSnapshot);
+
+app.listen(process.env.PORT || config.app.port);
+
+console.log('Snapspace app listening');
+
+module.exports = app;

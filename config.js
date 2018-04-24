@@ -11,7 +11,8 @@ var config = {
     },
     database: {
       uri: process.env.MONGODB_URI
-    }
+    },
+    root: __dirname
   },
 
   test: {
@@ -40,7 +41,8 @@ var config = {
     },
     database: {
       uri: 'mongodb://localhost:27017/snapspace_dev'
-    }
+    },
+    root: __dirname
   }
 
 }

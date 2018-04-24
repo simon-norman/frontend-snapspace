@@ -23,10 +23,11 @@ var snapshotModule = ( function() {
 
     document.getElementById('addphoto').addEventListener('change', function () {
         image = this.files[0];
+        $("#photomessage").text('Photo added');
     });
 
     document.getElementById('submit').addEventListener('click', function () {
-        var comment = document.getElementById("snapshotcomment").value
+        var comment = document.getElementById("snapshotcomment").value;
         saveSnapshot(image, comment);
     });
 

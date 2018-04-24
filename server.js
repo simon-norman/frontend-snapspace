@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use('/', routes);
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(config.root)));
 
 app.listen(process.env.PORT || config.app.port);
 

@@ -5,7 +5,7 @@ const express = require('express'),
 const router = express.Router();
 
 const sendFileOptions = {
-    root: __dirname
+    root: config.root
   }
 
 router.get('/', (req, res) => {

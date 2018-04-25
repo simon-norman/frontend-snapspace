@@ -3,11 +3,11 @@ const expect = require('chai').expect,
     assert = require('assert'),
     request = require('supertest'),
     express = require('express'),
-    config = require('../../config.js').get(process.env.NODE_ENV),
-    Snapshot = require('../../models/snapshots.js'),
+    config = require('../config.js').get(process.env.NODE_ENV),
+    Snapshot = require('../models/snapshots.js'),
     mongoose = require('mongoose');
 
-    const app = require('../../server.js')
+    const app = require('../server.js')
 
 mongoose.Promise = global.Promise;
 

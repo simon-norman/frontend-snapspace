@@ -4,7 +4,7 @@
       <v-flex xs12 s4 md3>
         <label class="btn btn-file info btn--block">
           Take photo
-          <input type="file" id="addphoto" accept="image/*" style="display: none;">
+          <input type="file" @change="addPhoto()" id="addphoto" accept="image/*" style="display: none;">
         </label>
       </v-flex>
     </v-layout>

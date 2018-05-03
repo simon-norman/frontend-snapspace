@@ -35,13 +35,12 @@ export default {
     }
   },
   methods: {
-    addPhoto(imageFile) {
+    addPhoto (imageFile) {
       this.imageFile = imageFile
     },
-    storeImage() {
-      this.imageFile = imageFile
+    storeImage () {
     },
-    getSignedAWSURL() {
+    getSignedAWSURL () {
       
     }
   },

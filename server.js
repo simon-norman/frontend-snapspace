@@ -1,15 +1,12 @@
-var express = require('express');
-var app = express();
-var path = require('path');
+const express = require('express'),
+    serveStatic = require('serve-static'),
+    path = require('path');
 
-app.use(express.static(path.join(__dirname)));
-app.use("/styles", express.static(__dirname));
-app.use("/images", express.static(__dirname + '/images'));
-app.use("/scripts", express.static(__dirname + '/scripts'));
+const app = express();
 
-// viewed at based directory http://localhost:8080/
-app.get('/', function (req, res) {
-  res.send("Hello world, it's me, Github, with credentials, Codeship Build, and final Heroku, and now from home!");
-});
+app.use("/", serveStatic ( path.join (__dirname, '/dist') ) );
 
-app.listen(process.env.PORT || 8080);
+const port = process.env.PORT || 5000
+app.listen(port)
+// Log to feedback that this is actually running
+console.log('Server started on port ' + port);

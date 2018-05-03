@@ -9,11 +9,12 @@
       </v-flex>
     </v-layout>
     <v-layout row justify-center align-center wrap>
-      <v-flex xs4 s2 md1>
-      <v-subheader>Normal with hint text</v-subheader>
-      </v-flex>
-      <v-flex xs8 s2 md2>
-        <v-text-field name="input-1-3" label="Hint Text" single-line></v-text-field>
+      <v-flex xs12 s4 md3>
+        <v-text-field
+          name="input-7-1"
+          label="Tell us more"
+          multi-line
+        ></v-text-field>
       </v-flex>
     </v-layout>  
     <v-layout row justify-center align-center wrap>
@@ -24,40 +25,25 @@
   </v-container>
 </template>
 
+<script>
+export default {
+  data () {
+    return {
+      imageFile: '',
+      imageURL: '',
+      comment: ''
+    }
+  },
+  methods: {
+    addPhoto: function (event) {
+
+    }
+  },
+  name: 'App'
+}
+</script>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 
-.btn-file {
-  position: relative;
-  margin: 0 !important;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.btn-file [type="file"] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 100px;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  outline: none;
-  display: block;
-}
 </style>

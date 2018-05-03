@@ -11,6 +11,7 @@ import {
   VList,
   VBtn,
   VIcon,
+  VTextField,
   VGrid,
   VToolbar,
   transitions
@@ -26,6 +27,7 @@ Vue.use(Vuetify, {
     VBtn,
     VIcon,
     VGrid,
+    VTextField,
     VToolbar,
     transitions
   },
@@ -46,5 +48,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-  render: h => h(App)
+  components: { App },
+  template: '<App/>'
 })

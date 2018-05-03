@@ -4,7 +4,7 @@
       <v-flex xs12 s4 md3>
         <label class="btn btn-file info btn--block">
           Take photo
-          <input type="file" @change="addPhoto()" id="addphoto" accept="image/*" style="display: none;">
+          <input type="file" @change="addPhoto($event.target.files[0])" id="addphoto" accept="image/*" style="display: none;">
         </label>
       </v-flex>
     </v-layout>
@@ -35,8 +35,14 @@ export default {
     }
   },
   methods: {
-    addPhoto: function (event) {
-
+    addPhoto(imageFile) {
+      this.imageFile = imageFile
+    },
+    storeImage() {
+      this.imageFile = imageFile
+    },
+    getSignedAWSURL() {
+      
     }
   },
   name: 'App'

@@ -12,5 +12,4 @@ export default new Router({
       component: SnapshotsUpload
     }
   ]
-})
- 
+});

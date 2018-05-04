@@ -41,7 +41,7 @@ export default {
     storeImage () {
     },
     getSignedAWSURL () {
-      
+            
     }
   },
   name: 'App'

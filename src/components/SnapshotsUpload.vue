@@ -19,54 +19,62 @@
     </v-layout>  
     <v-layout row justify-center align-center wrap>
       <v-flex xs12 s4 md3>
-        <v-btn block class="info">Submit</v-btn>
+        <v-btn block v-on:click="saveSnapshot()" class="info">Submit</v-btn>
       </v-flex>
     </v-layout>    
   </v-container>
 </template>
 
 <script>
+import axios from 'axios'
+axios.defaults.baseURL = process.env.SNAPSPACE_API
 export default {
-  data() {
+  data () {
     return {
-      imageFile: "",
-      imageURL: "",
-      comment: ""
-    };
+      imageFile: '',
+      imageURL: '',
+      comment: ''
+    }
   },
   methods: {
-    addPhoto(imageFile) {
-      this.imageFile = imageFile;
+    addPhoto (imageFile) {
+      this.imageFile = imageFile
     },
-    storeImage() {
-      const imageFile = this.imageFile;
+    saveSnapshot () {
+      this.storeImage()
+    },
+    storeImage () {
+      const imageFile = this.imageFile
       axios
         .get('/signedAWSURL', {
-          imageFileName: Date.now()
+          params: {
+            imageFileName: Date.now()
+          }
         })
 
-        .then(function(result) {
-          var signedUrl = result.data.signedUrl;
+        .then(function (result) {
+          const signedURL = result.data.signedAWSURL
+          console.log(result)
           var options = {
             headers: {
-              "Content-Type": imageFile.type
+              'Content-Type': imageFile.type
             }
-          };
+          }
 
-          return axios.put(signedUrl, imageFile, options);
+          return axios.put(signedURL, imageFile, options)
         })
 
-        .then(function(result) {
-          console.log(result);
+        .then(function (result) {
+          console.log(result)
         })
-        
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
+
+        .catch(function (err) {
+          console.log(err)
+        })
+    }
   },
-  name: "App"
-};
+  name: 'App'
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

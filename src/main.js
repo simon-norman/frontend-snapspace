@@ -41,11 +41,11 @@ Vue.use(Vuetify, {
     success: '#4CAF50',
     warning: '#FFC107'
   }
-}, axios)
+})
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = process.env.SNAPSPACE_API;
+axios.defaults.baseURL = process.env.SNAPSPACE_API
 
 /* eslint-disable no-new */
 new Vue({

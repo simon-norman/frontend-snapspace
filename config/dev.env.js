@@ -5,5 +5,5 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  SNAPSPACE_API: '"localhost:8080"'
+  SNAPSPACE_API: '"http://localhost:8080"'
 })

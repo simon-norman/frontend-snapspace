@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+import axios from 'axios'
 import router from './router'
 import {
   Vuetify,
@@ -40,9 +41,11 @@ Vue.use(Vuetify, {
     success: '#4CAF50',
     warning: '#FFC107'
   }
-})
+}, axios)
 
 Vue.config.productionTip = false
+
+axios.defaults.baseURL = process.env.SNAPSPACE_API;
 
 /* eslint-disable no-new */
 new Vue({

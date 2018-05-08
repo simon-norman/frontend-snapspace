@@ -27,25 +27,46 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      imageFile: '',
-      imageURL: '',
-      comment: ''
-    }
+      imageFile: "",
+      imageURL: "",
+      comment: ""
+    };
   },
   methods: {
-    addPhoto (imageFile) {
-      this.imageFile = imageFile
+    addPhoto(imageFile) {
+      this.imageFile = imageFile;
     },
-    storeImage () {
+    storeImage() {
+      const imageFile = this.imageFile;
+      axios
+        .get('/signedAWSURL', {
+          imageFileName: Date.now()
+        })
+
+        .then(function(result) {
+          var signedUrl = result.data.signedUrl;
+          var options = {
+            headers: {
+              "Content-Type": imageFile.type
+            }
+          };
+
+          return axios.put(signedUrl, imageFile, options);
+        })
+
+        .then(function(result) {
+          console.log(result);
+        })
+        
+        .catch(function(err) {
+          console.log(err);
+        });
     },
-    getSignedAWSURL () {
-            
-    }
   },
-  name: 'App'
-}
+  name: "App"
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

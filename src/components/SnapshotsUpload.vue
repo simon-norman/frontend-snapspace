@@ -45,6 +45,7 @@ export default {
     },
     saveSnapshot () {
       console.log(process.env.SNAPSPACE_API)
+      console.log(process.env.NODE_ENV)
       console.log(axios.defaults.baseURL)
       const self = this
       this.storeImage(() => {

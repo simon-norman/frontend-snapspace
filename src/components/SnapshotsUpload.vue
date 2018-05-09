@@ -42,10 +42,13 @@ export default {
   methods: {
     addPhoto (imageFile) {
       this.imageFile = imageFile
+      console.log(process.env.SNAPSPACE_API)
+      console.log("Api!")
       console.log(process.env.NODE_ENV)
     },
     saveSnapshot () {
       console.log(process.env.SNAPSPACE_API)
+      console.log("Api!")
       console.log(process.env.NODE_ENV)
       const self = this
       this.storeImage(() => {

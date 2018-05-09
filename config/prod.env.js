@@ -1,4 +1,4 @@
 module.exports = {
   NODE_ENV: '"production"',
-  SNAPSPACE_API: '"https://api-snapspace.herokuapp.com"'
+  SNAPSPACE_API: JSON.stringify(process.env.SNAPSPACE_API)
 }

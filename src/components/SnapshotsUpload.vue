@@ -28,7 +28,7 @@
 
 <script>
 import axios from 'axios'
-axios.defaults.baseURL = process.env.SNAPSPACE_API
+
 export default {
   data () {
     return {
@@ -44,9 +44,6 @@ export default {
       this.imageFile = imageFile
     },
     saveSnapshot () {
-      console.log(process.env.SNAPSPACE_API)
-      console.log(process.env.NODE_ENV)
-      console.log(axios.defaults.baseURL)
       const self = this
       this.storeImage(() => {
         axios

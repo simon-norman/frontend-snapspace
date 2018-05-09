@@ -28,6 +28,7 @@
 
 <script>
 import axios from 'axios'
+axios.defaults.baseURL = process.env.SNAPSPACE_API
 export default {
   data () {
     return {

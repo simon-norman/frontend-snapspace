@@ -44,6 +44,8 @@ export default {
       this.imageFile = imageFile
     },
     saveSnapshot () {
+      console.log(process.env.SNAPSPACE_API)
+      console.log(process.env.NODE_ENV)
       const self = this
       this.storeImage(() => {
         axios
@@ -67,6 +69,7 @@ export default {
 
         .then(result => {
           self.snapshot.imageURL = result.data.imageURL
+          console.log(result.data.imageURL)
           var options = {
             headers: {
               'Content-Type': self.imageFile.type

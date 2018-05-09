@@ -67,7 +67,6 @@ export default {
 
         .then(result => {
           self.snapshot.imageURL = result.data.imageURL
-          console.log(result.data.imageURL)
           var options = {
             headers: {
               'Content-Type': self.imageFile.type

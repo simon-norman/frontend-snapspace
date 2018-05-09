@@ -1,2 +1,3 @@
-'use strict'
 
+
+//environment variables stored in Heroku

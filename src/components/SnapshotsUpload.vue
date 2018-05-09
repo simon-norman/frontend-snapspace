@@ -28,7 +28,7 @@
 
 <script>
 import axios from 'axios'
-
+console.log(process.env.NODE_ENV)
 export default {
   data () {
     return {
@@ -42,6 +42,7 @@ export default {
   methods: {
     addPhoto (imageFile) {
       this.imageFile = imageFile
+      console.log(process.env.NODE_ENV)
     },
     saveSnapshot () {
       console.log(process.env.SNAPSPACE_API)

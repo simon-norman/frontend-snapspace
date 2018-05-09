@@ -5,5 +5,5 @@ const devEnv = require('./dev.env')
 
 module.exports = merge(devEnv, {
   NODE_ENV: '"test"',
-  SNAPSPACE_API: JSON.stringify(process.env.SNAPSPACE_API)
+  SNAPSPACE_API: '"test"'
 })

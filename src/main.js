@@ -5,6 +5,7 @@ import axios from 'axios';
 import {
   Vuetify,
   VApp,
+  VAlert,
   VCard,
   VNavigationDrawer,
   VFooter,
@@ -25,6 +26,7 @@ import '../node_modules/vuetify/src/stylus/app.styl';
 Vue.use(Vuetify, {
   components: {
     VApp,
+    VAlert,
     VCard,
     VNavigationDrawer,
     VFooter,

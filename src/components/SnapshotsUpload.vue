@@ -1,5 +1,15 @@
 <template>
-  <v-container grid-list-xl>
+  <v-container 
+    fluid 
+    grid-list-xl>
+    <div>
+      <v-alert 
+        v-model="submitSuccessAlert" 
+        type="success" 
+        dismissible>
+        Thank you for your feedback!
+      </v-alert>
+    </div>
     <v-layout 
       row 
       justify-center 
@@ -63,6 +73,7 @@ export default {
   name: 'App',
   data() {
     return {
+      submitSuccessAlert: false,
       imageFile: '',
       snapshot: {
         imageURL: '',
@@ -80,7 +91,9 @@ export default {
         axios
           .post('/snapshot', self.snapshot)
           .then(res => {
-            console.log(res);
+            if (res.status === 200) {
+              self.submitSuccessAlert = true;
+            }
           })
           .catch(err => {
             console.log(err);

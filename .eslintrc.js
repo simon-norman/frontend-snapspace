@@ -2,27 +2,33 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   parserOptions: {
-    sourceType: 'module'
+    sourceType: 'module',
+    parser: 'babel-eslint',
+    ecmaVersion: 2017
   },
   env: {
     browser: true,
   },
-  // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
-  extends: 'standard',
+ 
+  "extends": [
+    "airbnb-base",
+    "plugin:vue/recommended"
+  ],
   // required to lint *.vue files
-  plugins: [
-    'html'
+  "plugins": [
+    'vue'
   ],
   // add your custom rules here
-  'rules': {
+  rules: {
     // allow paren-less arrow functions
     'arrow-parens': 0,
     // allow async-await
     'generator-star-spacing': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'no-trailing-spaces': 0 // set it to 1 to get a warning.
+    'no-trailing-spaces': 0, // set it to 1 to get a warning.,
+    'linebreak-style': ["error", "windows"],
+    "import/no-unresolved": "off"
   }
 }

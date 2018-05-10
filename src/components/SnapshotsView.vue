@@ -1,91 +1,53 @@
 <template>
-  <v-container grid-list-xl>
-    <v-layout row justify-center align-center wrap>
-      <v-flex xs12 s4 md3>
-        <label class="btn btn-file info btn--block">
-          Take photo
-          <input type="file" @change="addPhoto($event.target.files[0])" id="addphoto" accept="image/*" style="display: none;">
-        </label>
+  <v-container 
+    grid-list-md 
+    text-xs-center>
+    <v-layout 
+      row 
+      wrap>
+      <v-flex 
+        v-for="snapshot in snapshots" 
+        :key="snapshot._id" 
+        xs4>
+        <v-card 
+          flat 
+          color="transparent">
+          <v-card-media 
+            :src="snapshot.imageURL" 
+            contain 
+            height="200px"/>
+          <v-card-text 
+            primary-title 
+            class="title">
+            <div>
+              <div>{{ snapshot.comment }}</div>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-flex>
     </v-layout>
-    <v-layout row justify-center align-center wrap>
-      <v-flex xs12 s4 md3>
-        <v-text-field
-          name="input-7-1"
-          label="Tell us more"
-          v-model="snapshot.comment"
-          multi-line
-        ></v-text-field>
-      </v-flex>
-    </v-layout>  
-    <v-layout row justify-center align-center wrap>
-      <v-flex xs12 s4 md3>
-        <v-btn block v-on:click="saveSnapshot()" class="info">Submit</v-btn>
-      </v-flex>
-    </v-layout>    
   </v-container>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
+
 export default {
-  data () {
+  name: 'App',
+  data() {
     return {
-      imageFile: '',
-      snapshot: {
-        imageURL: '',
-        comment: ''
-      }
-    }
+      snapshots: [
+      ],
+    };
   },
-  methods: {
-    addPhoto (imageFile) {
-      this.imageFile = imageFile
-    },
-    saveSnapshot () {
-      const self = this
-      this.storeImage(() => {
-        axios
-          .post('/snapshot', self.snapshot)
-          .then(res => {
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      })
-    },
-    storeImage (callback) {
-      const self = this
-      axios
-        .get('/image-aws-config', {
-          params: {
-            imageFileName: Date.now()
-          }
-        })
-
-        .then(result => {
-          self.snapshot.imageURL = result.data.imageURL
-          var options = {
-            headers: {
-              'Content-Type': self.imageFile.type
-            }
-          }
-
-          return axios.put(result.data.signedAWSURL, self.imageFile, options)
-        })
-
-        .then(result => {
-          callback()
-        })
-
-        .catch(err => {
-          console.log(err)
-        })
-    }
+  mounted() {
+    const self = this;
+    axios.get('/snapshots')
+      .then(response => {
+        self.snapshots = response.data;
+      });
   },
-  name: 'App'
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

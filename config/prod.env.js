@@ -1,4 +1,4 @@
 module.exports = {
-  NODE_ENV: '"production"',
-  SNAPSPACE_API: '"This is a prod env file"'
+  NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+  SNAPSPACE_API: JSON.stringify(process.env.SNAPSPACE_API)
 }

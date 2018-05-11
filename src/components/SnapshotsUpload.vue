@@ -27,7 +27,8 @@
         xs12 
         s4 
         md3>
-        <label class="btn btn-file info btn--block">
+        <label 
+          class="btn btn-file info btn--block">
           Take photo
           <input 
             id="addphoto" 
@@ -36,6 +37,12 @@
             style="display: none;" 
             @change="addPhoto($event.target.files[0])">
         </label>
+        <div 
+          v-if="$v.imageFile.$error"
+          class="input-group__messages 
+      input-group__error input-group__details input-group--error 
+      input-group--required error--text">
+          Please add a photo</div>
       </v-flex>
     </v-layout>
     <v-layout 
@@ -49,9 +56,11 @@
         md3>
         <v-text-field
           v-model="snapshot.comment"
+          :error-messages="commentErrors"
           name="input-7-1"
           label="Tell us more"
           multi-line
+          required
         />
       </v-flex>
     </v-layout>  
@@ -75,8 +84,8 @@
 
 <script>
 import axios from 'axios';
+import { required } from 'vuelidate/lib/validators';
 
-console.log(process.env.NODE_ENV);
 export default {
   name: 'App',
   data() {
@@ -93,25 +102,45 @@ export default {
       },
     };
   },
+  validations: {
+    snapshot: {
+      comment: { required },
+    },
+    imageFile: { required },
+  },
+  computed: {
+    commentErrors() {
+      const errors = [];
+      if (!this.$v.snapshot.comment.$dirty) return errors;
+      if (this.$v.snapshot.comment.$error) {
+        errors.push('Please provide a comment');
+      }
+      return errors;
+    },
+  },
   methods: {
     addPhoto(imageFile) {
       this.imageFile = imageFile;
     },
     saveSnapshot() {
       const self = this;
-      this.storeImage(() => {
-        axios
-          .post('/snapshot', self.snapshot)
-          .then(res => {
-            if (res.status === 200) {
-              self.submitSuccessAlert = true;
-            }
-          })
-          .catch(err => {
-            self.errorAlert.message = err.response.data.error.message;
-            self.errorAlert.active = true;
-          });
-      });
+      if (self.$v.$invalid) {
+        this.$v.$touch();
+      } else {
+        this.storeImage(() => {
+          axios
+            .post('/snapshot', self.snapshot)
+            .then(res => {
+              if (res.status === 200) {
+                self.submitSuccessAlert = true;
+              }
+            })
+            .catch(err => {
+              self.errorAlert.message = err.response.data.error.message;
+              self.errorAlert.active = true;
+            });
+        });
+      }
     },
     storeImage(callback) {
       const self = this;
@@ -124,7 +153,6 @@ export default {
 
         .then(result => {
           self.snapshot.imageURL = result.data.imageURL;
-          console.log(result.data.imageURL);
           const options = {
             headers: {
               'Content-Type': self.imageFile.type,
@@ -139,7 +167,8 @@ export default {
         })
 
         .catch(err => {
-          console.log(err);
+          self.errorAlert.message = err.response.data.error.message;
+          self.errorAlert.active = true;
         });
     },
   },

@@ -5,6 +5,7 @@
     <div>
       <v-alert 
         v-model="submitSuccessAlert" 
+        transition="scale-transition"
         type="success" 
         dismissible>
         Thank you for your feedback!
@@ -13,6 +14,7 @@
     <div>
       <v-alert 
         v-model="errorAlert.active" 
+        transition="scale-transition"
         type="error" 
         dismissible>
         {{ errorAlert.message }}

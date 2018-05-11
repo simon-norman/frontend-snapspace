@@ -10,6 +10,14 @@
         Thank you for your feedback!
       </v-alert>
     </div>
+    <div>
+      <v-alert 
+        v-model="errorAlert.active" 
+        type="error" 
+        dismissible>
+        {{ errorAlert.message }}
+      </v-alert>
+    </div>
     <v-layout 
       row 
       justify-center 
@@ -74,6 +82,10 @@ export default {
   data() {
     return {
       submitSuccessAlert: false,
+      errorAlert: {
+        active: false,
+        message: '',
+      },
       imageFile: '',
       snapshot: {
         imageURL: '',
@@ -96,7 +108,8 @@ export default {
             }
           })
           .catch(err => {
-            console.log(err);
+            self.errorAlert.message = err.response.data.error.message;
+            self.errorAlert.active = true;
           });
       });
     },

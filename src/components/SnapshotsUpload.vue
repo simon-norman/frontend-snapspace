@@ -29,9 +29,17 @@
         xs12 
         s4 
         md3>
+        <v-card 
+          flat 
+          color="transparent">
+          <v-card-media 
+            v-if="localImageDisplay"
+            :src="localImageDisplay" 
+            contain
+            height="200px"/></v-card>
         <label 
           class="btn btn-file info btn--block">
-          Take photo
+          Add photo
           <input 
             id="addphoto" 
             type="file" 
@@ -98,6 +106,7 @@ export default {
         message: '',
       },
       imageFile: '',
+      localImageDisplay: '',
       snapshot: {
         imageURL: '',
         comment: '',
@@ -123,6 +132,12 @@ export default {
   methods: {
     addPhoto(imageFile) {
       this.imageFile = imageFile;
+      const self = this;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        self.localImageDisplay = e.target.result;
+      };
+      reader.readAsDataURL(imageFile);
     },
     saveSnapshot() {
       const self = this;
@@ -169,7 +184,9 @@ export default {
         })
 
         .catch(err => {
-          self.errorAlert.message = err.response.data.error.message;
+          self.errorAlert.message = 
+          ('So sorry, it seems we`re having some technical issues - ' +
+          'please contact us or try again later' || err.response.data.error.message);
           self.errorAlert.active = true;
         });
     },
@@ -179,5 +196,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.image {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 200px;
+}
 
 </style>

@@ -95,7 +95,8 @@
 <script>
 import axios from 'axios';
 import { required } from 'vuelidate/lib/validators';
-
+import Api from '../api/Api';
+const HTTP = new Api()
 export default {
   name: 'App',
   data() {
@@ -141,26 +142,54 @@ export default {
     },
     saveSnapshot() {
       const self = this;
-      if (self.$v.$invalid) {
-        this.$v.$touch();
-      } else {
-        this.storeImage(() => {
-          axios
-            .post('/snapshot', self.snapshot)
-            .then(res => {
-              if (res.status === 200) {
-                self.submitSuccessAlert = true;
-              }
-            })
-            .catch(err => {
-              self.errorAlert.message = err.response.data.error.message;
-              self.errorAlert.active = true;
-            });
-        });
-      }
+      this.$v.$touch();
+      if (this.$v.$invalid) return
+
+      this.storeImage(() => {
+        // with arrow functions do not need self
+        axios
+          .post('/snapshot', self.snapshot)
+          .then(res => {
+            if (res.status === 200) {
+              self.submitSuccessAlert = true;
+            }
+          })
+          .catch(err => {
+            self.errorAlert.message = err.response.data.error.message;
+            self.errorAlert.active = true;
+          });
+      });
     },
-    storeImage(callback) {
+    async storeImage(callback) {
       const self = this;
+      try {
+        const result = await HTTP.getImgConfig({
+          params: {
+            imageFileName: Date.now()
+          }
+        });
+        const another = await HTTP.getAnotherCall(result2.)
+        this.showLoadingOverlay()
+        const [ apicall1result, apicall2result ] = await Promise.all([apicall1, apicall2])
+          .then(response => {
+            axios.ge
+          }) {
+            Promise() {
+
+            }
+            .catch
+          }
+          .catch {
+
+          }
+
+        console.log('result', result);
+      } catch (error) {
+        
+      } finally {
+        this.hideLoadingOverlay()
+      }
+     
       axios
         .get('/image-aws-config', {
           params: {

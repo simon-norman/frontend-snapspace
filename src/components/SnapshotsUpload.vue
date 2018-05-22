@@ -41,7 +41,7 @@
           class="btn btn-file info btn--block">
           Add photo
           <input 
-            id="addphoto" 
+            id="addPhoto" 
             type="file" 
             accept="image/*" 
             style="display: none;" 
@@ -65,6 +65,7 @@
         s4 
         md3>
         <v-text-field
+          id="snapshotComment"
           v-model="snapshot.comment"
           :error-messages="commentErrors"
           name="input-7-1"
@@ -84,6 +85,7 @@
         s4 
         md3>
         <v-btn 
+          id="submitSnapshot"
           block 
           class="info" 
           @click="saveSnapshot()">Submit</v-btn>
@@ -122,7 +124,6 @@ export default {
   computed: {
     commentErrors() {
       const errors = [];
-      if (!this.$v.snapshot.comment.$dirty) return errors;
       if (this.$v.snapshot.comment.$error) {
         errors.push('Please provide a comment');
       }
@@ -141,9 +142,8 @@ export default {
     },
     saveSnapshot() {
       const self = this;
-      if (self.$v.$invalid) {
-        this.$v.$touch();
-      } else {
+      this.$v.$touch();
+      if (!self.$v.$error) {
         this.storeImage(() => {
           axios
             .post('/snapshot', self.snapshot)
@@ -196,11 +196,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-.image {
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 200px;
-}
-
 </style>

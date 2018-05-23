@@ -34,6 +34,7 @@
           color="transparent">
           <v-card-media 
             v-if="localImageDisplay"
+            id="snapshotImage"
             :src="localImageDisplay" 
             contain
             height="200px"/></v-card>
@@ -41,14 +42,15 @@
           class="btn btn-file info btn--block">
           Add photo
           <input 
-            id="addPhoto" 
+            id="addImage" 
             type="file" 
             accept="image/*" 
             style="display: none;" 
-            @change="addPhoto($event.target.files[0])">
+            @change="addImage($event.target.files[0])">
         </label>
         <div 
           v-if="$v.imageFile.$error"
+          id="imageError"
           class="input-group__messages 
       input-group__error input-group__details input-group--error 
       input-group--required error--text">
@@ -97,7 +99,9 @@
 <script>
 import axios from 'axios';
 import { required } from 'vuelidate/lib/validators';
+import Api from '../api/Api';
 
+const HTTP = new Api();
 export default {
   name: 'App',
   data() {
@@ -131,7 +135,7 @@ export default {
     },
   },
   methods: {
-    addPhoto(imageFile) {
+    addImage(imageFile) {
       if (!imageFile) return;
       this.imageFile = imageFile;
       const reader = new FileReader();
@@ -159,36 +163,21 @@ export default {
         });
       }
     },
-    storeImage(callback) {
+    async storeImage() {
       const self = this;
-      axios
-        .get('/image-aws-config', {
+      try {
+        const result = await HTTP.getSignedPostURL({
           params: {
             imageFileName: Date.now(),
           },
-        })
-
-        .then(result => {
-          self.snapshot.imageURL = result.data.imageURL;
-          const options = {
-            headers: {
-              'Content-Type': self.imageFile.type,
-            },
-          };
-
-          return axios.put(result.data.signedAWSURL, self.imageFile, options);
-        })
-
-        .then(() => {
-          callback();
-        })
-
-        .catch(err => {
-          self.errorAlert.message = 
-          ('So sorry, it seems we`re having some technical issues - ' +
-          'please contact us or try again later' || err.response.data.error.message);
-          self.errorAlert.active = true;
         });
+        console.log(result);
+      } catch (error) {
+        self.errorAlert.message = 
+          ('So sorry, it seems we`re having some technical issues - ' +
+          'please contact us or try again later' || error.response.data.error.message);
+        self.errorAlert.active = true;
+      }
     },
   },
 };

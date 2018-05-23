@@ -1,24 +1,15 @@
 import axios from 'axios';
 
-class Api {
-    constructor(headers) {
-        this.axios = axios.create({
-            baseURL: ,
-            responseType: 'json',
-            headers
-        })
-    }
+export default class Api {
+  constructor() {
+    this.axios = axios.create({
+      baseURL: process.env.SNAPSPACE_API,
+      responseType: 'json',
+    });
+    this.signedPostURL = '/image-aws-config';
+  }
 
-    this.awsImgConfig = '/image-aws-config';
-    this.anotherUrl = 'something-else'
-
-    getImgConfig(params) {
-        return this.axios.get(this.awsImgConfig, params)
-    }
-
-
-
-    getAnotherThing() {
-
-    }
+  getSignedPostURL(params) {
+    return this.axios.get(this.signedPostURL, params);
+  }
 }

@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'radikal_regular';
+    src: url('../fonts/Nootype\ -\ Radikal-Regular.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'radikal_thin';
+    src: url('../fonts/Nootype\ -\ Radikal-Thin.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.btn {
+    font-family: radikal_regular;
+    border-radius: 0;
+    text-transform: none;
+    /* background-color: #ffcb05 !important; */
+}
+
+.spacelabThin {
+    font-family: radikal_thin;
+    border-radius: 0;
+    text-transform: none;
+}

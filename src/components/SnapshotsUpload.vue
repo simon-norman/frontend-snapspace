@@ -40,7 +40,7 @@
             contain
             height="200px"/></v-card>
         <label 
-          class="btn btn-file info btn--block">
+          class="btn btn-file btn--block info">
           Add photo
           <input 
             id="addImage" 
@@ -71,6 +71,7 @@
           id="snapshotComment"
           v-model="snapshot.comment"
           :error-messages="commentErrors"
+          class="spacelabThin"
           name="input-7-1"
           label="Tell us more"
           multi-line
@@ -90,8 +91,8 @@
         md3>
         <v-btn 
           id="submitSnapshot"
+          class="info"
           block 
-          class="info" 
           @click="saveSnapshot()">Submit</v-btn>
       </v-flex>
     </v-layout>    
@@ -190,8 +191,8 @@ export default {
 
 #uploadContainer {
   position: absolute;
-  top: 45%;
-  transform: translateY(-55%);
+  top: 47%;
+  transform: translateY(-53%);
 }
 
 </style>

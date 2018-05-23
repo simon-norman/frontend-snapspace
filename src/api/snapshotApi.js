@@ -8,6 +8,7 @@ export default class SnapshotApi {
     });
     this.signedURLPath = '/image-aws-config';
     this.snapshotPath = '/snapshot';
+    this.snapshotsPath = '/snapshots';
   }
 
   getSignedPostURL(params) {
@@ -16,5 +17,9 @@ export default class SnapshotApi {
   
   postSnapshot(params) {
     return this.axios.post(this.snapshotPath, params);
+  }
+
+  getSnapshots() {
+    return this.axios.get(this.snapshotsPath);
   }
 }

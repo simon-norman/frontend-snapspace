@@ -38,6 +38,28 @@ describe('SnapshotUpload.vue', () => {
       expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
     });
   });
+
+  describe('Save snapshot', () => {
+    let wrapper; 
+
+    beforeEach(() => {
+      const localVue = createLocalVue();
+      localVue.use(Vuetify);
+      localVue.use(Vuelidate);
+      /* eslint no-unused-vars: 0 */
+      wrapper = mount(SnapshotsUpload, {
+        localVue,
+      });
+    });
+    
+    it('should send ', async () => {
+      const imageFile = new Blob(['image'], { type: 'image/jpg' });
+      wrapper.vm.addImage(imageFile);
+      await flushPromises();
+      await flushPromises();
+      expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
+    });
+  });
   
   describe('Form validation on submit snapshot', () => {
     let wrapper;

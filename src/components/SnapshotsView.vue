@@ -30,8 +30,9 @@
 </template>
 
 <script>
-import axios from 'axios';
+import SnapshotApi from '../api/snapshotApi';
 
+const snapshotApi = new SnapshotApi();
 export default {
   name: 'App',
   data() {
@@ -40,12 +41,9 @@ export default {
       ],
     };
   },
-  mounted() {
-    const self = this;
-    axios.get('/snapshots')
-      .then(response => {
-        self.snapshots = response.data;
-      });
+  async mounted() {
+    const result = await snapshotApi.getSnapshots();
+    this.snapshots = result.data;
   },
 };
 </script>

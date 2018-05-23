@@ -42,8 +42,12 @@ export default {
     };
   },
   async mounted() {
-    const result = await snapshotApi.getSnapshots();
-    this.snapshots = result.data;
+    try {
+      const result = await snapshotApi.getSnapshots();
+      this.snapshots = result.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <v-container 
+  <v-container
+    id="uploadContainer" 
     fluid 
     grid-list-xl>
     <div>
@@ -74,6 +75,7 @@
           label="Tell us more"
           multi-line
           required
+          rows="3"
         />
       </v-flex>
     </v-layout>  
@@ -172,9 +174,8 @@ export default {
           }
         } catch (error) {
           console.log(error);
-
           this.errorAlert.message = 
-          ('So sorry, it seems we`re having some technical issues - ' +
+          ('So sorry, something went wrong - ' +
           'please contact us or try again later' || error.response.data.error.message);
           this.errorAlert.active = true;
         }
@@ -186,4 +187,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+#uploadContainer {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-55%);
+}
+
 </style>

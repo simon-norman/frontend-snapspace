@@ -51,14 +51,6 @@ describe('SnapshotUpload.vue', () => {
         localVue,
       });
     });
-    
-    it('should send ', async () => {
-      const imageFile = new Blob(['image'], { type: 'image/jpg' });
-      wrapper.vm.addImage(imageFile);
-      await flushPromises();
-      await flushPromises();
-      expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
-    });
   });
   
   describe('Form validation on submit snapshot', () => {

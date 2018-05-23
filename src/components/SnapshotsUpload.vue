@@ -97,11 +97,12 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { required } from 'vuelidate/lib/validators';
-import Api from '../api/Api';
+import SnapshotApi from '../api/snapshotApi';
+import ImageApi from '../api/imageApi';
 
-const HTTP = new Api();
+const snapshotApi = new SnapshotApi();
+const imageApi = new ImageApi();
 export default {
   name: 'App',
   data() {
@@ -138,45 +139,45 @@ export default {
     addImage(imageFile) {
       if (!imageFile) return;
       this.imageFile = imageFile;
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.localImageDisplay = e.target.result;
       };
       reader.readAsDataURL(imageFile);
     },
-    saveSnapshot() {
-      const self = this;
+
+    async saveSnapshot() {
       this.$v.$touch();
-      if (!self.$v.$error) {
-        this.storeImage(() => {
-          axios
-            .post('/snapshot', self.snapshot)
-            .then(res => {
-              if (res.status === 200) {
-                self.submitSuccessAlert = true;
-              }
-            })
-            .catch(err => {
-              self.errorAlert.message = err.response.data.error.message;
-              self.errorAlert.active = true;
-            });
-        });
-      }
-    },
-    async storeImage() {
-      const self = this;
-      try {
-        const result = await HTTP.getSignedPostURL({
-          params: {
-            imageFileName: Date.now(),
-          },
-        });
-        console.log(result);
-      } catch (error) {
-        self.errorAlert.message = 
+      
+      if (!this.$v.$error) {
+        try {
+          let result = await snapshotApi.getSignedPostURL({
+            params: {
+              imageFileName: Date.now(),
+            },
+          });
+          this.snapshot.imageURL = result.data.imageURL;
+
+          const options = {
+            headers: {
+              'Content-Type': this.imageFile.type,
+            },
+          };
+          await imageApi.putImage(result.data.signedAWSURL, this.imageFile, options);
+
+          result = await snapshotApi.postSnapshot(this.snapshot);
+          if (result.status === 200) {
+            this.submitSuccessAlert = true;
+          }
+        } catch (error) {
+          console.log(error);
+
+          this.errorAlert.message = 
           ('So sorry, it seems we`re having some technical issues - ' +
           'please contact us or try again later' || error.response.data.error.message);
-        self.errorAlert.active = true;
+          this.errorAlert.active = true;
+        }
       }
     },
   },

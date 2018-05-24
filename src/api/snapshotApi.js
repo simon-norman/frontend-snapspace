@@ -2,7 +2,7 @@ import Api from './Api';
 
 export default class SnapshotApi extends Api {
   constructor() {
-    super({ baseURL: process.env.SNAPSCAPE_API });
+    super({ baseURL: process.env.SNAPSPACE_API });
     
     this.signedURLPath = '/image-aws-config';
     this.snapshotPath = '/snapshot';

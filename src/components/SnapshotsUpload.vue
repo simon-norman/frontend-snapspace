@@ -34,9 +34,9 @@
           flat
           color="transparent">
           <v-card-media 
-            v-if="localImageDisplay"
+            v-if="snapshotData.localImageDisplay"
             id="snapshotImage"
-            :src="localImageDisplay" 
+            :src="snapshotData.localImageDisplay" 
             contain
             height="200px"/></v-card>
       </v-flex>
@@ -62,7 +62,7 @@
             @change="addImage($event.target.files[0])">
         </label>
         <div 
-          v-if="$v.imageFile.$error"
+          v-if="$v.snapshotData.imageFile.$error"
           id="imageError"
           class="input-group__messages 
       input-group__error input-group__details input-group--error 
@@ -81,7 +81,7 @@
         md3>
         <v-text-field
           id="snapshotComment"
-          v-model="snapshot.comment"
+          v-model="snapshotData.snapshot.comment"
           :error-messages="commentErrors"
           class="spacelabThin"
           name="input-7-1"
@@ -118,6 +118,18 @@ import ImageApi from '../api/imageApi';
 
 const snapshotApi = new SnapshotApi();
 const imageApi = new ImageApi();
+
+function getDefaultData() {
+  return {
+    imageFile: '',
+    localImageDisplay: '',
+    snapshot: {
+      imageURL: '',
+      comment: '',
+    },
+  };
+}
+
 export default {
   name: 'App',
   data() {
@@ -127,24 +139,21 @@ export default {
         active: false,
         message: '',
       },
-      imageFile: '',
-      localImageDisplay: '',
-      snapshot: {
-        imageURL: '',
-        comment: '',
-      },
-    };
+      snapshotData: getDefaultData(),
+    };    
   },
   validations: {
-    snapshot: {
-      comment: { required },
+    snapshotData: {
+      snapshot: {
+        comment: { required },
+      },
+      imageFile: { required },
     },
-    imageFile: { required },
   },
   computed: {
     commentErrors() {
       const errors = [];
-      if (this.$v.snapshot.comment.$error) {
+      if (this.$v.snapshotData.snapshot.comment.$error) {
         errors.push('Please provide a comment');
       }
       return errors;
@@ -153,11 +162,11 @@ export default {
   methods: {
     addImage(imageFile) {
       if (!imageFile) return;
-      this.imageFile = imageFile;
+      this.snapshotData.imageFile = imageFile;
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.localImageDisplay = e.target.result;
+        this.snapshotData.localImageDisplay = e.target.result;
       };
       reader.readAsDataURL(imageFile);
     },
@@ -166,25 +175,30 @@ export default {
       this.$v.$touch();
       
       if (!this.$v.$error) {
+        this.$v.$reset();
         try {
           let result = await snapshotApi.getSignedPostURL({
             params: {
               imageFileName: Date.now(),
             },
           });
-          this.snapshot.imageURL = result.data.imageURL;
+          this.snapshotData.snapshot.imageURL = result.data.imageURL;
 
           const options = {
             headers: {
-              'Content-Type': this.imageFile.type,
+              'Content-Type': this.snapshotData.imageFile.type,
             },
           };
-          await imageApi.putImage(result.data.signedAWSURL, this.imageFile, options);
+          await imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
 
-          result = await snapshotApi.postSnapshot(this.snapshot);
+          result = await snapshotApi.postSnapshot(this.snapshotData.snapshot);
           if (result.status === 200) {
             window.scrollTo(0, 0);
+            this.reset();
             this.submitSuccessAlert = true;
+            setTimeout(() => {
+              this.submitSuccessAlert = false;
+            }, 2000);
           }
         } catch (error) {
           window.scrollTo(0, 0);
@@ -195,6 +209,10 @@ export default {
           this.errorAlert.active = true;
         }
       }
+    },
+    reset() {
+      const defaultData = getDefaultData();
+      Object.assign(this.$data.snapshotData, defaultData);
     },
   },
 };

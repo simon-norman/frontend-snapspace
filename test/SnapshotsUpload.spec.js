@@ -86,7 +86,9 @@ describe('SnapshotUpload.vue', () => {
       expect(wrapper.vm.commentErrors).toBeEmpty();
 
       wrapper.setData({
-        snapshot: { comment: 'data' },
+        snapshotData: {
+          snapshot: { comment: 'data' },
+        },
       });
 
       wrapper.find('#submitSnapshot').trigger('click');
@@ -99,7 +101,9 @@ describe('SnapshotUpload.vue', () => {
     it('should be no error if image is provided', (done) => {
       expect(wrapper.find('#imageError').exists()).toBeFalsy();
 
-      wrapper.setData({ imageFile: 'data' });
+      wrapper.setData({
+        snapshotData: { imageFile: 'data' },
+      });
 
       wrapper.find('#submitSnapshot').trigger('click');
       wrapper.vm.$nextTick(() => {

@@ -1,8 +1,6 @@
 <template>
   <v-container
-    id="uploadContainer" 
-    fluid 
-    grid-list-xl>
+    fluid>
     <div>
       <v-alert 
         v-model="submitSuccessAlert" 
@@ -21,93 +19,98 @@
         {{ errorAlert.message }}
       </v-alert>
     </div>
-    <v-layout 
-      row 
-      justify-center 
-      align-center 
-      wrap>
-      <v-flex 
-        xs12 
-        s4 
-        md3>
-        <v-card 
-          flat 
-          color="transparent">
-          <v-card-media 
-            v-if="localImageDisplay"
-            id="snapshotImage"
-            :src="localImageDisplay" 
-            contain
-            height="200px"/></v-card>
-      </v-flex>
-    </v-layout>
-    <v-layout 
-      row 
-      justify-center 
-      align-center 
-      wrap>
-      <v-flex 
-        xs12 
-        s4 
-        md3>
-        <label 
-          class="btn btn-file btn--block info">
-          Take a photo of a problem in your workspace
-          <input 
-            id="addImage" 
-            type="file" 
-            accept="image/*" 
-            capture="camera"
-            style="display: none;" 
-            @change="addImage($event.target.files[0])">
-        </label>
-        <div 
-          v-if="$v.imageFile.$error"
-          id="imageError"
-          class="input-group__messages 
+    <v-container
+      id="uploadContainer" 
+      fluid 
+      grid-list-xl>
+      <v-layout 
+        row 
+        justify-center 
+        align-center 
+        wrap>
+        <v-flex 
+          xs12 
+          s4 
+          md3>
+          <v-card 
+            flat 
+            color="transparent">
+            <v-card-media 
+              v-if="localImageDisplay"
+              id="snapshotImage"
+              :src="localImageDisplay" 
+              contain
+              height="200px"/></v-card>
+        </v-flex>
+      </v-layout>
+      <v-layout 
+        row 
+        justify-center 
+        align-center 
+        wrap>
+        <v-flex 
+          xs12 
+          s4 
+          md3>
+          <label 
+            class="btn btn-file btn--block info">
+            Take a photo of a problem in your workspace
+            <input 
+              id="addImage" 
+              type="file" 
+              accept="image/*" 
+              capture="camera"
+              style="display: none;" 
+              @change="addImage($event.target.files[0])">
+          </label>
+          <div 
+            v-if="$v.imageFile.$error"
+            id="imageError"
+            class="input-group__messages 
       input-group__error input-group__details input-group--error 
       input-group--required error--text">
-          Please add a photo</div>
-      </v-flex>
-    </v-layout>
-    <v-layout 
-      row 
-      justify-center 
-      align-center 
-      wrap>
-      <v-flex 
-        xs12 
-        s4 
-        md3>
-        <v-text-field
-          id="snapshotComment"
-          v-model="snapshot.comment"
-          :error-messages="commentErrors"
-          class="spacelabThin"
-          name="input-7-1"
-          label="Tell us more about the problem"
-          multi-line
-          required
-          rows="3"
-        />
-      </v-flex>
-    </v-layout>  
-    <v-layout 
-      row 
-      justify-center 
-      align-center 
-      wrap>
-      <v-flex 
-        xs12 
-        s4 
-        md3>
-        <v-btn 
-          id="submitSnapshot"
-          class="info"
-          block 
-          @click="saveSnapshot()">Submit</v-btn>
-      </v-flex>
-    </v-layout>    
+            Please add a photo</div>
+        </v-flex>
+      </v-layout>
+      <v-layout 
+        row 
+        justify-center 
+        align-center 
+        wrap>
+        <v-flex 
+          xs12 
+          s4 
+          md3>
+          <v-text-field
+            id="snapshotComment"
+            v-model="snapshot.comment"
+            :error-messages="commentErrors"
+            class="spacelabThin"
+            name="input-7-1"
+            label="Tell us more about the problem"
+            multi-line
+            required
+            rows="3"
+          />
+        </v-flex>
+      </v-layout>  
+      <v-layout 
+        row 
+        justify-center 
+        align-center 
+        wrap>
+        <v-flex 
+          xs12 
+          s4 
+          md3>
+          <v-btn 
+            id="submitSnapshot"
+            class="info"
+            block 
+            @click="saveSnapshot()">Submit</v-btn>
+        </v-flex>
+      </v-layout>    
+    </v-container>
   </v-container>
 </template>
 

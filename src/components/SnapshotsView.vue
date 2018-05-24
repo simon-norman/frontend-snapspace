@@ -8,22 +8,25 @@
       <v-flex 
         v-for="snapshot in snapshots" 
         :key="snapshot._id" 
-        xs4>
-        <v-card 
-          flat 
-          color="transparent">
-          <v-card-media 
-            :src="snapshot.imageURL" 
-            contain 
-            height="200px"/>
-          <v-card-text 
-            primary-title 
-            class="title">
-            <div>
-              <div>{{ snapshot.comment }}</div>
-            </div>
-          </v-card-text>
-        </v-card>
+        xs4
+      >
+        <lazy-component>
+          <v-card 
+            flat 
+            color="transparent">
+            <v-card-media 
+              :src="snapshot.imageURL" 
+              contain 
+              height="200px"/>
+            <v-card-text 
+              primary-title 
+              class="title">
+              <div>
+                <div>{{ snapshot.comment }}</div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </lazy-component>
       </v-flex>
     </v-layout>
   </v-container>
@@ -49,10 +52,17 @@ export default {
       console.log(error);
     }
   },
+  methods: {
+    handler() {
+      console.log('this component is showing');
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.acrossPage {
+  flex-direction: row;
+}
 </style>

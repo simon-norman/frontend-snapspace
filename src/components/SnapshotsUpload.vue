@@ -31,7 +31,7 @@
         s4 
         md3>
         <v-card 
-          flat 
+          flat
           color="transparent">
           <v-card-media 
             v-if="localImageDisplay"

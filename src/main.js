@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuelidate from 'vuelidate';
+import Lazyload from 'vue-lazyload-component';
 import {
   Vuetify,
   VApp,
@@ -25,6 +26,8 @@ import '../static/assets/css/snapspace.css';
 import '../node_modules/vuetify/src/stylus/app.styl';
 
 Vue.use(Vuelidate);
+
+Vue.use(Lazyload);
 
 Vue.use(Vuetify, {
   components: {

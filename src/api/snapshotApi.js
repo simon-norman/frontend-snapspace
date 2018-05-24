@@ -1,11 +1,9 @@
-import axios from 'axios';
+import Api from './Api';
 
-export default class SnapshotApi {
+export default class SnapshotApi extends Api {
   constructor() {
-    this.axios = axios.create({
-      baseURL: process.env.SNAPSPACE_API,
-      responseType: 'json',
-    });
+    super({ baseURL: process.env.SNAPSCAPE_API });
+    
     this.signedURLPath = '/image-aws-config';
     this.snapshotPath = '/snapshot';
     this.snapshotsPath = '/snapshots';

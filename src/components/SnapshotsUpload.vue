@@ -191,8 +191,8 @@ export default {
 
 #uploadContainer {
   position: absolute;
-  top: 47%;
-  transform: translateY(-53%);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 </style>

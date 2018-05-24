@@ -39,6 +39,17 @@
             :src="localImageDisplay" 
             contain
             height="200px"/></v-card>
+      </v-flex>
+    </v-layout>
+    <v-layout 
+      row 
+      justify-center 
+      align-center 
+      wrap>
+      <v-flex 
+        xs12 
+        s4 
+        md3>
         <label 
           class="btn btn-file btn--block info">
           Take a photo of a problem in your workspace
@@ -172,9 +183,11 @@ export default {
 
           result = await snapshotApi.postSnapshot(this.snapshot);
           if (result.status === 200) {
+            window.scrollTo(0, 0);
             this.submitSuccessAlert = true;
           }
         } catch (error) {
+          window.scrollTo(0, 0);
           console.log(error);
           this.errorAlert.message = 
           ('So sorry, something went wrong - ' +

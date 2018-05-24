@@ -1,6 +1,5 @@
 <template>
-  <v-container
-    fluid>
+  <div>
     <div>
       <v-alert 
         v-model="submitSuccessAlert" 
@@ -111,7 +110,7 @@
         </v-flex>
       </v-layout>    
     </v-container>
-  </v-container>
+  </div>
 </template>
 
 <script>

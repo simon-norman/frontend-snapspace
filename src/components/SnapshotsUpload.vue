@@ -41,11 +41,12 @@
             height="200px"/></v-card>
         <label 
           class="btn btn-file btn--block info">
-          Add photo
+          Take a photo of a problem in your workspace
           <input 
             id="addImage" 
             type="file" 
             accept="image/*" 
+            capture="camera"
             style="display: none;" 
             @change="addImage($event.target.files[0])">
         </label>
@@ -73,7 +74,7 @@
           :error-messages="commentErrors"
           class="spacelabThin"
           name="input-7-1"
-          label="Tell us more"
+          label="Tell us more about the problem"
           multi-line
           required
           rows="3"

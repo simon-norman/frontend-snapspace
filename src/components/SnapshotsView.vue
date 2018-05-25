@@ -7,6 +7,7 @@
       wrap>
       <v-flex 
         v-for="snapshot in snapshots" 
+        id="snapshotflex"
         :key="snapshot._id" 
         xs4
       >
@@ -37,7 +38,7 @@ import SnapshotApi from '../api/snapshotApi';
 
 const snapshotApi = new SnapshotApi();
 export default {
-  name: 'App',
+  name: 'SnapshotsView',
   data() {
     return {
       snapshots: [

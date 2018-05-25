@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
-import SnapshotsView from '../src/components/SnapshotsView.vue';
+import SnapshotsView from '../components/SnapshotsView.vue';
 
 describe('SnapshotsView.vue', () => {
   describe('Tests loading successfully', () => {

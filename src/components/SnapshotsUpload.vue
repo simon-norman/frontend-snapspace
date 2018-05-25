@@ -131,7 +131,7 @@ function getDefaultData() {
 }
 
 export default {
-  name: 'App',
+  name: 'SnapshotsUpload',
   data() {
     return {
       submitSuccessAlert: false,

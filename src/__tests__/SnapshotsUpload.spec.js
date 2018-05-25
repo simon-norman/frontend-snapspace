@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import flushPromises from 'flush-promises';
-import SnapshotsUpload from '../src/components/SnapshotsUpload.vue';
+import SnapshotsUpload from '../components/SnapshotsUpload.vue';
 
 describe('SnapshotUpload.vue', () => {
   describe('Tests loading successfully', () => {

@@ -9,7 +9,7 @@
         transition="scale-transition"
         type="success" 
         dismissible>
-        Thank you! Please send us more if you have them
+        Thank you! Please send us more if possible
       </v-alert>
     </div>
     <div>

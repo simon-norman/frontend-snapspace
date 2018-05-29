@@ -9,7 +9,7 @@
         transition="scale-transition"
         type="success" 
         dismissible>
-        Thank you for your help!
+        Thank you! Please send us more if you have them 
       </v-alert>
     </div>
     <div>
@@ -198,7 +198,7 @@ export default {
             this.submitSuccessAlert = true;
             setTimeout(() => {
               this.submitSuccessAlert = false;
-            }, 2000);
+            }, 4000);
           }
         } catch (error) {
           window.scrollTo(0, 0);

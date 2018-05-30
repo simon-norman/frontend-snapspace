@@ -15,6 +15,7 @@
           :key="snapshotRequest._id" 
           :label="'Request ' + (index + 1)" 
           :id="'request' + (index + 1)"  
+          class="requestTitle"
           type="text"/>
         <v-btn 
           id="addRequest"
@@ -29,6 +30,9 @@
 </template>
 
 <script>
+import SnapshotRequestApi from '../api/snapshotRequestApi';
+
+const snapshotRequestApi = new SnapshotRequestApi();
 export default {
   name: 'SnapshotRequests',
   data() {
@@ -37,6 +41,14 @@ export default {
         { _id: '', description: 'description' },
       ],
     };
+  },
+  async mounted() {
+    try {
+      const result = await snapshotRequestApi.getSnapshotRequests();
+      console.log(result.data);
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
     addRequest() {

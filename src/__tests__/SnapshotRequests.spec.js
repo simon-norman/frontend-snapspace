@@ -47,7 +47,7 @@ describe('SnapshotRequests.vue', () => {
     let snapshotRequests;
 
     beforeAll(() => {
-      snapshotRequests = [{ _id: '1', title: 'title1' }, { _id: '2', title: 'title2' }];
+      snapshotRequests = [{ _id: '', title: 'title1' }, { _id: 2, title: 'title2' }];
       mockAxios.get.mockImplementation(() =>
         Promise.resolve({
           data: snapshotRequests,
@@ -78,8 +78,24 @@ describe('SnapshotRequests.vue', () => {
 
     it('should remove a snapshot request from request list', (done) => {
       wrapper.vm.$nextTick(() => {
-        wrapper.find('#deleteRequest').trigger('click');
+        wrapper.find('#deleteRequest2').trigger('click');
         expect(wrapper.find('#request2').exists()).toBeFalse();
+        done();
+      });
+    });
+
+    it('should delete a snapshot request completely if not yet saved', (done) => {
+      wrapper.vm.$nextTick(() => {
+        wrapper.find('#deleteRequest1').trigger('click');
+        expect(wrapper.vm.uiRequests[0].snapshotRequest._id).toBe(2);
+        done();
+      });
+    });
+
+    it('should make a snapshot request inactive if has been previously saved, without deleting it', (done) => {
+      wrapper.vm.$nextTick(() => {
+        wrapper.find('#deleteRequest2').trigger('click');
+        expect(wrapper.vm.uiRequests[1].isActive).toBe(false);
         done();
       });
     });

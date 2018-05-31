@@ -10,14 +10,23 @@
         xs12 
         sm8 
         md4>
-        <v-text-field 
-          v-for="(uiRequest, index) in uiRequests" 
-          :key="uiRequest.uiRequestId" 
-          :label="'Request ' + (index + 1)" 
-          :id="'request' + (uiRequest.uiRequestId)"  
-          :value="uiRequest.snapshotRequest.title"
-          class="requestTitle" 
-          type="text"/>
+        <v-list >
+          <v-list-tile 
+            v-for="(uiRequest, index) in uiRequests"
+            v-if="uiRequest.isActive" 
+            :key="uiRequest.uiRequestId">
+            <v-text-field 
+              :label="'Request ' + (index + 1)" 
+              :id="'request' + (uiRequest.uiRequestId)"  
+              :value="uiRequest.snapshotRequest.title"
+              class="requestTitle" 
+              type="text"/>
+            <v-icon
+              :id="'deleteRequest' + (uiRequest.uiRequestId)"   
+              medium
+              @click="deleteRequest(index)">delete</v-icon>
+          </v-list-tile>
+        </v-list>
         <v-btn 
           id="addRequest"
           class="info" 
@@ -25,15 +34,10 @@
         <v-btn 
           id="saveRequests" 
           class="info">Save requests</v-btn>
-        <v-btn 
-          id="deleteRequest" 
-          class="info"
-          @click="deleteRequest()">Delete request</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
-
 <script>
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 
@@ -71,15 +75,21 @@ export default {
       }
       this.uiRequests.push({ 
         uiRequestId: this.requestIdCounter, 
+        isActive: true,
         snapshotRequest: 
         { _id, title }, 
       });
       this.incrementRequestId();
-    },
+    },  
     incrementRequestId() {
       this.requestIdCounter = this.requestIdCounter + 1;
     },
-    deleteRequest() {
+    deleteRequest(index) {
+      if (this.uiRequests[index].snapshotRequest._id) {
+        this.uiRequests[index].isActive = false;
+      } else {
+        this.uiRequests.splice(index, 1);
+      }
     },
   },
 };

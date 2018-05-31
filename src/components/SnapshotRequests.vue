@@ -11,11 +11,12 @@
         sm8 
         md4>
         <v-text-field 
-          v-for="(snapshotRequest, index) in snapshotRequests" 
-          :key="snapshotRequest._id" 
+          v-for="(uiRequest, index) in uiRequests" 
+          :key="uiRequest.uiRequestId" 
           :label="'Request ' + (index + 1)" 
-          :id="'request' + (index + 1)"  
-          class="requestTitle"
+          :id="'request' + (uiRequest.uiRequestId)"  
+          :value="uiRequest.snapshotRequest.title"
+          class="requestTitle" 
           type="text"/>
         <v-btn 
           id="addRequest"
@@ -24,6 +25,10 @@
         <v-btn 
           id="saveRequests" 
           class="info">Save requests</v-btn>
+        <v-btn 
+          id="deleteRequest" 
+          class="info"
+          @click="deleteRequest()">Delete request</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -37,23 +42,45 @@ export default {
   name: 'SnapshotRequests',
   data() {
     return {
-      snapshotRequests: [
-        { _id: '', description: 'description' },
+      requestIdCounter: 1,
+      uiRequests: [
       ],
     };
   },
   async mounted() {
     try {
       const result = await snapshotRequestApi.getSnapshotRequests();
-      console.log(result.data);
+      const snapshotRequests = result.data;
+      if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
+        this.addRequest();
+      } else {
+        for (const snapshotRequest of snapshotRequests) {
+          this.addRequest(snapshotRequest);
+        } 
+      }
     } catch (error) {
       console.log(error);
     }
   },
   methods: {
-    addRequest() {
-      this.snapshotRequests.push({ _id: '', description: '' });
-    }, 
+    addRequest(snapshotRequest) {
+      let _id = '';
+      let title = '';
+      if (snapshotRequest) {
+        ({ title, _id } = snapshotRequest);
+      }
+      this.uiRequests.push({ 
+        uiRequestId: this.requestIdCounter, 
+        snapshotRequest: 
+        { _id, title }, 
+      });
+      this.incrementRequestId();
+    },
+    incrementRequestId() {
+      this.requestIdCounter = this.requestIdCounter + 1;
+    },
+    deleteRequest() {
+    },
   },
 };
 </script>

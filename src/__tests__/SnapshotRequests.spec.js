@@ -44,10 +44,11 @@ describe('SnapshotRequests.vue', () => {
 
   describe('Update snapshot requests', () => {
     let wrapper; 
+    let snapshotRequests;
 
     beforeAll(() => {
-      const snapshotRequests = [{ _id: '1', title: 'title1' }, { _id: '2', title: 'title2' }, { _id: '3', title: 'title3' }];
-      mockAxios.get.mockImplementationOnce(() =>
+      snapshotRequests = [{ _id: '1', title: 'title1' }, { _id: '2', title: 'title2' }];
+      mockAxios.get.mockImplementation(() =>
         Promise.resolve({
           data: snapshotRequests,
         }));
@@ -63,9 +64,24 @@ describe('SnapshotRequests.vue', () => {
       });
     });
 
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
     
-    it('should load existing snapshot requests', () => {
-      expect(wrapper.find('.requestTitle')).toHaveLength(3);
+    it('should load existing snapshot requests', (done) => {
+      wrapper.vm.$nextTick(() => {
+        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].title);
+        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].title);
+        done();
+      });
+    });
+
+    it('should remove a snapshot request from request list', (done) => {
+      wrapper.vm.$nextTick(() => {
+        wrapper.find('#deleteRequest').trigger('click');
+        expect(wrapper.find('#request2').exists()).toBeFalse();
+        done();
+      });
     });
   });
 });

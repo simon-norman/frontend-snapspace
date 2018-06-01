@@ -47,7 +47,7 @@ describe('SnapshotRequests.vue', () => {
     let snapshotRequests;
 
     beforeAll(() => {
-      snapshotRequests = [{ _id: '', title: 'title1' }, { _id: 2, title: 'title2' }];
+      snapshotRequests = [{ _id: '', name: 'name1' }, { _id: 2, name: 'name2' }];
       mockAxios.get.mockImplementation(() =>
         Promise.resolve({
           data: snapshotRequests,
@@ -70,8 +70,8 @@ describe('SnapshotRequests.vue', () => {
     
     it('should load existing snapshot requests', (done) => {
       wrapper.vm.$nextTick(() => {
-        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].title);
-        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].title);
+        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].name);
+        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].name);
         done();
       });
     });

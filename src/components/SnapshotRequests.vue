@@ -18,8 +18,8 @@
             <v-text-field 
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
-              :value="uiRequest.snapshotRequest.title"
-              class="requestTitle" 
+              :value="uiRequest.snapshotRequest.name"
+              class="requestName" 
               type="text"/>
             <v-icon
               :id="'deleteRequest' + (uiRequest.uiRequestId)"   
@@ -69,15 +69,15 @@ export default {
   methods: {
     addRequest(snapshotRequest) {
       let _id = '';
-      let title = '';
+      let name = '';
       if (snapshotRequest) {
-        ({ title, _id } = snapshotRequest);
+        ({ name, _id } = snapshotRequest);
       }
       this.uiRequests.push({ 
         uiRequestId: this.requestIdCounter, 
         isActive: true,
         snapshotRequest: 
-        { _id, title }, 
+        { _id, name }, 
       });
       this.incrementRequestId();
     },  

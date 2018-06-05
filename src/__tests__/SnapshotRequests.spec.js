@@ -115,21 +115,19 @@ describe('SnapshotRequests.vue', () => {
     });
   });
 
-  describe.only('Save snapshot requests', () => {
+  describe('Save snapshot requests', () => {
     let wrapper; 
     let newRequests; 
     let savedRequests;
-
-    beforeAll(() => {
+    
+    beforeEach(() => {
       mockAxios.get.mockReset();
+      mockAxios.post.mockReset();
       savedRequests = [{ _id: 1, name: 'save1', sequence: 1 }, { _id: 2, name: 'save2', sequence: 2 }];
       mockAxios.post.mockImplementation(() =>
         Promise.resolve({
           data: savedRequests,
         }));
-    });
-    
-    beforeEach(() => {
       const localVue = createLocalVue();
       localVue.use(Vuetify);
       localVue.use(Vuelidate);
@@ -142,12 +140,12 @@ describe('SnapshotRequests.vue', () => {
       newRequests = [{ 
         uiRequestId: 1, 
         isActive: true,
-        snapshotRequest: { name: 'new1', sequence: 1 }, 
+        snapshotRequest: { name: 'test', sequence: 1 }, 
       }, 
       {
         uiRequestId: 2, 
         isActive: true, 
-        snapshotRequest: { name: 'new2', sequence: 2 }, 
+        snapshotRequest: { name: 'test1', sequence: 2 }, 
       }];
 
       wrapper.setData({ 
@@ -180,24 +178,39 @@ describe('SnapshotRequests.vue', () => {
       });
     });
 
+    it('should display error, on save, if name not populated', (done) => {
+      newRequests = [{ 
+        uiRequestId: 1, 
+        isActive: true,
+        snapshotRequest: { name: '', sequence: 1 }, 
+      }, 
+      {
+        uiRequestId: 2, 
+        isActive: true, 
+        snapshotRequest: { name: '', sequence: 2 }, 
+      }];
+
+      wrapper.setData({ 
+        requestIdCounter: 3,
+        uiRequests: newRequests, 
+      });
+      wrapper.find('#saveRequests').trigger('click');
+      wrapper.vm.$nextTick(() => {
+        expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
+        expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
+        console.log('Mostly there');
+        expect(wrapper.find('.input-group__error').exists()).toBeTruthy();
+        done();
+      });
+    });
+
     it('should show an error if save was not successful', (done) => {
       mockAxios.post.mockImplementation(() => {
         throw new Error('Server error');
       });
       wrapper.vm.$nextTick(() => {
         wrapper.find('#saveRequests').trigger('click');
-        wrapper.vm.$nextTick(() => {
-          expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
-          done();
-        });
-      });
-    });
-
-    it('should display error, on save, if name not populated', (done) => {
-      wrapper.find('#saveRequests').trigger('click');
-      wrapper.vm.$nextTick(() => {
-        expect(Array.isArray(wrapper.vm.nameErrors)).toBeTrue();
-        expect(wrapper.vm.nameErrors).not.toBeEmpty();
+        expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
         done();
       });
     });

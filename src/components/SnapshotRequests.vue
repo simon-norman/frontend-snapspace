@@ -39,7 +39,7 @@
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
               :value="uiRequest.snapshotRequest.name"
-              :error-messages="nameErrors"
+              :error-messages="nameErrors(index)"
               required
               class="requestTitle" 
               type="text"/>
@@ -91,15 +91,6 @@ export default {
       },
     },
   },
-  computed: {
-    nameErrors() {
-      const errors = [];
-      if (this.$v.uiRequests.snapshotRequest.name.$error) {
-        errors.push('Please provide a name');
-      }
-      return errors;
-    },
-  },
   async mounted() {
     try {
       const result = await snapshotRequestApi.getSnapshotRequests();
@@ -116,6 +107,14 @@ export default {
     }
   },
   methods: {
+    nameErrors(requestIndex) {
+      const errors = [];
+      if (this.$v.uiRequests.$each[requestIndex].snapshotRequest.name.$error) {
+        errors.push('Please provide a name');
+        console.log('ERROR!')
+      }
+      return errors;
+    },
     addRequest(snapshotRequest) {
       let _id;
       let name;
@@ -144,7 +143,6 @@ export default {
     },
 
     async saveRequests() {
-      console.log('save request');
       this.$v.$touch();
       if (!this.$v.$error) {
         this.$v.$reset();
@@ -154,7 +152,6 @@ export default {
             postRequests.push(uiRequest.snapshotRequest);
           }
           const result = await snapshotRequestApi.saveRequests(postRequests);
-          console.log(result.data);
           for (const snapshotRequest of result.data) {
             this.uiRequests.find(uiRequest => 
               uiRequest.snapshotRequest.sequence === snapshotRequest.sequence)

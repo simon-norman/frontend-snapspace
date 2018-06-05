@@ -198,7 +198,6 @@ describe('SnapshotRequests.vue', () => {
       wrapper.vm.$nextTick(() => {
         expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
         expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
-        console.log('Mostly there');
         expect(wrapper.find('.input-group__error').exists()).toBeTruthy();
         done();
       });

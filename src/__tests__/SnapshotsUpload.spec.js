@@ -38,20 +38,6 @@ describe('SnapshotUpload.vue', () => {
       expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
     });
   });
-
-  describe('Save snapshot', () => {
-    let wrapper; 
-
-    beforeEach(() => {
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(SnapshotsUpload, {
-        localVue,
-      });
-    });
-  });
   
   describe('Form validation on submit snapshot', () => {
     let wrapper;
@@ -69,6 +55,7 @@ describe('SnapshotUpload.vue', () => {
     it('should display error, on submit, if comment not populated', (done) => {
       wrapper.find('#submitSnapshot').trigger('click');
       wrapper.vm.$nextTick(() => {
+        expect(Array.isArray(wrapper.vm.commentErrors)).toBeTrue();
         expect(wrapper.vm.commentErrors).not.toBeEmpty();
         done();
       });
@@ -83,6 +70,7 @@ describe('SnapshotUpload.vue', () => {
     });
   
     it('should be no error if comment is populated', (done) => {
+      expect(Array.isArray(wrapper.vm.commentErrors)).toBeTrue();
       expect(wrapper.vm.commentErrors).toBeEmpty();
 
       wrapper.setData({
@@ -93,6 +81,7 @@ describe('SnapshotUpload.vue', () => {
 
       wrapper.find('#submitSnapshot').trigger('click');
       wrapper.vm.$nextTick(() => {
+        expect(Array.isArray(wrapper.vm.commentErrors)).toBeTrue();
         expect(wrapper.vm.commentErrors).toBeEmpty();
         done();
       });

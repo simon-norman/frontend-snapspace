@@ -204,8 +204,8 @@ export default {
           window.scrollTo(0, 0);
           console.log(error);
           this.errorAlert.message = 
-          ('So sorry, something went wrong - ' +
-          'please contact us or try again later' || error.response.data.error.message);
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
           this.errorAlert.active = true;
         }
       }

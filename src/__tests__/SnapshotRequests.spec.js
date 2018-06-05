@@ -1,11 +1,14 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
+import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 import SnapshotRequests from '../components/SnapshotRequests.vue';
 
 jest.mock('axios', () => ({
   get: jest.fn(() => Promise.resolve({ data: {} })),
+
+  post: jest.fn(() => Promise.resolve({ data: {} })),
 
   create: jest.fn(function () {
     return this;
@@ -16,6 +19,7 @@ describe('SnapshotRequests.vue', () => {
   describe('Tests loading successfully', () => {
     const localVue = createLocalVue();
     localVue.use(Vuetify);
+    localVue.use(Vuelidate);
   
     /* eslint no-unused-vars: 0 */
     const wrapper = mount(SnapshotRequests, {
@@ -30,10 +34,17 @@ describe('SnapshotRequests.vue', () => {
   describe('Create snapshot requests', () => {
     const localVue = createLocalVue();
     localVue.use(Vuetify);
+    localVue.use(Vuelidate);
   
     /* eslint no-unused-vars: 0 */
     const wrapper = mount(SnapshotRequests, {
       localVue,
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.resetModules();
+      jest.clearAllMocks();
     });
     
     it('should add a snapshot request to request list', () => {
@@ -47,7 +58,7 @@ describe('SnapshotRequests.vue', () => {
     let snapshotRequests;
 
     beforeAll(() => {
-      snapshotRequests = [{ _id: '', title: 'title1' }, { _id: 2, title: 'title2' }];
+      snapshotRequests = [{ _id: '', name: 'name1', sequence: 1 }, { _id: 2, name: 'name2', sequence: 2 }];
       mockAxios.get.mockImplementation(() =>
         Promise.resolve({
           data: snapshotRequests,
@@ -57,6 +68,7 @@ describe('SnapshotRequests.vue', () => {
     beforeEach(() => {
       const localVue = createLocalVue();
       localVue.use(Vuetify);
+      localVue.use(Vuelidate);
     
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
@@ -64,14 +76,16 @@ describe('SnapshotRequests.vue', () => {
       });
     });
 
-    afterAll(() => {
+    afterEach(() => {
       jest.restoreAllMocks();
+      jest.resetModules();
+      jest.clearAllMocks();
     });
     
     it('should load existing snapshot requests', (done) => {
       wrapper.vm.$nextTick(() => {
-        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].title);
-        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].title);
+        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].name);
+        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].name);
         done();
       });
     });
@@ -96,6 +110,94 @@ describe('SnapshotRequests.vue', () => {
       wrapper.vm.$nextTick(() => {
         wrapper.find('#deleteRequest2').trigger('click');
         expect(wrapper.vm.uiRequests[1].isActive).toBe(false);
+        done();
+      });
+    });
+  });
+
+  describe.only('Save snapshot requests', () => {
+    let wrapper; 
+    let newRequests; 
+    let savedRequests;
+
+    beforeAll(() => {
+      mockAxios.get.mockReset();
+      savedRequests = [{ _id: 1, name: 'save1', sequence: 1 }, { _id: 2, name: 'save2', sequence: 2 }];
+      mockAxios.post.mockImplementation(() =>
+        Promise.resolve({
+          data: savedRequests,
+        }));
+    });
+    
+    beforeEach(() => {
+      const localVue = createLocalVue();
+      localVue.use(Vuetify);
+      localVue.use(Vuelidate);
+    
+      /* eslint no-unused-vars: 0 */
+      wrapper = mount(SnapshotRequests, {
+        localVue,
+      });
+
+      newRequests = [{ 
+        uiRequestId: 1, 
+        isActive: true,
+        snapshotRequest: { name: 'new1', sequence: 1 }, 
+      }, 
+      {
+        uiRequestId: 2, 
+        isActive: true, 
+        snapshotRequest: { name: 'new2', sequence: 2 }, 
+      }];
+
+      wrapper.setData({ 
+        requestIdCounter: 3,
+        uiRequests: newRequests, 
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.resetModules();
+      jest.clearAllMocks();
+    });
+    
+    it('should send snapshot requests to API and post a success message when save successful', (done) => {
+      wrapper.find('#saveRequests').trigger('click');
+      wrapper.vm.$nextTick(() => {
+        expect(wrapper.find('#successMessage').exists()).toBeTruthy();
+        expect(mockAxios.post).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$data.uiRequests.length).toBe(2);
+        done();
+      });
+    });
+
+    it('should update requests with any new request IDs returned by API', (done) => {
+      wrapper.find('#saveRequests').trigger('click');
+      wrapper.vm.$nextTick(() => {
+        expect(wrapper.vm.$data.uiRequests[0].snapshotRequest._id).toBe(1);
+        done();
+      });
+    });
+
+    it('should show an error if save was not successful', (done) => {
+      mockAxios.post.mockImplementation(() => {
+        throw new Error('Server error');
+      });
+      wrapper.vm.$nextTick(() => {
+        wrapper.find('#saveRequests').trigger('click');
+        wrapper.vm.$nextTick(() => {
+          expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
+          done();
+        });
+      });
+    });
+
+    it('should display error, on save, if name not populated', (done) => {
+      wrapper.find('#saveRequests').trigger('click');
+      wrapper.vm.$nextTick(() => {
+        expect(Array.isArray(wrapper.vm.nameErrors)).toBeTrue();
+        expect(wrapper.vm.nameErrors).not.toBeEmpty();
         done();
       });
     });

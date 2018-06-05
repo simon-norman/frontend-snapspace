@@ -4,10 +4,14 @@ export default class SnapshotRequestApi extends Api {
   constructor() {
     super({ baseURL: process.env.SNAPSPACE_API });
     
-    this.snapshotPath = '/snapshotRequests';
+    this.requestsPath = '/snapshotRequests';
   }
 
   getSnapshotRequests() {
-    return this.axios.get(this.snapshotsPath);
+    return this.axios.get(this.requestsPath);
+  }
+
+  saveRequests() {
+    return this.axios.post(this.requestsPath);
   }
 }

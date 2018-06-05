@@ -2,6 +2,26 @@
   <v-container 
     fluid 
     fill-height>
+    <div>
+      <v-alert 
+        id="successMessage"
+        v-model="submitSuccessAlert" 
+        transition="scale-transition"
+        type="success" 
+        dismissible>
+        Success! WELL DONE YOU!!!!!!
+      </v-alert>
+    </div>
+    <div>
+      <v-alert 
+        id="errorMessage"
+        v-model="errorAlert.active" 
+        transition="scale-transition"
+        type="error" 
+        dismissible>
+        {{ errorAlert.message }}
+      </v-alert>
+    </div>
     <v-layout 
       align-center 
       justify-center>
@@ -18,7 +38,9 @@
             <v-text-field 
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
-              :value="uiRequest.snapshotRequest.title"
+              :value="uiRequest.snapshotRequest.name"
+              :error-messages="nameErrors"
+              required
               class="requestTitle" 
               type="text"/>
             <v-icon
@@ -33,12 +55,14 @@
           @click="addRequest()">Add request</v-btn>
         <v-btn 
           id="saveRequests" 
-          class="info">Save requests</v-btn>
+          class="info"
+          @click="saveRequests()">Save requests</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 <script>
+import { required } from 'vuelidate/lib/validators';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 
 const snapshotRequestApi = new SnapshotRequestApi();
@@ -46,10 +70,35 @@ export default {
   name: 'SnapshotRequests',
   data() {
     return {
+      submitSuccessAlert: false,
+      errorAlert: {
+        active: false,
+        message: '',
+      },
       requestIdCounter: 1,
+      clientId: '',
+      prId: '',
       uiRequests: [
       ],
     };
+  },
+  validations: {
+    uiRequests: {
+      $each: {
+        snapshotRequest: {
+          name: { required },
+        },
+      },
+    },
+  },
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (this.$v.uiRequests.snapshotRequest.name.$error) {
+        errors.push('Please provide a name');
+      }
+      return errors;
+    },
   },
   async mounted() {
     try {
@@ -68,22 +117,24 @@ export default {
   },
   methods: {
     addRequest(snapshotRequest) {
-      let _id = '';
-      let title = '';
+      let _id;
+      let name;
       if (snapshotRequest) {
-        ({ title, _id } = snapshotRequest);
+        ({ name, _id } = snapshotRequest);
       }
       this.uiRequests.push({ 
         uiRequestId: this.requestIdCounter, 
         isActive: true,
         snapshotRequest: 
-        { _id, title }, 
+        { _id, name }, 
       });
       this.incrementRequestId();
     },  
+
     incrementRequestId() {
       this.requestIdCounter = this.requestIdCounter + 1;
     },
+
     deleteRequest(index) {
       if (this.uiRequests[index].snapshotRequest._id) {
         this.uiRequests[index].isActive = false;
@@ -91,6 +142,39 @@ export default {
         this.uiRequests.splice(index, 1);
       }
     },
+
+    async saveRequests() {
+      console.log('save request');
+      this.$v.$touch();
+      if (!this.$v.$error) {
+        this.$v.$reset();
+        try {
+          const postRequests = [];
+          for (const uiRequest of this.uiRequests) {
+            postRequests.push(uiRequest.snapshotRequest);
+          }
+          const result = await snapshotRequestApi.saveRequests(postRequests);
+          console.log(result.data);
+          for (const snapshotRequest of result.data) {
+            this.uiRequests.find(uiRequest => 
+              uiRequest.snapshotRequest.sequence === snapshotRequest.sequence)
+              .snapshotRequest._id = snapshotRequest._id;
+          }
+          window.scrollTo(0, 0);
+          this.submitSuccessAlert = true;
+          setTimeout(() => {
+            this.submitSuccessAlert = false;
+          }, 4000);
+        } catch (error) {
+          window.scrollTo(0, 0);
+          console.log(error);
+          this.errorAlert.message = 
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
+          this.errorAlert.active = true;
+        }
+      }
+    },  
   },
 };
 </script>

@@ -15,6 +15,10 @@ jest.mock('axios', () => ({
   }),
 }));
 
+// stubbing Window.scrollTo as scrollTo not provided in JSDOM
+// stops it from throwing errors in testing
+global.scrollTo = () => {};
+
 describe('SnapshotRequests.vue', () => {
   describe('Tests loading successfully', () => {
     const localVue = createLocalVue();

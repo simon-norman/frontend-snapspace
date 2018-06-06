@@ -103,7 +103,7 @@ export default {
         } 
       }
     } catch (error) {
-      console.log(error);
+      // placeholder for logging
     }
   },
   methods: {
@@ -111,7 +111,6 @@ export default {
       const errors = [];
       if (this.$v.uiRequests.$each[requestIndex].snapshotRequest.name.$error) {
         errors.push('Please provide a name');
-        console.log('ERROR!')
       }
       return errors;
     },
@@ -164,7 +163,7 @@ export default {
           }, 4000);
         } catch (error) {
           window.scrollTo(0, 0);
-          console.log(error);
+          // placeholder for logging
           this.errorAlert.message = 
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');

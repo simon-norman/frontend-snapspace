@@ -91,7 +91,14 @@ describe('SnapshotUpload.vue', () => {
       expect(wrapper.find('#imageError').exists()).toBeFalsy();
 
       wrapper.setData({
-        snapshotData: { imageFile: 'data' },
+        snapshotData: { 
+          imageFile: 'data',
+          localImageDisplay: '',
+          snapshot: {
+            imageURL: '',
+            comment: '',
+          },
+        },
       });
 
       wrapper.find('#submitSnapshot').trigger('click');

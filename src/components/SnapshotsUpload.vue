@@ -202,7 +202,7 @@ export default {
           }
         } catch (error) {
           window.scrollTo(0, 0);
-          console.log(error);
+          // placeholder for logging
           this.errorAlert.message = 
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');

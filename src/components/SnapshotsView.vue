@@ -50,13 +50,8 @@ export default {
       const result = await snapshotApi.getSnapshots();
       this.snapshots = result.data;
     } catch (error) {
-      console.log(error);
+      // placeholder for logging
     }
-  },
-  methods: {
-    handler() {
-      console.log('this component is showing');
-    },
   },
 };
 </script>

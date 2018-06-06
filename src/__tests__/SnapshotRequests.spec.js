@@ -182,6 +182,17 @@ describe('SnapshotRequests.vue', () => {
       });
     });
 
+    it('should show an error if save was not successful', (done) => {
+      mockAxios.post.mockImplementation(() => {
+        throw new Error('Server error');
+      });
+      wrapper.vm.$nextTick(() => {
+        wrapper.find('#saveRequests').trigger('click');
+        expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
+        done();
+      });
+    });
+
     it('should display error, on save, if name not populated', (done) => {
       newRequests = [{ 
         uiRequestId: 1, 
@@ -203,17 +214,6 @@ describe('SnapshotRequests.vue', () => {
         expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
         expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
         expect(wrapper.find('.input-group__error').exists()).toBeTruthy();
-        done();
-      });
-    });
-
-    it('should show an error if save was not successful', (done) => {
-      mockAxios.post.mockImplementation(() => {
-        throw new Error('Server error');
-      });
-      wrapper.vm.$nextTick(() => {
-        wrapper.find('#saveRequests').trigger('click');
-        expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
         done();
       });
     });

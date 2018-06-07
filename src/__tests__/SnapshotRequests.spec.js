@@ -1,9 +1,11 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue, config, TransitionStub } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 import SnapshotRequests from '../components/SnapshotRequests.vue';
+
+config.stubs.transition = TransitionStub;
 
 jest.mock('axios', () => ({
   get: jest.fn(() => Promise.resolve({ data: {} })),
@@ -138,6 +140,7 @@ describe('SnapshotRequests.vue', () => {
     
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
+        TransitionStub,
         localVue,
       });
 
@@ -182,17 +185,6 @@ describe('SnapshotRequests.vue', () => {
       });
     });
 
-    it('should show an error if save was not successful', (done) => {
-      mockAxios.post.mockImplementation(() => {
-        throw new Error('Server error');
-      });
-      wrapper.vm.$nextTick(() => {
-        wrapper.find('#saveRequests').trigger('click');
-        expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
-        done();
-      });
-    });
-
     it('should display error, on save, if name not populated', (done) => {
       newRequests = [{ 
         uiRequestId: 1, 
@@ -213,9 +205,48 @@ describe('SnapshotRequests.vue', () => {
       wrapper.vm.$nextTick(() => {
         expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
         expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
-        expect(wrapper.find('.input-group__error').exists()).toBeTruthy();
+        const nameerror = wrapper.vm.nameErrors(0);
+        expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
         done();
       });
+    });
+  });
+
+  describe('Error when save requests fails', () => {
+    let wrapper; 
+    let newRequests; 
+    let savedRequests;
+    
+    beforeEach(() => {
+      mockAxios.get.mockReset();
+      mockAxios.post.mockReset();
+      mockAxios.post.mockImplementation(() => {
+        throw new Error('Server error');
+      });
+      const localVue = createLocalVue();
+      localVue.use(Vuetify);
+      localVue.use(Vuelidate);
+    
+      /* eslint no-unused-vars: 0 */
+      wrapper = mount(SnapshotRequests, {
+        TransitionStub,
+        localVue,
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.resetModules();
+      jest.clearAllMocks();
+    });
+
+    it('should show an error if save was not successful', (done) => {
+      mockAxios.post.mockImplementation(() => {
+        throw new Error('Server error');
+      });
+      wrapper.find('#saveRequests').trigger('click');
+      expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
+      done();
     });
   });
 });

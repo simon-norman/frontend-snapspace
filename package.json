@@ -10,7 +10,8 @@
     "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build",
     "build": "node build/build.js",
     "unit": "jest",
-    "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
+    "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
+    "inspect": "node --inspect --inspect-brk ./node_modules/jest/bin/jest.js -i"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -108,7 +109,7 @@
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
     }
-  },
+  }, 
   "browserslist": [
     "> 1%",
     "last 2 versions",

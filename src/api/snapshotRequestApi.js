@@ -8,7 +8,7 @@ export default class SnapshotRequestApi extends Api {
   }
 
   requestsPath(clientId, projectId) {
-    const finalRequestsPath = this.requestsPath.replace('clientId', clientId);
+    const finalRequestsPath = this.baseRequestsPath.replace('clientId', clientId);
     return finalRequestsPath.replace('projectId', projectId);
   }
 

@@ -76,8 +76,8 @@ export default {
         message: '',
       },
       requestIdCounter: 1,
-      clientId: '',
-      prId: '',
+      clientId: 1,
+      prId: 2,
       uiRequests: [
       ],
     };
@@ -93,7 +93,7 @@ export default {
   },
   async mounted() {
     try {
-      const result = await snapshotRequestApi.getSnapshotRequests();
+      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.prId);
       const snapshotRequests = result.data;
       if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
         this.addRequest();

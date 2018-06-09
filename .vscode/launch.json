@@ -13,7 +13,6 @@
             "outFiles": [
                 "${workspaceRoot}/dist/**/*"
             ],
-            "envFile": "${workspaceRoot}/config/dev.env.js"
         }
     ]
 }

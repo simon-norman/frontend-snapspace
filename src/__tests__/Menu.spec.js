@@ -38,7 +38,7 @@ describe('Menu.vue', () => {
       });
     });
         
-    it.only('should post client to server and, if successful, add client to client list', async () => {
+    it('should post client to server and, if successful, add client to client list', async () => {
       const newClientName = 'Client';
       const returnedClient = { _id: 3, name: newClientName };
       mockAxios.post.mockImplementation(() =>
@@ -53,8 +53,9 @@ describe('Menu.vue', () => {
       wrapper.find('#addClient').trigger('click');
 
       await wrapper.vm.$nextTick();
-      expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
+      await wrapper.vm.$nextTick();
       expect(wrapper.vm.clients[0]._id).toBe(returnedClient._id);
+      expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
     });
 
     it('should display error request me to add name if name not populated', async () => {
@@ -68,6 +69,39 @@ describe('Menu.vue', () => {
       await wrapper.vm.$nextTick();
       expect(wrapper.find('#ClientListGroup').exists()).toBeFalsy();
       expect(mockAxios.post).toHaveBeenCalledTimes(0);
+    });
+  });
+  describe('Error when save requests fails', () => {
+    let wrapper; 
+    let newRequests; 
+    let savedRequests;
+      
+    beforeEach(() => {
+      mockAxios.post.mockReset();
+      mockAxios.post.mockImplementation(() => {
+        throw new Error('Server error');
+      });
+      const localVue = createLocalVue();
+      localVue.use(Vuetify);
+      localVue.use(Vuelidate);
+          
+      /* eslint no-unused-vars: 0 */
+      wrapper = mount(Menu, {
+        localVue,
+      });
+    });
+  
+    it('should show an error if save was not successful', async () => {
+      debugger;
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true);
+      const newClientName = 'Client';
+      wrapper.setData({ 
+        newClientName,
+        clients: [], 
+      });
+      wrapper.find('#addClient').trigger('click');
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
     });
   });
 });

@@ -8,7 +8,6 @@ export default class SnapshotApi extends Api {
   }
   
   postClient(params) {
-    debugger;
     return this.axios.post(this.clientPath, params);
   }
 }

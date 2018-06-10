@@ -79,6 +79,9 @@ describe('SnapshotRequests.vue', () => {
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
         localVue,
+        stubs: {
+          transition: TransitionStub,
+        },
       });
     });
 
@@ -88,36 +91,31 @@ describe('SnapshotRequests.vue', () => {
       jest.clearAllMocks();
     });
     
-    it('should load existing snapshot requests', (done) => {
-      wrapper.vm.$nextTick(() => {
-        expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].name);
-        expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].name);
-        done();
-      });
+    it('should load existing snapshot requests', async () => {
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('#request1').element.value).toBe(snapshotRequests[0].name);
+      expect(wrapper.find('#request2').element.value).toBe(snapshotRequests[1].name);
     });
 
-    it('should remove a snapshot request from request list', (done) => {
-      wrapper.vm.$nextTick(() => {
-        wrapper.find('#deleteRequest2').trigger('click');
-        expect(wrapper.find('#request2').exists()).toBeFalse();
-        done();
-      });
+    it('should remove a snapshot request from request list', async () => {
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      wrapper.find('#deleteRequest2').trigger('click');
+      expect(wrapper.find('#request2').exists()).toBeFalse();
     });
 
-    it('should delete a snapshot request completely if not yet saved', (done) => {
-      wrapper.vm.$nextTick(() => {
-        wrapper.find('#deleteRequest1').trigger('click');
-        expect(wrapper.vm.uiRequests[0].snapshotRequest._id).toBe(2);
-        done();
-      });
+    it('should delete a snapshot request completely if not yet saved', async () => {
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      wrapper.find('#deleteRequest1').trigger('click');
+      expect(wrapper.vm.uiRequests[0].snapshotRequest._id).toBe(2);
     });
 
-    it('should make a snapshot request inactive if has been previously saved, without deleting it', (done) => {
-      wrapper.vm.$nextTick(() => {
-        wrapper.find('#deleteRequest2').trigger('click');
-        expect(wrapper.vm.uiRequests[1].isActive).toBe(false);
-        done();
-      });
+    it('should make a snapshot request inactive if has been previously saved, without deleting it', async () => {
+      await wrapper.vm.$nextTick();
+      wrapper.find('#deleteRequest2').trigger('click');
+      expect(wrapper.vm.uiRequests[1].isActive).toBe(false);
     });
   });
 
@@ -140,8 +138,10 @@ describe('SnapshotRequests.vue', () => {
     
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
-        TransitionStub,
         localVue,
+        stubs: {
+          transition: TransitionStub,
+        },
       });
 
       newRequests = [{ 
@@ -167,25 +167,24 @@ describe('SnapshotRequests.vue', () => {
       jest.clearAllMocks();
     });
     
-    it('should send snapshot requests to API and post a success message when save successful', (done) => {
+    it('should send snapshot requests to API and post a success message when save successful', async () => {
+      expect(wrapper.find('#successMessage').hasStyle('display', 'none')).toBe(true);
       wrapper.find('#saveRequests').trigger('click');
-      wrapper.vm.$nextTick(() => {
-        expect(wrapper.find('#successMessage').exists()).toBeTruthy();
-        expect(mockAxios.post).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$data.uiRequests.length).toBe(2);
-        done();
-      });
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('#successMessage').hasStyle('display', 'none')).toBe(false);
+      expect(mockAxios.post).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.$data.uiRequests.length).toBe(2);
     });
 
-    it('should update requests with any new request IDs returned by API', (done) => {
+    it('should update requests with any new request IDs returned by API', async () => {
       wrapper.find('#saveRequests').trigger('click');
-      wrapper.vm.$nextTick(() => {
-        expect(wrapper.vm.$data.uiRequests[0].snapshotRequest._id).toBe(1);
-        done();
-      });
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.$data.uiRequests[0].snapshotRequest._id).toBe(1);
     });
 
-    it('should display error, on save, if name not populated', (done) => {
+    it('should display error, on save, if name not populated', async () => {
       newRequests = [{ 
         uiRequestId: 1, 
         isActive: true,
@@ -202,51 +201,12 @@ describe('SnapshotRequests.vue', () => {
         uiRequests: newRequests, 
       });
       wrapper.find('#saveRequests').trigger('click');
-      wrapper.vm.$nextTick(() => {
-        expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
-        expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
-        const nameerror = wrapper.vm.nameErrors(0);
-        expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
-        done();
-      });
-    });
-  });
-
-  describe('Error when save requests fails', () => {
-    let wrapper; 
-    let newRequests; 
-    let savedRequests;
-    
-    beforeEach(() => {
-      mockAxios.get.mockReset();
-      mockAxios.post.mockReset();
-      mockAxios.post.mockImplementation(() => {
-        throw new Error('Server error');
-      });
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-    
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(SnapshotRequests, {
-        TransitionStub,
-        localVue,
-      });
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.resetModules();
-      jest.clearAllMocks();
-    });
-
-    it('should show an error if save was not successful', (done) => {
-      mockAxios.post.mockImplementation(() => {
-        throw new Error('Server error');
-      });
-      wrapper.find('#saveRequests').trigger('click');
-      expect(wrapper.find('#errorMessage').exists()).toBeTruthy();
-      done();
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
+      expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
+      const nameerror = wrapper.vm.nameErrors(0);
+      expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
     });
   });
 });

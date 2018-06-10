@@ -57,7 +57,6 @@ describe('SnapshotRequests.vue', () => {
       mockAxios.post.mockImplementation(() => {
         throw new Error('Server error');
       });
-      debugger;
       wrapper.find('#saveRequests').trigger('click');
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();

@@ -92,7 +92,6 @@ describe('Menu.vue', () => {
     });
   
     it('should show an error if save was not successful', async () => {
-      debugger;
       expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true);
       const newClientName = 'Client';
       wrapper.setData({ 

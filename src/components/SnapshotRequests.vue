@@ -157,7 +157,6 @@ export default {
               uiRequest.snapshotRequest.sequence === snapshotRequest.sequence)
               .snapshotRequest._id = snapshotRequest._id;
           }
-          debugger;
           window.scrollTo(0, 0);
           // This line on submitSuccessAlert is causing test to check for errorAlert to fail
           // as it is running transitions that JSDOM cannot handle - therefore separated 

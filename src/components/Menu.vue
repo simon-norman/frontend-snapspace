@@ -11,7 +11,9 @@
           <v-text-field 
             v-model="newClientName"  
             :error-messages="clientNameErrors"
-            label="Client Name"
+            solo
+            flat
+            label="New client name"
             required
             type="text"/>
           <v-icon
@@ -36,9 +38,9 @@
 <script>
 
 import { required } from 'vuelidate/lib/validators';
-// import SnapshotRequestApi from '../api/snapshotRequestApi';
+import ClientProjectApi from '../api/clientProjectApi';
 
-// const snapshotRequestApi = new SnapshotRequestApi();
+const clientProjectApi = new ClientProjectApi();
 export default {
   name: 'Menu',
   data() {
@@ -53,10 +55,9 @@ export default {
   },
   computed: {
     clientNameErrors() {
-      debugger;
       const errors = [];
       if (this.$v.newClientName.$error) {
-        errors.push('Please provide a name');
+        errors.push('');
       }
       return errors;
     },
@@ -65,11 +66,28 @@ export default {
     // placeholder for mounted
   },
   methods: {
-    addClient() {
+    async addClient() {
       this.$v.$touch();
+      
       if (!this.$v.$error) {
         this.$v.$reset();
-        this.clients.push({ name: this.newClientName });
+        const newClient = { name: this.newClientName };
+        debugger;
+
+        try {
+          const result = 
+            await clientProjectApi.postClient(newClient);
+          debugger;
+          // should check if result code is 201?
+          this.clients.push(result.data);
+        } catch (error) {
+          /*           window.scrollTo(0, 0);
+          // placeholder for logging
+          this.errorAlert.message = 
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
+          this.errorAlert.active = true; */
+        }
       }
     },
   },

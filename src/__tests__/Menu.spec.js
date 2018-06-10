@@ -5,11 +5,7 @@ import mockAxios from 'axios';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 import Menu from '../components/Menu.vue';
 
-jest.mock('axios', () => ({
-  
-  post: jest.fn(() => Promise.resolve({ data: {} })),
-  
-}));
+jest.mock('axios');
 
 describe('Menu.vue', () => {
   describe('Tests loading successfully', () => {
@@ -31,7 +27,6 @@ describe('Menu.vue', () => {
     let wrapper; 
 
     beforeEach(() => {
-      mockAxios.get.mockReset();
       mockAxios.post.mockReset();
       const localVue = createLocalVue();
       localVue.use(Vuetify);
@@ -43,15 +38,23 @@ describe('Menu.vue', () => {
       });
     });
         
-    it('should add a new client to the menu when I enter name and select to add', async () => {
+    it.only('should post client to server and, if successful, add client to client list', async () => {
+      const newClientName = 'Client';
+      const returnedClient = { _id: 3, name: newClientName };
+      mockAxios.post.mockImplementation(() =>
+        Promise.resolve({
+          data: returnedClient,
+        }));
+      
       wrapper.setData({ 
-        newClientName: 'Client',
+        newClientName,
         clients: [], 
       });
       wrapper.find('#addClient').trigger('click');
+
       await wrapper.vm.$nextTick();
-      
       expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
+      expect(wrapper.vm.clients[0]._id).toBe(returnedClient._id);
     });
 
     it('should display error request me to add name if name not populated', async () => {

@@ -151,7 +151,7 @@ export default {
             postRequests.push(uiRequest.snapshotRequest);
           }
           const result = 
-            await snapshotRequestApi.saveRequests(this.clientId, this.projectId, postRequests);
+            await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);
           for (const snapshotRequest of result.data) {
             this.uiRequests.find(uiRequest => 
               uiRequest.snapshotRequest.sequence === snapshotRequest.sequence)

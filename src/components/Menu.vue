@@ -81,6 +81,7 @@ export default {
         active: false,
         message: '',
       },
+      newProjectName: '',
       newClientName: '',
       clients: [
       ],

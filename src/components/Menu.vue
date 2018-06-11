@@ -43,7 +43,8 @@
             </v-list-tile>
             <v-list-tile>
               <v-text-field 
-                v-model="newProjectName"  
+                v-model="client.newProjectName"  
+                :error-messages="projectNameErrors(index)"
                 solo
                 flat
                 label="New project name"
@@ -52,7 +53,7 @@
               <v-icon
                 id="addProject"   
                 medium
-                @click="addProject()">add</v-icon>
+                @click="addProject(index)">add</v-icon>
             </v-list-tile>
             <v-list-tile
               v-for="project in clients[index].projects"
@@ -79,7 +80,6 @@ export default {
         active: false,
         message: '',
       },
-      newProjectName: '',
       newClientName: '',
       clients: [
       ],
@@ -87,6 +87,11 @@ export default {
   },
   validations: {
     newClientName: { required },
+    clients: {
+      $each: {
+        newProjectName: { required },
+      },
+    },
   },
   computed: {
     clientNameErrors() {
@@ -101,10 +106,17 @@ export default {
     // placeholder for mounted
   },
   methods: {
+    projectNameErrors(clientIndex) {
+      const errors = [];
+      if (this.$v.clients.$each[clientIndex].newProjectName.$error) {
+        errors.push('Please provide a name');
+      }
+      return errors;
+    },
     async addClient() {
       this.$v.$touch();
       
-      if (!this.$v.$error) {
+      if (!this.$v.newClientName.$error) {
         this.$v.$reset();
         const newClient = { name: this.newClientName };
 
@@ -124,6 +136,34 @@ export default {
           }
 
           this.errorAlert.active = true; 
+        }
+      }
+    },
+    async addProject(clientIndex) {
+      this.$v.$touch();
+      
+      if (!this.$v.clients.$each[clientIndex].newProjectName.$error) {
+        this.$v.$reset();
+        const newProject = { name: this.clients[0].newProjectName };
+        
+
+        try {
+          debugger;
+          const result = 
+            await clientProjectApi.postProject(this.clients[clientIndex]._id, newProject);
+          this.clients[clientIndex].projects.push(result.data);
+          debugger;
+        } catch (error) {
+          // placeholder for logging
+          if (error.response) {
+            this.errorAlert.message = error.response.data.error.message;
+          } else {
+            this.errorAlert.message = 
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
+          }
+
+          this.errorAlert.active = true;  
         }
       }
     },

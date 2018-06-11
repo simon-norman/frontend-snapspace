@@ -118,7 +118,7 @@ describe('Menu.vue', () => {
       });
     });
         
-    it.only('should post project to server and, if successful, add project to project list', async () => {
+    it('should post project to server and, if successful, add project to project list', async () => {
       const newProjectName = 'Project';
       const returnedProject = { _id: 3, name: newProjectName };
       mockAxios.post.mockImplementation(() =>

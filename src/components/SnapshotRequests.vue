@@ -117,6 +117,7 @@ export default {
     addRequest(snapshotRequest) {
       let _id;
       let name;
+      
       if (snapshotRequest) {
         ({ name, _id } = snapshotRequest);
       }

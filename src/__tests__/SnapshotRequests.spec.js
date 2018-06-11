@@ -65,6 +65,7 @@ describe('SnapshotRequests.vue', () => {
 
     beforeAll(() => {
       snapshotRequests = [{ _id: '', name: 'name1', sequence: 1 }, { _id: 2, name: 'name2', sequence: 2 }];
+
       mockAxios.get.mockImplementation(() =>
         Promise.resolve({
           data: snapshotRequests,

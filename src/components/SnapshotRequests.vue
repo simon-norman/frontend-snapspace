@@ -38,7 +38,7 @@
             <v-text-field 
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
-              :value="uiRequest.snapshotRequest.name"
+              v-model="uiRequest.snapshotRequest.name"
               :error-messages="nameErrors(index)"
               required
               class="requestTitle" 

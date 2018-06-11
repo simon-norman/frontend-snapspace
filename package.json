@@ -109,7 +109,7 @@
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
     }
-  }, 
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

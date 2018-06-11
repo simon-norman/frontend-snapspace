@@ -2,49 +2,51 @@
   <v-container 
     fluid 
     fill-height>
-    <div>
-      <v-alert 
-        id="errorMessage"
-        v-model="errorAlert.active" 
-        transition="scale-transition"
-        type="error" 
-        dismissible>
-        {{ errorAlert.message }}
-      </v-alert>
-    </div>
-    <v-navigation-drawer
-      stateless
-      value="true"
-    >
-      <v-list>
-        <v-list-tile>
-          <v-text-field 
-            v-model="newClientName"  
-            :error-messages="clientNameErrors"
-            solo
-            flat
-            label="New client name"
-            required
-            type="text"/>
-          <v-icon
-            id="addClient"   
-            medium
-            @click="addClient()">add</v-icon>
-        </v-list-tile>
-        <div id="specialdiv">
-          <v-list-group
-            v-for="client in clients"
-            :id="client.name + 'ListGroup'"
-            :key="client.name"
-            value="true"
-          >
-            <v-list-tile slot="activator">
-              <v-list-tile-title>{{ client.name }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list-group>
-        </div>
-      </v-list>
-    </v-navigation-drawer>
+    <v-layout column>
+      <div>
+        <v-alert 
+          id="errorMessage"
+          v-model="errorAlert.active" 
+          transition="scale-transition"
+          type="error" 
+          dismissible>
+          {{ errorAlert.message }}
+        </v-alert>
+      </div>
+      <v-navigation-drawer
+        stateless
+        value="true"
+      >
+        <v-list>
+          <v-list-tile>
+            <v-text-field 
+              v-model="newClientName"  
+              :error-messages="clientNameErrors"
+              solo
+              flat
+              label="New client name"
+              required
+              type="text"/>
+            <v-icon
+              id="addClient"   
+              medium
+              @click="addClient()">add</v-icon>
+          </v-list-tile>
+          <div id="specialdiv">
+            <v-list-group
+              v-for="client in clients"
+              :id="client.name + 'ListGroup'"
+              :key="client.name"
+              value="true"
+            >
+              <v-list-tile slot="activator">
+                <v-list-tile-title>{{ client.name }}</v-list-tile-title>
+              </v-list-tile>
+            </v-list-group>
+          </div>
+        </v-list>
+      </v-navigation-drawer>
+    </v-layout>
   </v-container>
 </template>
 <script>
@@ -96,9 +98,14 @@ export default {
           this.clients.push(result.data);
         } catch (error) {
           // placeholder for logging
-          this.errorAlert.message = 
+          if (error.response) {
+            this.errorAlert.message = error.response.data.error.message;
+          } else {
+            this.errorAlert.message = 
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');
+          }
+
           this.errorAlert.active = true; 
         }
       }

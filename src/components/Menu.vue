@@ -42,6 +42,24 @@
               <v-list-tile slot="activator">
                 <v-list-tile-title>{{ client.name }}</v-list-tile-title>
               </v-list-tile>
+              <v-list-tile>
+                <v-text-field 
+                  v-model="newProjectName"  
+                  solo
+                  flat
+                  label="New project name"
+                  required
+                  type="text"/>
+                <v-icon
+                  id="addProject"   
+                  medium
+                  @click="addProject()">add</v-icon>
+              </v-list-tile>
+              <v-list-tile
+                v-for="project in clients[index].projects"
+                :id="project.name + 'ListTile'"
+                :key="project.name"
+                value="true"/>
             </v-list-group>
           </div>
         </v-list>

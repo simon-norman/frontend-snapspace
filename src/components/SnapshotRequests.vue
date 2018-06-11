@@ -2,6 +2,26 @@
   <v-container 
     fluid 
     fill-height>
+    <div>
+      <v-alert 
+        id="successMessage"
+        v-model="submitSuccessAlert" 
+        transition="scale-transition"
+        type="success" 
+        dismissible>
+        Success! WELL DONE YOU!!!!!!
+      </v-alert>
+    </div>
+    <div>
+      <v-alert 
+        id="errorMessage"
+        v-model="errorAlert.active" 
+        transition="scale-transition"
+        type="error" 
+        dismissible>
+        {{ errorAlert.message }}
+      </v-alert>
+    </div>
     <v-layout 
       align-center 
       justify-center>
@@ -19,7 +39,9 @@
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
               :value="uiRequest.snapshotRequest.name"
-              class="requestName" 
+              :error-messages="nameErrors(index)"
+              required
+              class="requestTitle" 
               type="text"/>
             <v-icon
               :id="'deleteRequest' + (uiRequest.uiRequestId)"   
@@ -33,12 +55,14 @@
           @click="addRequest()">Add request</v-btn>
         <v-btn 
           id="saveRequests" 
-          class="info">Save requests</v-btn>
+          class="info"
+          @click="saveRequests()">Save requests</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 <script>
+import { required } from 'vuelidate/lib/validators';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 
 const snapshotRequestApi = new SnapshotRequestApi();
@@ -46,14 +70,30 @@ export default {
   name: 'SnapshotRequests',
   data() {
     return {
+      submitSuccessAlert: false,
+      errorAlert: {
+        active: false,
+        message: '',
+      },
       requestIdCounter: 1,
+      clientId: 1,
+      prId: 2,
       uiRequests: [
       ],
     };
   },
+  validations: {
+    uiRequests: {
+      $each: {
+        snapshotRequest: {
+          name: { required },
+        },
+      },
+    },
+  },
   async mounted() {
     try {
-      const result = await snapshotRequestApi.getSnapshotRequests();
+      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.prId);
       const snapshotRequests = result.data;
       if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
         this.addRequest();
@@ -63,13 +103,21 @@ export default {
         } 
       }
     } catch (error) {
-      console.log(error);
+      // placeholder for logging
     }
   },
   methods: {
+    nameErrors(requestIndex) {
+      const errors = [];
+      if (this.$v.uiRequests.$each[requestIndex].snapshotRequest.name.$error) {
+        errors.push('Please provide a name');
+      }
+      return errors;
+    },
     addRequest(snapshotRequest) {
-      let _id = '';
-      let name = '';
+      let _id;
+      let name;
+      
       if (snapshotRequest) {
         ({ name, _id } = snapshotRequest);
       }
@@ -81,9 +129,11 @@ export default {
       });
       this.incrementRequestId();
     },  
+
     incrementRequestId() {
       this.requestIdCounter = this.requestIdCounter + 1;
     },
+
     deleteRequest(index) {
       if (this.uiRequests[index].snapshotRequest._id) {
         this.uiRequests[index].isActive = false;
@@ -91,6 +141,41 @@ export default {
         this.uiRequests.splice(index, 1);
       }
     },
+
+    async saveRequests() {
+      this.$v.$touch();
+      if (!this.$v.$error) {
+        this.$v.$reset();
+        try {
+          const postRequests = [];
+          for (const uiRequest of this.uiRequests) {
+            postRequests.push(uiRequest.snapshotRequest);
+          }
+          const result = 
+            await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);
+          for (const snapshotRequest of result.data) {
+            this.uiRequests.find(uiRequest => 
+              uiRequest.snapshotRequest.sequence === snapshotRequest.sequence)
+              .snapshotRequest._id = snapshotRequest._id;
+          }
+          window.scrollTo(0, 0);
+          // This line on submitSuccessAlert is causing test to check for errorAlert to fail
+          // as it is running transitions that JSDOM cannot handle - therefore separated 
+          // errorAlert test into separate file
+          this.submitSuccessAlert = true;
+          setTimeout(() => {
+            this.submitSuccessAlert = false;
+          }, 4000);
+        } catch (error) {
+          window.scrollTo(0, 0);
+          // placeholder for logging
+          this.errorAlert.message = 
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
+          this.errorAlert.active = true;
+        }
+      }
+    },  
   },
 };
 </script>

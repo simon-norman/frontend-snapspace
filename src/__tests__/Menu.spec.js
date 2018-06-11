@@ -103,4 +103,40 @@ describe('Menu.vue', () => {
       expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
     });
   });
+  describe('Add project', () => {
+    let wrapper; 
+
+    beforeEach(() => {
+      mockAxios.post.mockReset();
+      const localVue = createLocalVue();
+      localVue.use(Vuetify);
+      localVue.use(Vuelidate);
+          
+      /* eslint no-unused-vars: 0 */
+      wrapper = mount(Menu, {
+        localVue,
+      });
+    });
+        
+    it.only('should post project to server and, if successful, add project to project list', async () => {
+      const newProjectName = 'Project';
+      const returnedProject = { _id: 3, name: newProjectName };
+      mockAxios.post.mockImplementation(() =>
+        Promise.resolve({
+          data: returnedProject,
+        }));
+      
+      wrapper.setData({ 
+        clients: [{
+          name: 'Client', _id: 1, newProjectName, projects: [], 
+        }], 
+      });
+      wrapper.find('#addProject').trigger('click');
+
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.clients[0].projects[0]._id).toBe(returnedProject._id);
+      expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
+    });
+  });
 });

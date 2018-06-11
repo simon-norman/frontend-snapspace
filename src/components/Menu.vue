@@ -32,36 +32,34 @@
               medium
               @click="addClient()">add</v-icon>
           </v-list-tile>
-          <div id="specialdiv">
-            <v-list-group
-              v-for="client in clients"
-              :id="client.name + 'ListGroup'"
-              :key="client.name"
-              value="true"
-            >
-              <v-list-tile slot="activator">
-                <v-list-tile-title>{{ client.name }}</v-list-tile-title>
-              </v-list-tile>
-              <v-list-tile>
-                <v-text-field 
-                  v-model="newProjectName"  
-                  solo
-                  flat
-                  label="New project name"
-                  required
-                  type="text"/>
-                <v-icon
-                  id="addProject"   
-                  medium
-                  @click="addProject()">add</v-icon>
-              </v-list-tile>
-              <v-list-tile
-                v-for="project in clients[index].projects"
-                :id="project.name + 'ListTile'"
-                :key="project.name"
-                value="true"/>
-            </v-list-group>
-          </div>
+          <v-list-group
+            v-for="(client, index) in clients"
+            :id="client.name + 'ListGroup'"
+            :key="client.name"
+            value="true"
+          >
+            <v-list-tile slot="activator">
+              <v-list-tile-title>{{ client.name }}</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile>
+              <v-text-field 
+                v-model="newProjectName"  
+                solo
+                flat
+                label="New project name"
+                required
+                type="text"/>
+              <v-icon
+                id="addProject"   
+                medium
+                @click="addProject()">add</v-icon>
+            </v-list-tile>
+            <v-list-tile
+              v-for="project in clients[index].projects"
+              :id="project.name + 'ListTile'"
+              :key="project.name"
+              value="true"/>
+          </v-list-group>
         </v-list>
       </v-navigation-drawer>
     </v-layout>

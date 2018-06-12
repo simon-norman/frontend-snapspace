@@ -33,7 +33,7 @@
         <v-list >
           <v-list-tile 
             v-for="(uiRequest, index) in uiRequests"
-            v-if="uiRequest.snapshotRequest.status = 'active'" 
+            v-if="uiRequest.snapshotRequest.status === 'active'" 
             :key="uiRequest.uiRequestId">
             <v-text-field 
               :label="'Request ' + (index + 1)" 
@@ -76,8 +76,8 @@ export default {
         message: '',
       },
       requestIdCounter: 1,
-      clientId: this.$route.params.clId,
-      projectId: this.$route.params.prId,
+      clientId: 1,
+      projectId: 2,
       uiRequests: [
       ],
     };
@@ -135,7 +135,10 @@ export default {
 
     deleteRequest(index) {
       if (this.uiRequests[index].snapshotRequest._id) {
+        console.log('TEST ONE!');
         this.uiRequests[index].snapshotRequest.status = 'deleted';
+        console.log('TEST!');
+        console.log(this.uiRequests[index].snapshotRequest.status);
       } else {
         this.uiRequests.splice(index, 1);
       }
@@ -153,7 +156,6 @@ export default {
             uiRequest.snapshotRequest.sequence = sequence; 
             postRequests.push(uiRequest.snapshotRequest);
             sequence += 1;
-            debugger;
           }
           const result = 
             await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);

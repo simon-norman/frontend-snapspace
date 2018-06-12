@@ -1,6 +1,7 @@
 import { mount, createLocalVue, config, TransitionStub } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
+import VueRouter from 'vue-router';
 import mockAxios from 'axios';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 import SnapshotRequests from '../components/SnapshotRequests.vue';
@@ -80,9 +81,6 @@ describe('SnapshotRequests.vue', () => {
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
         localVue,
-        stubs: {
-          transition: TransitionStub,
-        },
       });
     });
 
@@ -100,9 +98,8 @@ describe('SnapshotRequests.vue', () => {
     });
 
     it('should remove a snapshot request from request list', async () => {
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
       wrapper.find('#deleteRequest2').trigger('click');
+      await wrapper.vm.$nextTick();
       expect(wrapper.find('#request2').exists()).toBeFalse();
     });
 
@@ -116,7 +113,7 @@ describe('SnapshotRequests.vue', () => {
     it('should make a snapshot request inactive if has been previously saved, without deleting it', async () => {
       await wrapper.vm.$nextTick();
       wrapper.find('#deleteRequest2').trigger('click');
-      expect(wrapper.vm.uiRequests[1].isActive).toBe(false);
+      expect(wrapper.vm.uiRequests[1].snapshotRequest.status).toBe('deleted');
     });
   });
 
@@ -136,6 +133,7 @@ describe('SnapshotRequests.vue', () => {
       const localVue = createLocalVue();
       localVue.use(Vuetify);
       localVue.use(Vuelidate);
+      localVue.use(VueRouter);
     
       /* eslint no-unused-vars: 0 */
       wrapper = mount(SnapshotRequests, {
@@ -147,13 +145,11 @@ describe('SnapshotRequests.vue', () => {
 
       newRequests = [{ 
         uiRequestId: 1, 
-        isActive: true,
-        snapshotRequest: { name: 'test', sequence: 1 }, 
+        snapshotRequest: { name: 'test', sequence: 1, status: 'active' }, 
       }, 
       {
         uiRequestId: 2, 
-        isActive: true, 
-        snapshotRequest: { name: 'test1', sequence: 2 }, 
+        snapshotRequest: { name: 'test1', sequence: 2, status: 'active' }, 
       }];
 
       wrapper.setData({ 
@@ -188,13 +184,11 @@ describe('SnapshotRequests.vue', () => {
     it('should display error, on save, if name not populated', async () => {
       newRequests = [{ 
         uiRequestId: 1, 
-        isActive: true,
-        snapshotRequest: { name: '', sequence: 1 }, 
+        snapshotRequest: { name: '', sequence: 1, status: 'active' }, 
       }, 
       {
         uiRequestId: 2, 
-        isActive: true, 
-        snapshotRequest: { name: '', sequence: 2 }, 
+        snapshotRequest: { name: '', sequence: 2, status: 'active' }, 
       }];
 
       wrapper.setData({ 
@@ -206,7 +200,6 @@ describe('SnapshotRequests.vue', () => {
       await wrapper.vm.$nextTick();
       expect(Array.isArray(wrapper.vm.nameErrors(0))).toBeTrue();
       expect(wrapper.vm.nameErrors(0)).not.toBeEmpty();
-      const nameerror = wrapper.vm.nameErrors(0);
       expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
     });
   });

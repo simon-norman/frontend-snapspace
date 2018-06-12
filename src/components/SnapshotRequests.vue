@@ -33,7 +33,7 @@
         <v-list >
           <v-list-tile 
             v-for="(uiRequest, index) in uiRequests"
-            v-if="uiRequest.isActive" 
+            v-if="uiRequest.snapshotRequest.status = 'active'" 
             :key="uiRequest.uiRequestId">
             <v-text-field 
               :label="'Request ' + (index + 1)" 
@@ -76,8 +76,8 @@ export default {
         message: '',
       },
       requestIdCounter: 1,
-      clientId: 1,
-      prId: 2,
+      clientId: this.$route.params.clId,
+      projectId: this.$route.params.prId,
       uiRequests: [
       ],
     };
@@ -93,7 +93,7 @@ export default {
   },
   async mounted() {
     try {
-      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.prId);
+      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.projectId);
       const snapshotRequests = result.data;
       if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
         this.addRequest();
@@ -123,9 +123,8 @@ export default {
       }
       this.uiRequests.push({ 
         uiRequestId: this.requestIdCounter, 
-        isActive: true,
         snapshotRequest: 
-        { _id, name }, 
+        { _id, name, status: 'active' }, 
       });
       this.incrementRequestId();
     },  
@@ -136,7 +135,7 @@ export default {
 
     deleteRequest(index) {
       if (this.uiRequests[index].snapshotRequest._id) {
-        this.uiRequests[index].isActive = false;
+        this.uiRequests[index].snapshotRequest.status = 'deleted';
       } else {
         this.uiRequests.splice(index, 1);
       }
@@ -148,8 +147,13 @@ export default {
         this.$v.$reset();
         try {
           const postRequests = [];
+          let sequence = 1;
           for (const uiRequest of this.uiRequests) {
+            // uiRequest.snapshotRequest.sequence = uiReque
+            uiRequest.snapshotRequest.sequence = sequence; 
             postRequests.push(uiRequest.snapshotRequest);
+            sequence += 1;
+            debugger;
           }
           const result = 
             await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);
@@ -159,9 +163,6 @@ export default {
               .snapshotRequest._id = snapshotRequest._id;
           }
           window.scrollTo(0, 0);
-          // This line on submitSuccessAlert is causing test to check for errorAlert to fail
-          // as it is running transitions that JSDOM cannot handle - therefore separated 
-          // errorAlert test into separate file
           this.submitSuccessAlert = true;
           setTimeout(() => {
             this.submitSuccessAlert = false;

@@ -11,7 +11,6 @@ export default class SnapshotApi extends Api {
 
   projectPath(clientId) {
     const finalRequestsPath = this.baseProjectPath.replace('clientId', clientId);
-    debugger;
     return finalRequestsPath;
   }
   
@@ -20,7 +19,6 @@ export default class SnapshotApi extends Api {
   }
 
   postProject(clientId, body) {
-    debugger;
     return this.axios.post(this.projectPath(clientId), body);
   }
 }

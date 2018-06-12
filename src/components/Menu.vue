@@ -33,10 +33,9 @@
               @click="addClient()">add</v-icon>
           </v-list-tile>
           <v-list-group
-            v-for="(client, index) in clients"
+            v-for="(client, clientIndex) in clients"
             :id="client.name + 'ListGroup'"
             :key="client.name"
-            value="true"
           >
             <v-list-tile slot="activator">
               <v-list-tile-title>{{ client.name }}</v-list-tile-title>
@@ -44,7 +43,7 @@
             <v-list-tile>
               <v-text-field 
                 v-model="client.newProjectName"  
-                :error-messages="projectNameErrors(index)"
+                :error-messages="projectNameErrors(clientIndex)"
                 solo
                 flat
                 label="New project name"
@@ -53,13 +52,17 @@
               <v-icon
                 id="addProject"   
                 medium
-                @click="addProject(index)">add</v-icon>
+                @click="addProject(clientIndex)">add</v-icon>
             </v-list-tile>
             <v-list-tile
-              v-for="project in clients[index].projects"
-              :id="project.name + 'ListTile'"
+              v-for="project in clients[clientIndex].projects"
+              :id="project.name + 'ListTile'"           
               :key="project.name"
-              value="true"/>
+              :to="snapshotRequestsLink(client._id, project._id)">
+              <v-list-tile-content>
+                <v-list-tile-title>{{ project.name }}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list-group>
         </v-list>
       </v-navigation-drawer>
@@ -106,6 +109,9 @@ export default {
     // placeholder for mounted
   },
   methods: {
+    snapshotRequestsLink(clientId, projectId) {
+      return `/client/${clientId}/project/${projectId}/snapshotRequests`;
+    },
     projectNameErrors(clientIndex) {
       const errors = [];
       if (this.$v.clients.$each[clientIndex].newProjectName.$error) {
@@ -125,6 +131,7 @@ export default {
             await clientProjectApi.postClient(newClient);
           // should check if result code is 201?
           this.clients.push(result.data);
+          this.newClientName = '';
         } catch (error) {
           // placeholder for logging
           if (error.response) {
@@ -148,11 +155,10 @@ export default {
         
 
         try {
-          debugger;
           const result = 
             await clientProjectApi.postProject(this.clients[clientIndex]._id, newProject);
           this.clients[clientIndex].projects.push(result.data);
-          debugger;
+          this.clients[clientIndex].newProjectName = '';
         } catch (error) {
           // placeholder for logging
           if (error.response) {

@@ -3,7 +3,6 @@ import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import VueRouter from 'vue-router';
 import mockAxios from 'axios';
-import SnapshotRequestApi from '../api/snapshotRequestApi';
 import SnapshotRequests from '../components/SnapshotRequests.vue';
 
 config.stubs.transition = TransitionStub;

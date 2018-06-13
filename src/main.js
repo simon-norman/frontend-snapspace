@@ -21,6 +21,7 @@ import {
 
 import App from './App.vue';
 import router from './router';
+import { store } from './store/store';
 
 import '../static/assets/css/snapspace.css';
 import '../node_modules/vuetify/src/stylus/app.styl';
@@ -62,6 +63,7 @@ Vue.config.productionTip = false;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>',

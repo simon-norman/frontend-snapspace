@@ -29,6 +29,20 @@
             ],
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Menu Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "Menu.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "vuejs: chrome",

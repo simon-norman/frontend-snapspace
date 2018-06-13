@@ -69,9 +69,8 @@
 <script>
 
 import { required } from 'vuelidate/lib/validators';
-import ClientProjectApi from '../api/clientProjectApi';
+import { mapActions } from 'vuex';
 
-const clientProjectApi = new ClientProjectApi();
 export default {
   name: 'Menu',
   data() {
@@ -106,6 +105,10 @@ export default {
     // placeholder for mounted
   },
   methods: {
+    ...mapActions([
+      'addClientAction',
+      'addProjectAction',
+    ]),
     snapshotRequestsLink(clientId, projectId) {
       return `/client/${clientId}/project/${projectId}/snapshotRequests`;
     },
@@ -118,16 +121,15 @@ export default {
     },
     async addClient() {
       this.$v.$touch();
-      
+      debugger;      
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
         const newClient = { name: this.newClientName };
 
         try {
-          const result = 
-            await clientProjectApi.postClient(newClient);
-          // should check if result code is 201?
-          this.clients.push(result.data);
+          debugger;
+          const savedClient = await this.addClientAction(newClient);
+          this.clients.push(savedClient);
           this.newClientName = '';
         } catch (error) {
           // placeholder for logging
@@ -152,9 +154,9 @@ export default {
         
 
         try {
-          const result = 
-            await clientProjectApi.postProject(this.clients[clientIndex]._id, newProject);
-          this.clients[clientIndex].projects.push(result.data);
+          const payload = { clientId: this.clients[clientIndex]._id, newProject };
+          const savedProject = await this.addProjectAction(payload);
+          this.clients[clientIndex].projects.push(savedProject);
           this.clients[clientIndex].newProjectName = '';
         } catch (error) {
           // placeholder for logging

@@ -1,73 +1,70 @@
 <template>
-  <v-container 
-    fluid 
-    fill-height>
-    <v-layout column>
-      <div>
-        <v-alert 
-          id="errorMessage"
-          v-model="errorAlert.active" 
-          transition="scale-transition"
-          type="error" 
-          dismissible>
-          {{ errorAlert.message }}
-        </v-alert>
-      </div>
-      <v-navigation-drawer
-        stateless
-        value="true"
-      >
-        <v-list>
+  <v-layout column>
+    <div>
+      <v-alert 
+        id="errorMessage"
+        v-model="errorAlert.active" 
+        transition="scale-transition"
+        type="error" 
+        dismissible>
+        {{ errorAlert.message }}
+      </v-alert>
+    </div>
+    <v-navigation-drawer
+      fixed
+      stateless
+      value="true"
+    >
+      <v-list>
+        <v-list-tile>
+          <v-text-field 
+            v-model="newClientName"  
+            :error-messages="clientNameErrors"
+            solo
+            flat
+            label="New client name"
+            required
+            type="text"/>
+          <v-icon
+            id="addClient"   
+            medium
+            @click="addClient()">add</v-icon>
+        </v-list-tile>
+        <v-list-group
+          v-for="(client, clientIndex) in clients"
+          :id="client.name + 'ListGroup'"
+          :key="client.name"
+        >
+          <v-list-tile slot="activator">
+            <v-list-tile-title>{{ client.name }}</v-list-tile-title>
+          </v-list-tile>
           <v-list-tile>
             <v-text-field 
-              v-model="newClientName"  
-              :error-messages="clientNameErrors"
+              v-model="client.newProjectName"  
+              :error-messages="projectNameErrors(clientIndex)"
               solo
               flat
-              label="New client name"
+              label="New project name"
               required
               type="text"/>
             <v-icon
-              id="addClient"   
+              id="addProject"   
               medium
-              @click="addClient()">add</v-icon>
+              @click="addProject(clientIndex)">add</v-icon>
           </v-list-tile>
-          <v-list-group
-            v-for="(client, clientIndex) in clients"
-            :id="client.name + 'ListGroup'"
-            :key="client.name"
-          >
-            <v-list-tile slot="activator">
-              <v-list-tile-title>{{ client.name }}</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile>
-              <v-text-field 
-                v-model="client.newProjectName"  
-                :error-messages="projectNameErrors(clientIndex)"
-                solo
-                flat
-                label="New project name"
-                required
-                type="text"/>
-              <v-icon
-                id="addProject"   
-                medium
-                @click="addProject(clientIndex)">add</v-icon>
-            </v-list-tile>
-            <v-list-tile
-              v-for="project in clients[clientIndex].projects"
-              :id="project.name + 'ListTile'"           
-              :key="project.name"
-              :to="snapshotRequestsLink(client._id, project._id)">
-              <v-list-tile-content>
-                <v-list-tile-title>{{ project.name }}</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
-    </v-layout>
-  </v-container>
+          <v-list-tile
+            v-for="project in clients[clientIndex].projects"
+            :id="project.name + 'ListTile'"           
+            :key="project.name"
+            :to="snapshotRequestsLink(client._id, project._id)">
+            <v-list-tile-content>
+              <v-list-tile-title>{{ project.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+  </v-layout>
 </template>
 <script>
 

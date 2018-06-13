@@ -27,7 +27,7 @@ export default new Router({
     {
       path: '/client/:clId/project/:prId/snapshotRequests',
       name: 'snapshotRequests',
-      component: SnapshotRequests,
+      components: { default: SnapshotRequests, menu: Menu },
     },
   ],
 });

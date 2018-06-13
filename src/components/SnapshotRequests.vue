@@ -30,7 +30,7 @@
         xs12 
         sm8 
         md4>
-        <v-list >
+        <v-list>
           <v-list-tile 
             v-for="(uiRequest, index) in uiRequests"
             v-if="uiRequest.snapshotRequest.status === 'active'" 

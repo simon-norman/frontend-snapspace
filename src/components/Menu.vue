@@ -31,7 +31,7 @@
             @click="addClient()">add</v-icon>
         </v-list-tile>
         <v-list-group
-          v-for="(client, clientIndex) in clients"
+          v-for="(client, clientIndex) in getClients"
           :id="client.name + 'ListGroup'"
           :key="client.name"
         >
@@ -69,7 +69,7 @@
 <script>
 
 import { required } from 'vuelidate/lib/validators';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'Menu',
@@ -79,7 +79,6 @@ export default {
         active: false,
         message: '',
       },
-      newClientName: '',
       clients: [
       ],
     };
@@ -93,12 +92,24 @@ export default {
     },
   },
   computed: {
+    ...mapGetters([
+      'getClients',
+      'getNewClientName',
+    ]),
     clientNameErrors() {
       const errors = [];
       if (this.$v.newClientName.$error) {
         errors.push('');
       }
       return errors;
+    },
+    newClientName: {
+      get() {
+        return this.getNewClientName;
+      },
+      set(newClientName) {
+        this.updateNewClientName(newClientName);
+      },
     },
   },
   async mounted() {
@@ -108,6 +119,7 @@ export default {
     ...mapActions([
       'addClientAction',
       'addProjectAction',
+      'updateNewClientName',
     ]),
     snapshotRequestsLink(clientId, projectId) {
       return `/client/${clientId}/project/${projectId}/snapshotRequests`;
@@ -120,14 +132,12 @@ export default {
       return errors;
     },
     async addClient() {
-      this.$v.$touch();
-      debugger;      
+      this.$v.$touch();   
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
         const newClient = { name: this.newClientName };
 
         try {
-          debugger;
           const savedClient = await this.addClientAction(newClient);
           this.clients.push(savedClient);
           this.newClientName = '';
@@ -154,9 +164,12 @@ export default {
         
 
         try {
-          const payload = { clientId: this.clients[clientIndex]._id, newProject };
-          const savedProject = await this.addProjectAction(payload);
-          this.clients[clientIndex].projects.push(savedProject);
+          const payload = { 
+            clientId: this.clients[clientIndex]._id, 
+            clientStoreIndex: this.clients[clientIndex].storeIndex, 
+            newProject, 
+          };
+          await this.addProjectAction(payload);
           this.clients[clientIndex].newProjectName = '';
         } catch (error) {
           // placeholder for logging

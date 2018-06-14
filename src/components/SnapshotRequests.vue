@@ -95,15 +95,15 @@ export default {
     try {
       const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.projectId);
       const snapshotRequests = result.data;
-      if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
-        this.addRequest();
-      } else {
-        for (const snapshotRequest of snapshotRequests) {
-          this.addRequest(snapshotRequest);
-        } 
+      for (const snapshotRequest of snapshotRequests) {
+        this.addRequest(snapshotRequest);
       }
     } catch (error) {
-      // placeholder for logging
+      if (error.response && error.response.status === 404) {
+        this.addRequest();
+      } else {
+        // placeholder for error
+      }
     }
   },
   methods: {

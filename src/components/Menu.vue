@@ -19,7 +19,7 @@
         <v-list-tile>
           <v-text-field 
             v-model="newClientName"  
-            :error-messages="clientNameErrors"
+            :error-messages="clientNameErrors()"
             solo
             flat
             label="New client name"
@@ -31,32 +31,33 @@
             @click="addClient()">add</v-icon>
         </v-list-tile>
         <v-list-group
-          v-for="(client, clientIndex) in getClients"
-          :id="client.name + 'ListGroup'"
-          :key="client.name"
+          v-for="(client, clientIndex) in clients"
+          :id="client.persistedClient.name + 'ListGroup'"
+          :key="client.persistedClient.name"
         >
           <v-list-tile slot="activator">
-            <v-list-tile-title>{{ client.name }}</v-list-tile-title>
+            <v-list-tile-title>{{ client.persistedClient.name }}</v-list-tile-title>
           </v-list-tile>
           <v-list-tile>
             <v-text-field 
-              v-model="client.newProjectName"  
               :error-messages="projectNameErrors(clientIndex)"
+              :value="getNewProjectName(clientIndex)"
               solo
               flat
               label="New project name"
               required
-              type="text"/>
+              type="text"
+              @input="updateNewProjectName({clientIndex, newProjectName: $event})"/>
             <v-icon
               id="addProject"   
               medium
               @click="addProject(clientIndex)">add</v-icon>
           </v-list-tile>
           <v-list-tile
-            v-for="project in clients[clientIndex].projects"
+            v-for="project in clients[clientIndex].persistedClient.projects"
             :id="project.name + 'ListTile'"           
             :key="project.name"
-            :to="snapshotRequestsLink(client._id, project._id)">
+            :to="snapshotRequestsLink(client.persistedClient._id, project._id)">
             <v-list-tile-content>
               <v-list-tile-title>{{ project.name }}</v-list-tile-title>
             </v-list-tile-content>
@@ -79,8 +80,6 @@ export default {
         active: false,
         message: '',
       },
-      clients: [
-      ],
     };
   },
   validations: {
@@ -95,13 +94,10 @@ export default {
     ...mapGetters([
       'getClients',
       'getNewClientName',
+      'getNewProjectName',
     ]),
-    clientNameErrors() {
-      const errors = [];
-      if (this.$v.newClientName.$error) {
-        errors.push('');
-      }
-      return errors;
+    clients() {
+      return this.getClients;
     },
     newClientName: {
       get() {
@@ -120,26 +116,33 @@ export default {
       'addClientAction',
       'addProjectAction',
       'updateNewClientName',
+      'updateNewProjectName',
     ]),
     snapshotRequestsLink(clientId, projectId) {
       return `/client/${clientId}/project/${projectId}/snapshotRequests`;
     },
+    clientNameErrors() {
+      const errors = [];
+      if (this.$v.newClientName.$error) {
+        errors.push('');
+      }
+      return errors;
+    },
     projectNameErrors(clientIndex) {
       const errors = [];
       if (this.$v.clients.$each[clientIndex].newProjectName.$error) {
-        errors.push('Please provide a name');
+        errors.push('');
       }
       return errors;
     },
     async addClient() {
-      this.$v.$touch();   
+      this.$v.newClientName.$touch();   
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
-        const newClient = { name: this.newClientName };
+        const newClient = { newProjectName: '', persistedClient: { name: this.newClientName } };
 
         try {
-          const savedClient = await this.addClientAction(newClient);
-          this.clients.push(savedClient);
+          await this.addClientAction(newClient);
           this.newClientName = '';
         } catch (error) {
           // placeholder for logging
@@ -156,17 +159,16 @@ export default {
       }
     },
     async addProject(clientIndex) {
-      this.$v.$touch();
+      this.$v.clients.$touch();
       
       if (!this.$v.clients.$each[clientIndex].newProjectName.$error) {
         this.$v.$reset();
         const newProject = { name: this.clients[0].newProjectName };
         
-
         try {
           const payload = { 
-            clientId: this.clients[clientIndex]._id, 
-            clientStoreIndex: this.clients[clientIndex].storeIndex, 
+            clientId: this.clients[clientIndex].persistedClient._id, 
+            clientIndex,
             newProject, 
           };
           await this.addProjectAction(payload);

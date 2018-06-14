@@ -8,41 +8,49 @@ const mutations = {
   },
 
   ADD_PROJECT: (state, payload) => {
-    state.clients[payload.clientStoreIndex].projects.push(payload.savedProject);
+    state.clients[payload.clientIndex].persistedClient.projects.push(payload.savedProject);
   },
 
   UPDATE_NEW_CLIENT_NAME: (state, payload) => {
     state.newClientName = payload;
   },
+  UPDATE_NEW_PROJECT_NAME: (state, payload) => {
+    state.clients[payload.clientIndex].newProjectName = payload.newProjectName;
+  },
 };
 
 const actions = {
   addClientAction: (context, payload) => new Promise(async (resolve) => {
-    const result = await clientProjectApi.postClient(payload);
-    const savedClient = result.data;
-    savedClient.storeIndex = context.getters.getClients.length;
-    context.commit('ADD_CLIENT', savedClient);
-    resolve(savedClient);
+    const result = await clientProjectApi.postClient(payload.persistedClient);
+    payload.persistedClient = result.data;
+    payload.storeIndex = context.getters.getClients.length;
+    context.commit('ADD_CLIENT', payload);
+    resolve();
   }),
 
   addProjectAction: ({ commit }, payload) => new Promise(async (resolve) => {
     const result = await clientProjectApi.postProject(payload.clientId, payload.newProject);
     const savedProject = result.data;
-    // issue is somewhere here
     const finalPayload = payload;
     finalPayload.savedProject = savedProject;
     commit('ADD_PROJECT', finalPayload);
-    resolve(savedProject);
+    resolve();
   }),
 
   updateNewClientName: ({ commit }, payload) => {
     commit('UPDATE_NEW_CLIENT_NAME', payload);
   },
+  updateNewProjectName: ({ commit }, payload) => {
+    commit('UPDATE_NEW_PROJECT_NAME', payload);
+  },
 };
 
 const getters = {
   getClients: state => state.clients,
+
   getNewClientName: state => state.newClientName,
+
+  getNewProjectName: (state) => (clientIndex) => state.clients[clientIndex].newProjectName,
 };
 
 const state = {

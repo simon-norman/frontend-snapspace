@@ -38,6 +38,13 @@ describe('SnapshotRequests.vue', () => {
   });
 
   describe('Create snapshot requests', () => {
+    const snapshotRequests = [{ _id: 2, name: 'name1', sequence: 1 }];
+
+    mockAxios.get.mockImplementation(() =>
+      Promise.resolve({
+        data: snapshotRequests,
+      }));
+
     const localVue = createLocalVue();
     localVue.use(Vuetify);
     localVue.use(Vuelidate);

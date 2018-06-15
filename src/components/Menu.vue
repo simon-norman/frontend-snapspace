@@ -175,6 +175,7 @@ export default {
             clientIndex,
             newProject, 
           };
+          
           await this.addProjectAction(payload);
           this.clients[clientIndex].newProjectName = '';
         } catch (error) {

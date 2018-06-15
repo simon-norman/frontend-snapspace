@@ -1,4 +1,4 @@
-import { mount, shallow, createLocalVue } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
@@ -7,7 +7,7 @@ import Menu from '../components/Menu.vue';
 
 jest.mock('axios');
 
-const createWrapper = (actions, wrapperData) => {
+const createWrapper = (actions, wrapperData, getters) => {
   const localVue = createLocalVue();
   localVue.use(Vuetify);
   localVue.use(Vuelidate);
@@ -16,6 +16,7 @@ const createWrapper = (actions, wrapperData) => {
   const store = new Vuex.Store({
     state: {},
     actions,
+    getters,
   });
           
   const wrapper = shallow(Menu, {
@@ -32,40 +33,37 @@ const createWrapper = (actions, wrapperData) => {
 
 describe('Menu.vue', () => {
   describe('Tests loading successfully', () => {
-    const localVue = createLocalVue();
-    localVue.use(Vuetify);
-    localVue.use(Vuelidate);
-      
-    /* eslint no-unused-vars: 0 */
-    const wrapper = mount(Menu, {
-      localVue,
-    });
-        
+    let wrapper; 
+
     it('should have loaded a Vue instance', () => {
+      wrapper = createWrapper(undefined, undefined, undefined); 
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });
 
   describe('Add client', () => {
     let wrapper; 
-    let wrapperData;
     let actions;
+    let getters;
 
     beforeEach(() => {
-      const newClientName = 'Client';
-      wrapperData = { 
-        newClientName,
-        clients: [], 
+      actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
       };
     });
-    
+
     it('should save client to store', async () => {
-      const clientActionData = { _id: 3, name: 'Client' };
-      actions = {
-        addClientAction: jest.fn(() => Promise.resolve(clientActionData)),
-      };
-
-      wrapper = createWrapper(actions, wrapperData);    
+      wrapper = createWrapper(actions, undefined, getters);    
 
       wrapper.find('#addClient').trigger('click');
 
@@ -74,13 +72,12 @@ describe('Menu.vue', () => {
       expect(actions.addClientAction).toHaveBeenCalled();
     });
 
-    it('should call Vuex action to save client and, if successful, add client to client list', async () => {
-      const clientActionData = { _id: 3, name: 'Client' };
-      actions = {
-        addClientAction: jest.fn(() => Promise.resolve(clientActionData)),
-      };
+    it('should add new client to client list', async () => {
+      const clientActionData = { newProjectName: '', persistedClient: { name: 'Client' } };
 
-      wrapper = createWrapper(actions, wrapperData);      
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);  
 
       wrapper.find('#addClient').trigger('click');
 
@@ -88,47 +85,33 @@ describe('Menu.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(actions.addClientAction).toHaveBeenCalled();
-      expect(wrapper.vm.clients[0]._id).toBe(clientActionData._id);
+      expect(actions.addClientAction.mock.calls[0][1]).toEqual(clientActionData);
       expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
     });
 
     it('should display error request to add name if name not populated', async () => {
-      wrapper = createWrapper();  
+      getters.getNewClientName = () => '';
+      wrapper = createWrapper(actions, undefined, getters);  
       wrapper.find('#addClient').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
     });
 
     it('should not add client if name is not populated', async () => {
-      wrapper = createWrapper();  
+      getters.getNewClientName = () => '';
+      wrapper = createWrapper(actions, undefined, getters);  
       wrapper.find('#addClient').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.find('#ClientListGroup').exists()).toBeFalsy();
       expect(mockAxios.post).toHaveBeenCalledTimes(0);
     });
-  });
 
-  describe('Error when save client fails', () => {
-    let wrapper; 
-    let wrapperData;
-    let actions;
-
-    beforeEach(() => {
-      const newClientName = 'Client';
-      wrapperData = { 
-        newClientName,
-        clients: [], 
-      };
-    });
-  
     it('should show an error if save was not successful', async () => {
-      actions = {
-        addClientAction: jest.fn(() => {
-          throw new Error('Server error');
-        }),
-      };
+      actions.addClientAction = jest.fn(() => {
+        throw new Error('Server error');
+      });
 
-      wrapper = createWrapper(actions, wrapperData);   
+      wrapper = createWrapper(actions, undefined, getters);  
       expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true); 
 
       wrapper.find('#addClient').trigger('click');
@@ -139,33 +122,63 @@ describe('Menu.vue', () => {
 
   describe('Add project', () => {
     let wrapper; 
-    let wrapperData;
     let actions;
+    let getters;
     let newProjectName;
 
     beforeEach(() => {
-      newProjectName = 'Project';
-      wrapperData = { 
-        clients: [{
-          name: 'Client', _id: 1, newProjectName, projects: [], 
-        }], 
+      actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
       };
     });
         
-    it('should post project to server and, if successful, add project to project list', async () => {
-      const projectActionData = { _id: 3, name: newProjectName };
-      actions = {
-        addProjectAction: jest.fn(() => Promise.resolve(projectActionData)),
+    it('should save project with store action', async () => {
+      newProjectName = 'newProject';
+      const payload = { clientId: 1, clientIndex: 0, newProject: { name: newProjectName } };
+
+      getters.getNewProjectName = () => () => newProjectName;
+
+      const clientActionData = {
+        newProjectName, 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [],
+        }, 
       };
+      getters.getClients = () => [clientActionData];
 
-      wrapper = createWrapper(actions, wrapperData);    
-
+      wrapper = createWrapper(actions, undefined, getters);  
       wrapper.find('#addProject').trigger('click');
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(actions.addProjectAction.mock.calls[0][1]).toEqual(payload);
+    });
 
-      await wrapper.vm.$nextTick();
-      await wrapper.vm.$nextTick();
-      expect(wrapper.vm.clients[0].projects[0]._id).toBe(projectActionData._id);
-      expect(wrapper.find(`#${newProjectName}ListTile`).exists()).toBeTruthy();
+    it('should display projects in the store', async () => {
+      const projectName = 'project';
+
+      const clientActionData = { 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [{ _id: 3, name: projectName }],
+        }, 
+      };
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);     
+      expect(wrapper.find(`#${projectName}ListTile`).exists()).toBeTruthy();
     });
   });
 });

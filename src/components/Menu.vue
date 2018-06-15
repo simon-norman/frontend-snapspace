@@ -4,7 +4,7 @@
       <v-alert 
         id="errorMessage"
         v-model="errorAlert.active" 
-        transition="scale-transition"
+        transition="v-fade-transition"
         type="error" 
         dismissible>
         {{ errorAlert.message }}
@@ -47,7 +47,7 @@
               label="New project name"
               required
               type="text"
-              @input="updateNewProjectName({clientIndex, newProjectName: $event})"/>
+              @input="newProjectNameAction({clientIndex, newProjectName: $event})"/>
             <v-icon
               id="addProject"   
               medium
@@ -104,19 +104,21 @@ export default {
         return this.getNewClientName;
       },
       set(newClientName) {
-        this.updateNewClientName(newClientName);
+        this.newClientNameAction(newClientName);
       },
     },
   },
-  async mounted() {
+  async created() {
+    this.loadClientsAction();
     // placeholder for mounted
   },
   methods: {
     ...mapActions([
       'addClientAction',
       'addProjectAction',
-      'updateNewClientName',
-      'updateNewProjectName',
+      'newClientNameAction',
+      'newProjectNameAction',
+      'loadClientsAction',
     ]),
     snapshotRequestsLink(clientId, projectId) {
       return `/client/${clientId}/project/${projectId}/snapshotRequests`;
@@ -153,8 +155,10 @@ export default {
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');
           }
-
           this.errorAlert.active = true; 
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
     },
@@ -163,7 +167,7 @@ export default {
       
       if (!this.$v.clients.$each[clientIndex].newProjectName.$error) {
         this.$v.$reset();
-        const newProject = { name: this.clients[0].newProjectName };
+        const newProject = { name: this.clients[clientIndex].newProjectName };
         
         try {
           const payload = { 
@@ -184,6 +188,9 @@ export default {
           }
 
           this.errorAlert.active = true;  
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
     },

@@ -6,6 +6,8 @@ export default class SnapshotApi extends Api {
 
     this.clientPath = '/client';
 
+    this.clientsPath = '/clients';
+
     this.baseProjectPath = '/client/clientId/project';
   }
 
@@ -20,5 +22,9 @@ export default class SnapshotApi extends Api {
 
   postProject(clientId, body) {
     return this.axios.post(this.projectPath(clientId), body);
+  }
+
+  getClients() {
+    return this.axios.get(this.clientsPath);
   }
 }

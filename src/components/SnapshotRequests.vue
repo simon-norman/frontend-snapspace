@@ -68,6 +68,7 @@ import SnapshotRequestApi from '../api/snapshotRequestApi';
 const snapshotRequestApi = new SnapshotRequestApi();
 export default {
   name: 'SnapshotRequests',
+
   data() {
     return {
       submitSuccessAlert: false,
@@ -91,21 +92,17 @@ export default {
       },
     },
   },
-  async mounted() {
-    try {
-      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.projectId);
-      const snapshotRequests = result.data;
-      for (const snapshotRequest of snapshotRequests) {
-        this.addRequest(snapshotRequest);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        this.addRequest();
-      } else {
-        // placeholder for error
-      }
-    }
+
+  watch: {
+    $route() {
+      this.loadSnapshotRequests();
+    },
   },
+
+  mounted() {
+    this.loadSnapshotRequests();
+  },
+
   methods: {
     nameErrors(requestIndex) {
       const errors = [];
@@ -114,6 +111,24 @@ export default {
       }
       return errors;
     },
+
+    async loadSnapshotRequests() {
+      this.uiRequests = [];
+      try {
+        const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.projectId);
+        const snapshotRequests = result.data;
+        for (const snapshotRequest of snapshotRequests) {
+          this.addRequest(snapshotRequest);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.addRequest();
+        } else {
+        // placeholder for error
+        }
+      }
+    },
+
     addRequest(snapshotRequest) {
       let _id;
       let name;
@@ -173,9 +188,12 @@ export default {
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');
           this.errorAlert.active = true;
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
-    },  
+    },
   },
 };
 </script>

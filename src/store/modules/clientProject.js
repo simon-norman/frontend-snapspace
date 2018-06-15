@@ -17,30 +17,54 @@ const mutations = {
   UPDATE_NEW_PROJECT_NAME: (state, payload) => {
     state.clients[payload.clientIndex].newProjectName = payload.newProjectName;
   },
+
+  LOAD_CLIENTS: (state, payload) => {
+    state.clients = payload;
+  },
 };
 
 const actions = {
-  addClientAction: (context, payload) => new Promise(async (resolve) => {
-    const result = await clientProjectApi.postClient(payload.persistedClient);
-    payload.persistedClient = result.data;
-    payload.storeIndex = context.getters.getClients.length;
-    context.commit('ADD_CLIENT', payload);
-    resolve();
+  loadClientsAction: async ({ commit }) => {
+    const result = await clientProjectApi.getClients();
+    const clients = result.data;
+    const payload = [];
+    for (const client of clients) {
+      payload.push({ newProjectName: '', persistedClient: client });
+    }
+    commit('LOAD_CLIENTS', payload);
+  },
+
+  addClientAction: (context, payload) => new Promise(async (resolve, reject) => {
+    try {
+      const result = await clientProjectApi.postClient(payload.persistedClient);
+      payload.persistedClient = result.data;
+      context.commit('ADD_CLIENT', payload);
+      resolve();
+    } catch (error) {
+      reject(error);
+      // error handle 
+    }
   }),
 
-  addProjectAction: ({ commit }, payload) => new Promise(async (resolve) => {
-    const result = await clientProjectApi.postProject(payload.clientId, payload.newProject);
-    const savedProject = result.data;
-    const finalPayload = payload;
-    finalPayload.savedProject = savedProject;
-    commit('ADD_PROJECT', finalPayload);
-    resolve();
+  addProjectAction: ({ commit }, payload) => new Promise(async (resolve, reject) => {
+    try {
+      const result = await clientProjectApi.postProject(payload.clientId, payload.newProject);
+      const savedProject = result.data;
+      const finalPayload = payload;
+      finalPayload.savedProject = savedProject;
+      commit('ADD_PROJECT', finalPayload);
+      resolve();
+    } catch (error) {
+      reject(error);
+    // error handle 
+    }
   }),
 
-  updateNewClientName: ({ commit }, payload) => {
+  newClientNameAction: ({ commit }, payload) => {
     commit('UPDATE_NEW_CLIENT_NAME', payload);
   },
-  updateNewProjectName: ({ commit }, payload) => {
+  
+  newProjectNameAction: ({ commit }, payload) => {
     commit('UPDATE_NEW_PROJECT_NAME', payload);
   },
 };

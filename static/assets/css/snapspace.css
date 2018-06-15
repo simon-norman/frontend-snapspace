@@ -28,3 +28,8 @@
 .list {
     background: transparent !important;
 }
+
+.alert {
+    z-index: 1000;
+    margin: 0;
+}

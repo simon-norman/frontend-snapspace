@@ -207,6 +207,9 @@ export default {
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');
           this.errorAlert.active = true;
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
     },

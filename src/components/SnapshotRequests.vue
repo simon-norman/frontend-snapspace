@@ -83,6 +83,7 @@ export default {
       ],
     };
   },
+  
   validations: {
     uiRequests: {
       $each: {
@@ -164,7 +165,6 @@ export default {
           const postRequests = [];
           let sequence = 1;
           for (const uiRequest of this.uiRequests) {
-            // uiRequest.snapshotRequest.sequence = uiReque
             uiRequest.snapshotRequest.sequence = sequence; 
             postRequests.push(uiRequest.snapshotRequest);
             sequence += 1;

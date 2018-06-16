@@ -49,14 +49,14 @@
               type="text"
               @input="newProjectNameAction({clientIndex, newProjectName: $event})"/>
             <v-icon
-              id="addProject"   
+              :id="client.persistedClient.name + 'AddProject'"  
               medium
               @click="addProject(clientIndex)">add</v-icon>
           </v-list-tile>
           <v-list-tile
             v-for="project in clients[clientIndex].persistedClient.projects"
             :id="project.name + 'ListTile'"           
-            :key="project.name"
+            :key="project._id"
             :to="snapshotRequestsLink(client.persistedClient._id, project._id)">
             <v-list-tile-content>
               <v-list-tile-title>{{ project.name }}</v-list-tile-title>

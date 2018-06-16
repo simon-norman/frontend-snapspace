@@ -159,7 +159,7 @@ describe('Menu.vue', () => {
       getters.getClients = () => [clientActionData];
 
       wrapper = createWrapper(actions, undefined, getters);  
-      wrapper.find('#addProject').trigger('click');
+      wrapper.find('#ClientAddProject').trigger('click');
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
       expect(actions.addProjectAction.mock.calls[0][1]).toEqual(payload);
@@ -179,6 +179,32 @@ describe('Menu.vue', () => {
 
       wrapper = createWrapper(actions, undefined, getters);     
       expect(wrapper.find(`#${projectName}ListTile`).exists()).toBeTruthy();
+    });
+
+    it('should show an error if save was not successful', async () => {
+      actions.addProjectAction = jest.fn(() => {
+        throw new Error('Server error');
+      });
+
+      newProjectName = 'newProject';
+      getters.getNewProjectName = () => () => newProjectName;
+
+      const clientActionData = {
+        newProjectName, 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [],
+        }, 
+      };
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);  
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true); 
+
+      wrapper.find('#ClientAddProject').trigger('click');
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
     });
   });
 });

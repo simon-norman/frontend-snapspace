@@ -52,7 +52,7 @@
         md3>
         <label 
           class="btn btn-file btn--block info">
-          Take a photo of a problem in your workspace
+          {{ requestName }}
           <input 
             id="addImage" 
             type="file" 
@@ -133,7 +133,16 @@ function getDefaultData() {
 export default {
   name: 'SnapshotsUpload',
 
-  // props: ['snapshotId'],
+  props: {
+    'request-id': { 
+      type: String,
+      required: true,
+    },
+    'request-name': {
+      type: String,
+      required: true,
+    },
+  },
 
   data() {
     return {

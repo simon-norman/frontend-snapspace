@@ -3,6 +3,8 @@
     <snapshots-upload 
       v-for="snapshotRequest in snapshotRequests"
       :key="snapshotRequest._id"
+      :request-name="snapshotRequest.name"
+      :request-id="snapshotRequest._id"
     />
   </v-layout>
 </template>

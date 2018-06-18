@@ -1,4 +1,5 @@
 import ClientProjectApi from '../../api/clientProjectApi';
+import * as types from '../types';
 
 const clientProjectApi = new ClientProjectApi();
 
@@ -34,18 +35,28 @@ const actions = {
     commit('LOAD_CLIENTS', payload);
   },
 
-  addClientAction: (context, payload) => new Promise(async (resolve, reject) => {
+  // addClientAction: (context, payload) => new Promise(async (resolve, reject) => {
+  //   try {
+  //     const result = await clientProjectApi.postClient(payload.persistedClient);
+  //     payload.persistedClient = result.data;
+  //     context.commit('ADD_CLIENT', payload);
+  //     resolve();
+  //   } catch (error) {
+  //     reject(error);
+  //     // error handle 
+  //   }
+  // }),
+  async addClientAction(context, payload) {
     try {
       const result = await clientProjectApi.postClient(payload.persistedClient);
       payload.persistedClient = result.data;
       context.commit('ADD_CLIENT', payload);
-      resolve();
+      return Promise.resolve();
     } catch (error) {
-      reject(error);
+      return Promise.reject(error);
       // error handle 
     }
-  }),
-
+  },
   addProjectAction: ({ commit }, payload) => new Promise(async (resolve, reject) => {
     try {
       const result = await clientProjectApi.postProject(payload.clientId, payload.newProject);
@@ -70,7 +81,7 @@ const actions = {
 };
 
 const getters = {
-  getClients: state => state.clients,
+  [types.GET_CLIENTS]: state => state.clients,
 
   getNewClientName: state => state.newClientName,
 

@@ -133,13 +133,12 @@ function getDefaultData() {
 
 export default {
   name: 'SnapshotsUpload',
-
   props: {
-    requestId: { 
+    'request-id': { 
       type: String,
       required: true,
     },
-    requestName: {
+    'request-name': {
       type: String,
       required: true,
     },

@@ -95,15 +95,15 @@ export default {
   },
 
   watch: {
-    $route() {
-      this.clientId = this.$route.params.clId;
-      this.projectId = this.$route.params.prId;
-      this.loadSnapshotRequests();
+    $route: {
+      // This will be fired before created in component lifecycle
+      handler() {
+        this.clientId = this.$route.params.clId;
+        this.projectId = this.$route.params.prId;
+        this.loadSnapshotRequests();
+      },
+      immediate: true,
     },
-  },
-
-  async created() {
-    await this.loadSnapshotRequests();
   },
 
   methods: {
@@ -171,7 +171,6 @@ export default {
             postRequests.push(uiRequest.snapshotRequest);
             sequence += 1;
           }
-          debugger;
           const result = 
             await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);
           for (const snapshotRequest of result.data) {

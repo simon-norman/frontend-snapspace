@@ -19,7 +19,7 @@ const snapshotRequestApi = new SnapshotRequestApi();
 export default {
   name: 'Menu',
   components: {
-    'snapshots-upload': SnapshotsUpload,
+    SnapshotsUpload,
   },
   data() {
     return {
@@ -28,8 +28,8 @@ export default {
       projectId: this.$route.params.prId,
     };
   },    
-  async created() {
-    await this.loadSnapshotRequests();
+  created() {
+    this.loadSnapshotRequests();
   },
   methods: {
     async loadSnapshotRequests() {

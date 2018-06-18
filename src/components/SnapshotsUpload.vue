@@ -132,6 +132,9 @@ function getDefaultData() {
 
 export default {
   name: 'SnapshotsUpload',
+
+  // props: ['snapshotId'],
+
   data() {
     return {
       submitSuccessAlert: false,
@@ -150,6 +153,7 @@ export default {
       imageFile: { required },
     },
   },
+
   computed: {
     commentErrors() {
       const errors = [];

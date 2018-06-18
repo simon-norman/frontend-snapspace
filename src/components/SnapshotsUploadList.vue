@@ -2,6 +2,7 @@
   <v-layout column>
     <snapshots-upload 
       v-for="snapshotRequest in snapshotRequests"
+      ref="snapshots"
       :key="snapshotRequest._id"
       :request-name="snapshotRequest.name"
       :request-id="snapshotRequest._id"
@@ -29,7 +30,6 @@ export default {
   },    
   async created() {
     await this.loadSnapshotRequests();
-    // placeholder for mounted
   },
   methods: {
     async loadSnapshotRequests() {

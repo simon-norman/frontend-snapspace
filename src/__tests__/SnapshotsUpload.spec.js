@@ -1,34 +1,50 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import flushPromises from 'flush-promises';
 import SnapshotsUpload from '../components/SnapshotsUpload.vue';
 
+const createWrapper = (propsData, wrapperData) => {
+  const localVue = createLocalVue();
+  localVue.use(Vuetify);
+  localVue.use(Vuelidate);
+          
+  const wrapper = shallow(SnapshotsUpload, {
+    localVue,
+    propsData,
+  });
+
+  if (wrapperData) {
+    wrapper.setData(wrapperData);
+  } 
+  
+  return wrapper;
+};
+
 describe('SnapshotUpload.vue', () => {
   describe('Tests loading successfully', () => {
-    const localVue = createLocalVue();
-    localVue.use(Vuetify);
-    localVue.use(Vuelidate);
-  
-    /* eslint no-unused-vars: 0 */
-    const wrapper = mount(SnapshotsUpload, {
-      localVue,
-    });
+    const wrapper = createWrapper();
     
     it('should have loaded a Vue instance', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });
 
-  describe('Display image', () => {
-    const localVue = createLocalVue();
-    localVue.use(Vuetify);
-    localVue.use(Vuelidate);
-  
-    /* eslint no-unused-vars: 0 */
-    const wrapper = mount(SnapshotsUpload, {
-      localVue,
+  describe('Load snapshot request', () => {
+    it('should display the snapshot request name', async () => {
+      const propsData = {
+        requestId: 'ab27c74f73ba26561c61cbcc',
+        requestName: 'name', 
+      };
+      const wrapper = createWrapper(propsData);
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find(`#${propsData.requestId}`).exists()).toBeTruthy();
     });
+  });
+
+  describe('Display image', () => {
+    const wrapper = createWrapper();
     
     it('should display image when user adds image', async () => {
       const imageFile = new Blob(['image'], { type: 'image/jpg' });
@@ -43,13 +59,7 @@ describe('SnapshotUpload.vue', () => {
     let wrapper;
   
     beforeEach(() => {
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(SnapshotsUpload, {
-        localVue,
-      });
+      wrapper = createWrapper();
     });
   
     it('should display error, on submit, if comment not populated', (done) => {

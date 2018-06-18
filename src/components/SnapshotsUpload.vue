@@ -51,6 +51,7 @@
         s4 
         md3>
         <label 
+          :id="requestId"
           class="btn btn-file btn--block info">
           {{ requestName }}
           <input 
@@ -85,7 +86,7 @@
           :error-messages="commentErrors"
           class="spacelabThin"
           name="input-7-1"
-          label="Tell us more about the problem"
+          label="Tell us more about this"
           multi-line
           required
           rows="3"
@@ -134,11 +135,11 @@ export default {
   name: 'SnapshotsUpload',
 
   props: {
-    'request-id': { 
+    requestId: { 
       type: String,
       required: true,
     },
-    'request-name': {
+    requestName: {
       type: String,
       required: true,
     },

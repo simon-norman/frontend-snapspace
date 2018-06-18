@@ -43,6 +43,34 @@
             ],
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Snapshot Upload Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "SnapshotsUpload.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Snapshot Upload List Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "SnapshotsUploadList.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "vuejs: chrome",

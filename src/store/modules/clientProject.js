@@ -1,5 +1,4 @@
 import ClientProjectApi from '../../api/clientProjectApi';
-import * as types from '../types';
 
 const clientProjectApi = new ClientProjectApi();
 
@@ -81,7 +80,7 @@ const actions = {
 };
 
 const getters = {
-  [types.GET_CLIENTS]: state => state.clients,
+  getClients: state => state.clients,
 
   getNewClientName: state => state.newClientName,
 

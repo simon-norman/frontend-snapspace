@@ -71,7 +71,6 @@
 
 import { required } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters } from 'vuex';
-import * as types from '../store/types';
 
 export default {
   name: 'Menu',
@@ -95,10 +94,8 @@ export default {
     ...mapGetters([
       'getNewClientName',
       'getNewProjectName',
+      'getClients',
     ]),
-    ...mapGetters({
-      getClients: types.GET_CLIENTS,
-    }),
     clients() {
       return this.getClients;
     },

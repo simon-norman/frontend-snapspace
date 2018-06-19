@@ -1,5 +1,24 @@
 <template>
-  <v-layout column>
+  <v-layout 
+    column>
+    <div>
+      <v-alert 
+        :value="getSuccessStatus" 
+        transition="scale-transition"
+        type="success" 
+        dismissible>
+        {{ getSuccessMessage }}
+      </v-alert>
+    </div>
+    <div>
+      <v-alert 
+        :value="getErrorStatus"  
+        transition="scale-transition"
+        type="error" 
+        dismissible>
+        {{ getErrorMessage }}
+      </v-alert>
+    </div>
     <snapshots-upload 
       v-for="snapshotRequest in snapshotRequests"
       ref="snapshots"
@@ -11,6 +30,7 @@
 </template>
 <script>
 
+import { mapGetters } from 'vuex';
 import SnapshotsUpload from './SnapshotsUpload.vue';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
 
@@ -28,6 +48,14 @@ export default {
       projectId: this.$route.params.prId,
     };
   },    
+  computed: {
+    ...mapGetters([
+      'getErrorMessage',
+      'getErrorStatus',
+      'getSuccessMessage',
+      'getSuccessStatus',
+    ]),
+  },
   created() {
     this.loadSnapshotRequests();
   },

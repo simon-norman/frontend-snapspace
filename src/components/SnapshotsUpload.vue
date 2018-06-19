@@ -3,24 +3,6 @@
     id="uploadContainer" 
     fluid 
     grid-list-xl>
-    <div>
-      <v-alert 
-        v-model="submitSuccessAlert" 
-        transition="scale-transition"
-        type="success" 
-        dismissible>
-        Thank you! Keep 'em coming!
-      </v-alert>
-    </div>
-    <div>
-      <v-alert 
-        v-model="errorAlert.active" 
-        transition="scale-transition"
-        type="error" 
-        dismissible>
-        {{ errorAlert.message }}
-      </v-alert>
-    </div>
     <v-layout 
       row 
       justify-center 
@@ -113,6 +95,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
@@ -146,11 +129,9 @@ export default {
 
   data() {
     return {
-      submitSuccessAlert: false,
-      errorAlert: {
-        active: false,
-        message: '',
-      },
+      successMessage: 'Thank you for your feedback - keep \'em coming!',
+      errorMessage: 'So sorry, there\'s been an error - ' +
+          'please contact us or try again later',
       snapshotData: getDefaultData(),
     };    
   },
@@ -173,6 +154,12 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'UPDATE_ERROR_MESSAGE',
+      'UPDATE_ERROR_STATUS',
+      'UPDATE_SUCCESS_STATUS',
+      'UPDATE_SUCCESS_MESSAGE',
+    ]),
     addImage(imageFile) {
       if (!imageFile) return;
       this.snapshotData.imageFile = imageFile;
@@ -206,22 +193,19 @@ export default {
 
           result = await snapshotApi.postSnapshot(this.snapshotData.snapshot);
           if (result.status === 200) {
-            window.scrollTo(0, 0);
             this.reset();
-            this.submitSuccessAlert = true;
+            this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
+            this.UPDATE_SUCCESS_STATUS(true);
             setTimeout(() => {
-              this.submitSuccessAlert = false;
+              this.UPDATE_SUCCESS_STATUS(false);
             }, 4000);
           }
         } catch (error) {
-          window.scrollTo(0, 0);
           // placeholder for logging
-          this.errorAlert.message = 
-          ('So sorry, there\'s been an error - ' +
-          'please contact us or try again later');
-          this.errorAlert.active = true;
+          this.UPDATE_ERROR_MESSAGE(this.errorMessage);
+          this.UPDATE_ERROR_STATUS(true);
           setTimeout(() => {
-            this.errorAlert.active = false;
+            this.UPDATE_ERROR_STATUS(false);
           }, 4000);
         }
       }
@@ -236,8 +220,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-#uploadContainer {
-}
-
 </style>

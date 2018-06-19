@@ -33,10 +33,22 @@ const createWrapper = (actions, wrapperData, getters) => {
 
 describe('Menu.vue', () => {
   describe('Tests loading successfully', () => {
-    let wrapper; 
-
     it('should have loaded a Vue instance', () => {
-      wrapper = createWrapper(undefined, undefined, undefined); 
+      const actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      const getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
+      };
+
+      const wrapper = createWrapper(actions, undefined, getters); 
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });

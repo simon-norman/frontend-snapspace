@@ -21,7 +21,7 @@
             "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
             "args": [
                 "-i",
-                "SnapshotRequests.spec"
+                "SnapshotRequests"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "outFiles": [

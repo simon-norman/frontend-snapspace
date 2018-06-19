@@ -1,23 +1,27 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import mockAxios from 'axios';
+import Vuex from 'vuex';
 import SnapshotsUploadList from '../components/SnapshotsUploadList.vue';
 
 jest.mock('axios');
 
-const createWrapper = (stubs, wrapperData, mocks) => {
+const createWrapper = (stubs, mocks, getters) => {
   const localVue = createLocalVue();
   localVue.use(Vuetify);
+  localVue.use(Vuex);
+
+  const store = new Vuex.Store({
+    state: {},
+    getters,
+  });
           
   const wrapper = mount(SnapshotsUploadList, {
     localVue,
     stubs,
     mocks,
+    store,
   });
-
-  if (wrapperData) {
-    wrapper.setData(wrapperData);
-  } 
   
   return wrapper;
 };
@@ -42,9 +46,16 @@ describe('SnapshotUploadList.vue', () => {
     SnapshotsUpload: '<div id="snapshotsUpload"></div>',
   };
 
-  describe('Tests loading successfully', () => {    
+  const getters = {
+    getErrorMessage: () => [],
+    getErrorStatus: () => false,
+    getSuccessMessage: () => () => '',
+    getSuccessStatus: () => () => false,
+  };
+
+  describe('Tests loading successfully', () => {  
     it('should have loaded a Vue instance', () => {
-      const wrapper = createWrapper(stubs, undefined, mocks);
+      const wrapper = createWrapper(stubs, mocks, getters);
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });
@@ -61,7 +72,7 @@ describe('SnapshotUploadList.vue', () => {
           data: snapshotRequests,
         }));
 
-      const wrapper = createWrapper(stubs, undefined, mocks);
+      const wrapper = createWrapper(stubs, mocks, getters);
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
       expect(wrapper.findAll('#snapshotsUpload')).toHaveLength(2);

@@ -23,7 +23,11 @@ const createWrapper = (propsData, wrapperData) => {
 
 describe('SnapshotUpload.vue', () => {
   describe('Tests loading successfully', () => {
-    const wrapper = createWrapper();
+    const propsData = {
+      requestId: 'ab27c74f73ba26561c61cbcc',
+      requestName: 'name', 
+    };
+    const wrapper = createWrapper(propsData);
     
     it('should have loaded a Vue instance', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();

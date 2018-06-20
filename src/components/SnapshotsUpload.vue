@@ -1,8 +1,8 @@
 <template>
   <v-container
     id="uploadContainer" 
-    fluid 
-    grid-list-xl>
+    fluid
+    grid-list-lg>
     <v-layout 
       row 
       justify-center 
@@ -12,6 +12,7 @@
         xs12 
         s4 
         md3>
+        <h2 class="request-title">{{ requestSequence }}. {{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">
@@ -35,7 +36,7 @@
         <label 
           :id="requestId"
           class="btn btn-file btn--block info">
-          {{ requestName }}
+          Tap here to take a photo of your space
           <input 
             id="addImage" 
             type="file" 
@@ -125,6 +126,10 @@ export default {
       type: String,
       required: true,
     },
+    'request-sequence': {
+      type: Number,
+      required: true,
+    },
   },
 
   data() {
@@ -177,11 +182,13 @@ export default {
       if (!this.$v.$error) {
         this.$v.$reset();
         try {
+          debugger;
           let result = await snapshotApi.getSignedPostURL({
             params: {
               imageFileName: Date.now(),
             },
           });
+          debugger;
           this.snapshotData.snapshot.imageURL = result.data.imageURL;
 
           const options = {
@@ -190,8 +197,12 @@ export default {
             },
           };
           await imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
+          debugger;
 
-          result = await snapshotApi.postSnapshot(this.snapshotData.snapshot);
+          const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+          finalSnapshot.requestId = this.requestId;
+          debugger;
+          result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
             this.reset();
             this.UPDATE_SUCCESS_MESSAGE(this.successMessage);

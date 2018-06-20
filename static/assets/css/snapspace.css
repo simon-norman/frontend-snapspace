@@ -19,6 +19,16 @@
     /* background-color: #ffcb05 !important; */
 }
 
+.request-title {
+    font-family: radikal_regular;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.snapshot-upload {
+    margin-bottom: 50px;
+}
+
 .spacelabThin {
     font-family: radikal_thin;
     border-radius: 0;
@@ -29,9 +39,14 @@
     background: transparent !important;
 }
 
+.snapshots-upload-container {
+    margin-top: 100px;
+}
+
 .alert {
     z-index: 1000;
     margin: 0;
     position: fixed;
+    top: 0;
     width: 100%;
 }

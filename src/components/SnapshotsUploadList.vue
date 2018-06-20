@@ -19,13 +19,17 @@
         {{ getErrorMessage }}
       </v-alert>
     </div>
-    <snapshots-upload 
-      v-for="snapshotRequest in snapshotRequests"
-      ref="snapshots"
-      :key="snapshotRequest._id"
-      :request-name="snapshotRequest.name"
-      :request-id="snapshotRequest._id"
-    />
+    <div class="snapshots-upload-container">
+      <snapshots-upload 
+        v-for="snapshotRequest in snapshotRequests"
+        ref="snapshots"
+        :key="snapshotRequest._id"
+        :request-name="snapshotRequest.name"
+        :request-id="snapshotRequest._id"
+        :request-sequence="snapshotRequest.sequence"
+        class="snapshot-upload"
+      />
+    </div>
   </v-layout>
 </template>
 <script>

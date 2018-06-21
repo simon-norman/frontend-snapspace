@@ -167,9 +167,9 @@ export default {
     /*     atatusScript.setAttribute('src', '//dmc1acwvwny3.cloudfront.net/atatus.js');
     document.head.appendChild(atatusScript);
     const atatusConfigScript = document.createElement('script'); */
-    const recaptchaScript = document.createElement('script');
-    recaptchaScript.setAttribute('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
-    recaptchaScript.async = true; 
+    const pingdomScript = document.createElement('script');
+    pingdomScript.setAttribute('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
+    pingdomScript.async = true; 
     /*     atatusConfigScript.setAttribute('type', 'text/javascript');
     atatusConfigScript.text = "atatus.config('ae8d06ae797a47cb8d9bccabeb6114e5').install();"; 
     document.head.appendChild(atatusConfigScript); */

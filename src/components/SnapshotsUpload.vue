@@ -158,6 +158,13 @@ export default {
       return errors;
     },
   },
+
+  created() {
+    const recaptchaScript = document.createElement('script');
+    recaptchaScript.setAttribute('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
+    document.head.appendChild(recaptchaScript);
+  },
+  
   methods: {
     ...mapMutations([
       'UPDATE_ERROR_MESSAGE',
@@ -182,13 +189,11 @@ export default {
       if (!this.$v.$error) {
         this.$v.$reset();
         try {
-          debugger;
           let result = await snapshotApi.getSignedPostURL({
             params: {
               imageFileName: Date.now(),
             },
           });
-          debugger;
           this.snapshotData.snapshot.imageURL = result.data.imageURL;
 
           const options = {
@@ -197,11 +202,9 @@ export default {
             },
           };
           await imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
-          debugger;
 
           const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
           finalSnapshot.requestId = this.requestId;
-          debugger;
           result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
             this.reset();

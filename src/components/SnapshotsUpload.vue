@@ -162,6 +162,7 @@ export default {
   created() {
     const recaptchaScript = document.createElement('script');
     recaptchaScript.setAttribute('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
+    recaptchaScript.async = true;
     document.head.appendChild(recaptchaScript);
   },
   

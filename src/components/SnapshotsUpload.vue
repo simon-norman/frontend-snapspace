@@ -160,19 +160,19 @@ export default {
   },
 
   created() {
-    const atatusScript = document.createElement('script');
+    /* const atatusScript = document.createElement('script'); */
     /* recaptchaScript.setAttribute
     ('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
     recaptchaScript.async = true; */
-    atatusScript.setAttribute('src', '//dmc1acwvwny3.cloudfront.net/atatus.js');
+    /*     atatusScript.setAttribute('src', '//dmc1acwvwny3.cloudfront.net/atatus.js');
     document.head.appendChild(atatusScript);
-    const atatusConfigScript = document.createElement('script');
-    /* recaptchaScript.setAttribute
-    ('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
-    recaptchaScript.async = true; */
-    atatusConfigScript.setAttribute('type', 'text/javascript');
+    const atatusConfigScript = document.createElement('script'); */
+    const recaptchaScript = document.createElement('script');
+    recaptchaScript.setAttribute('src', '//rum-static.pingdom.net/pa-5b2bc90e6a549f0016000042.js');
+    recaptchaScript.async = true; 
+    /*     atatusConfigScript.setAttribute('type', 'text/javascript');
     atatusConfigScript.text = "atatus.config('ae8d06ae797a47cb8d9bccabeb6114e5').install();"; 
-    document.head.appendChild(atatusConfigScript);
+    document.head.appendChild(atatusConfigScript); */
   },
   
   methods: {

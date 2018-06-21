@@ -35,7 +35,7 @@
         md3>
         <label 
           :id="requestId"
-          class="btn btn-file btn--block info">
+          class="btn btn-file btn--block secondary">
           Tap here to take a photo of your space
           <input 
             id="addImage" 
@@ -72,7 +72,7 @@
           label="Tell us more about this"
           multi-line
           required
-          rows="3"
+          rows="2"
         />
       </v-flex>
     </v-layout>  
@@ -87,7 +87,7 @@
         md3>
         <v-btn 
           id="submitSnapshot"
-          class="info"
+          class="secondary"
           block 
           @click="saveSnapshot()">Submit</v-btn>
       </v-flex>

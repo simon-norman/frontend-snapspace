@@ -12,11 +12,12 @@
     font-style: normal;
 }
 
-.btn {
+.secondary.btn {
     font-family: radikal_regular;
     border-radius: 0;
     text-transform: none;
-    /* background-color: #ffcb05 !important; */
+    background-color: #ffcb05 !important;
+    color: black;
 }
 
 .request-title {

@@ -30,15 +30,15 @@
         xs12 
         sm8 
         md4>
-        <v-list >
+        <v-list>
           <v-list-tile 
             v-for="(uiRequest, index) in uiRequests"
-            v-if="uiRequest.isActive" 
+            v-if="uiRequest.snapshotRequest.status === 'active'" 
             :key="uiRequest.uiRequestId">
             <v-text-field 
               :label="'Request ' + (index + 1)" 
               :id="'request' + (uiRequest.uiRequestId)"  
-              :value="uiRequest.snapshotRequest.name"
+              v-model="uiRequest.snapshotRequest.name"
               :error-messages="nameErrors(index)"
               required
               class="requestTitle" 
@@ -68,6 +68,7 @@ import SnapshotRequestApi from '../api/snapshotRequestApi';
 const snapshotRequestApi = new SnapshotRequestApi();
 export default {
   name: 'SnapshotRequests',
+
   data() {
     return {
       submitSuccessAlert: false,
@@ -76,12 +77,13 @@ export default {
         message: '',
       },
       requestIdCounter: 1,
-      clientId: 1,
-      prId: 2,
+      clientId: this.$route.params.clId,
+      projectId: this.$route.params.prId,
       uiRequests: [
       ],
     };
   },
+  
   validations: {
     uiRequests: {
       $each: {
@@ -91,21 +93,19 @@ export default {
       },
     },
   },
-  async mounted() {
-    try {
-      const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.prId);
-      const snapshotRequests = result.data;
-      if (!Array.isArray(snapshotRequests) || !snapshotRequests.length) { 
-        this.addRequest();
-      } else {
-        for (const snapshotRequest of snapshotRequests) {
-          this.addRequest(snapshotRequest);
-        } 
-      }
-    } catch (error) {
-      // placeholder for logging
-    }
+
+  watch: {
+    $route: {
+      // This will be fired before created in component lifecycle
+      handler() {
+        this.clientId = this.$route.params.clId;
+        this.projectId = this.$route.params.prId;
+        this.loadSnapshotRequests();
+      },
+      immediate: true,
+    },
   },
+
   methods: {
     nameErrors(requestIndex) {
       const errors = [];
@@ -114,6 +114,24 @@ export default {
       }
       return errors;
     },
+
+    async loadSnapshotRequests() {
+      this.uiRequests = [];
+      try {
+        const result = await snapshotRequestApi.getSnapshotRequests(this.clientId, this.projectId);
+        const snapshotRequests = result.data;
+        for (const snapshotRequest of snapshotRequests) {
+          this.addRequest(snapshotRequest);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.addRequest();
+        } else {
+        // placeholder for error
+        }
+      }
+    },
+
     addRequest(snapshotRequest) {
       let _id;
       let name;
@@ -123,9 +141,8 @@ export default {
       }
       this.uiRequests.push({ 
         uiRequestId: this.requestIdCounter, 
-        isActive: true,
         snapshotRequest: 
-        { _id, name }, 
+        { _id, name, status: 'active' }, 
       });
       this.incrementRequestId();
     },  
@@ -136,7 +153,7 @@ export default {
 
     deleteRequest(index) {
       if (this.uiRequests[index].snapshotRequest._id) {
-        this.uiRequests[index].isActive = false;
+        this.uiRequests[index].snapshotRequest.status = 'deleted';
       } else {
         this.uiRequests.splice(index, 1);
       }
@@ -148,8 +165,11 @@ export default {
         this.$v.$reset();
         try {
           const postRequests = [];
+          let sequence = 1;
           for (const uiRequest of this.uiRequests) {
+            uiRequest.snapshotRequest.sequence = sequence; 
             postRequests.push(uiRequest.snapshotRequest);
+            sequence += 1;
           }
           const result = 
             await snapshotRequestApi.postRequests(this.clientId, this.projectId, postRequests);
@@ -159,9 +179,6 @@ export default {
               .snapshotRequest._id = snapshotRequest._id;
           }
           window.scrollTo(0, 0);
-          // This line on submitSuccessAlert is causing test to check for errorAlert to fail
-          // as it is running transitions that JSDOM cannot handle - therefore separated 
-          // errorAlert test into separate file
           this.submitSuccessAlert = true;
           setTimeout(() => {
             this.submitSuccessAlert = false;
@@ -173,9 +190,12 @@ export default {
           ('So sorry, there\'s been an error - ' +
           'please contact us or try again later');
           this.errorAlert.active = true;
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
-    },  
+    },
   },
 };
 </script>

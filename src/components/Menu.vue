@@ -1,76 +1,77 @@
 <template>
-  <v-container 
-    fluid 
-    fill-height>
-    <v-layout column>
-      <div>
-        <v-alert 
-          id="errorMessage"
-          v-model="errorAlert.active" 
-          transition="scale-transition"
-          type="error" 
-          dismissible>
-          {{ errorAlert.message }}
-        </v-alert>
-      </div>
-      <v-navigation-drawer
-        stateless
-        value="true"
-      >
-        <v-list>
+  <v-layout column>
+    <div>
+      <v-alert 
+        id="errorMessage"
+        v-model="errorAlert.active" 
+        transition="v-fade-transition"
+        type="error" 
+        dismissible>
+        {{ errorAlert.message }}
+      </v-alert>
+    </div>
+    <v-navigation-drawer
+      fixed
+      stateless
+      value="true"
+    >
+      <v-list>
+        <v-list-tile>
+          <v-text-field 
+            v-model="newClientName"  
+            :error-messages="clientNameErrors()"
+            solo
+            flat
+            label="New client name"
+            required
+            type="text"/>
+          <v-icon
+            id="addClient"   
+            medium
+            @click="addClient()">add</v-icon>
+        </v-list-tile>
+        <v-list-group
+          v-for="(client, clientIndex) in clients"
+          :id="client.persistedClient.name + 'ListGroup'"
+          :key="client.persistedClient.name"
+        >
+          <v-list-tile slot="activator">
+            <v-list-tile-title>{{ client.persistedClient.name }}</v-list-tile-title>
+          </v-list-tile>
           <v-list-tile>
             <v-text-field 
-              v-model="newClientName"  
-              :error-messages="clientNameErrors"
+              :error-messages="projectNameErrors(clientIndex)"
+              :value="getNewProjectName(clientIndex)"
               solo
               flat
-              label="New client name"
+              label="New project name"
               required
-              type="text"/>
+              type="text"
+              @input="newProjectNameAction({clientIndex, newProjectName: $event})"/>
             <v-icon
-              id="addClient"   
+              :id="client.persistedClient.name + 'AddProject'"  
               medium
-              @click="addClient()">add</v-icon>
+              @click="addProject(clientIndex)">add</v-icon>
           </v-list-tile>
-          <v-list-group
-            v-for="(client, index) in clients"
-            :id="client.name + 'ListGroup'"
-            :key="client.name"
-            value="true"
-          >
-            <v-list-tile slot="activator">
-              <v-list-tile-title>{{ client.name }}</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile>
-              <v-text-field 
-                v-model="newProjectName"  
-                solo
-                flat
-                label="New project name"
-                required
-                type="text"/>
-              <v-icon
-                id="addProject"   
-                medium
-                @click="addProject()">add</v-icon>
-            </v-list-tile>
-            <v-list-tile
-              v-for="project in clients[index].projects"
-              :id="project.name + 'ListTile'"
-              :key="project.name"
-              value="true"/>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
-    </v-layout>
-  </v-container>
+          <v-list-tile
+            v-for="project in clients[clientIndex].persistedClient.projects"
+            :id="project.name + 'ListTile'"           
+            :key="project._id"
+            :to="snapshotRequestsLink(client.persistedClient._id, project._id)">
+            <v-list-tile-content>
+              <v-list-tile-title>{{ project.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+  </v-layout>
 </template>
 <script>
 
 import { required } from 'vuelidate/lib/validators';
-import ClientProjectApi from '../api/clientProjectApi';
+import { mapActions, mapGetters } from 'vuex';
 
-const clientProjectApi = new ClientProjectApi();
 export default {
   name: 'Menu',
   data() {
@@ -79,16 +80,49 @@ export default {
         active: false,
         message: '',
       },
-      newProjectName: '',
-      newClientName: '',
-      clients: [
-      ],
     };
   },
   validations: {
     newClientName: { required },
+    clients: {
+      $each: {
+        newProjectName: { required },
+      },
+    },
   },
   computed: {
+    ...mapGetters([
+      'getNewClientName',
+      'getNewProjectName',
+      'getClients',
+    ]),
+    clients() {
+      return this.getClients;
+    },
+    newClientName: {
+      get() {
+        return this.getNewClientName;
+      },
+      set(newClientName) {
+        this.newClientNameAction(newClientName);
+      },
+    },
+  },
+  created() {
+    this.loadClientsAction();
+    // placeholder for mounted
+  },
+  methods: {
+    ...mapActions([
+      'addClientAction',
+      'addProjectAction',
+      'newClientNameAction',
+      'newProjectNameAction',
+      'loadClientsAction',
+    ]),
+    snapshotRequestsLink(clientId, projectId) {
+      return `/client/${clientId}/project/${projectId}/snapshotRequests`;
+    },
     clientNameErrors() {
       const errors = [];
       if (this.$v.newClientName.$error) {
@@ -96,23 +130,54 @@ export default {
       }
       return errors;
     },
-  },
-  async mounted() {
-    // placeholder for mounted
-  },
-  methods: {
+    projectNameErrors(clientIndex) {
+      const errors = [];
+      if (this.$v.clients.$each[clientIndex].newProjectName.$error) {
+        errors.push('');
+      }
+      return errors;
+    },
     async addClient() {
-      this.$v.$touch();
-      
-      if (!this.$v.$error) {
+      this.$v.newClientName.$touch();   
+      if (!this.$v.newClientName.$error) {
         this.$v.$reset();
-        const newClient = { name: this.newClientName };
+        const newClient = { newProjectName: '', persistedClient: { name: this.newClientName } };
 
         try {
-          const result = 
-            await clientProjectApi.postClient(newClient);
-          // should check if result code is 201?
-          this.clients.push(result.data);
+          await this.addClientAction(newClient);
+          this.newClientName = '';
+        } catch (error) {
+          // placeholder for logging
+          if (error.response) {
+            this.errorAlert.message = error.response.data.error.message;
+          } else {
+            this.errorAlert.message = 
+          ('So sorry, there\'s been an error - ' +
+          'please contact us or try again later');
+          }
+          this.errorAlert.active = true; 
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
+        }
+      }
+    },
+    async addProject(clientIndex) {
+      this.$v.clients.$touch();
+      
+      if (!this.$v.clients.$each[clientIndex].newProjectName.$error) {
+        this.$v.$reset();
+        const newProject = { name: this.clients[clientIndex].newProjectName };
+        
+        try {
+          const payload = { 
+            clientId: this.clients[clientIndex].persistedClient._id, 
+            clientIndex,
+            newProject, 
+          };
+          
+          await this.addProjectAction(payload);
+          this.clients[clientIndex].newProjectName = '';
         } catch (error) {
           // placeholder for logging
           if (error.response) {
@@ -123,7 +188,10 @@ export default {
           'please contact us or try again later');
           }
 
-          this.errorAlert.active = true; 
+          this.errorAlert.active = true;  
+          setTimeout(() => {
+            this.errorAlert.active = false;
+          }, 4000);
         }
       }
     },

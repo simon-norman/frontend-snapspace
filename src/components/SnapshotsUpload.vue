@@ -1,26 +1,8 @@
 <template>
   <v-container
     id="uploadContainer" 
-    fluid 
-    grid-list-xl>
-    <div>
-      <v-alert 
-        v-model="submitSuccessAlert" 
-        transition="scale-transition"
-        type="success" 
-        dismissible>
-        Thank you! Keep 'em coming!
-      </v-alert>
-    </div>
-    <div>
-      <v-alert 
-        v-model="errorAlert.active" 
-        transition="scale-transition"
-        type="error" 
-        dismissible>
-        {{ errorAlert.message }}
-      </v-alert>
-    </div>
+    fluid
+    grid-list-lg>
     <v-layout 
       row 
       justify-center 
@@ -30,6 +12,7 @@
         xs12 
         s4 
         md3>
+        <h2 class="request-title">{{ requestSequence }}. {{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">
@@ -51,8 +34,9 @@
         s4 
         md3>
         <label 
-          class="btn btn-file btn--block info">
-          Take a photo of a problem in your workspace
+          :id="requestId"
+          class="btn btn-file btn--block secondary">
+          Tap here to take a photo of your space
           <input 
             id="addImage" 
             type="file" 
@@ -85,10 +69,10 @@
           :error-messages="commentErrors"
           class="spacelabThin"
           name="input-7-1"
-          label="Tell us more about the problem"
+          label="Tell us more about this"
           multi-line
           required
-          rows="3"
+          rows="2"
         />
       </v-flex>
     </v-layout>  
@@ -103,7 +87,7 @@
         md3>
         <v-btn 
           id="submitSnapshot"
-          class="info"
+          class="secondary"
           block 
           @click="saveSnapshot()">Submit</v-btn>
       </v-flex>
@@ -112,6 +96,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
@@ -132,13 +117,26 @@ function getDefaultData() {
 
 export default {
   name: 'SnapshotsUpload',
+  props: {
+    'request-id': { 
+      type: String,
+      required: true,
+    },
+    'request-name': {
+      type: String,
+      required: true,
+    },
+    'request-sequence': {
+      type: Number,
+      required: true,
+    },
+  },
+
   data() {
     return {
-      submitSuccessAlert: false,
-      errorAlert: {
-        active: false,
-        message: '',
-      },
+      successMessage: 'Thank you for your feedback - keep \'em coming!',
+      errorMessage: 'So sorry, there\'s been an error - ' +
+          'please contact us or try again later',
       snapshotData: getDefaultData(),
     };    
   },
@@ -150,6 +148,7 @@ export default {
       imageFile: { required },
     },
   },
+
   computed: {
     commentErrors() {
       const errors = [];
@@ -160,6 +159,12 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'UPDATE_ERROR_MESSAGE',
+      'UPDATE_ERROR_STATUS',
+      'UPDATE_SUCCESS_STATUS',
+      'UPDATE_SUCCESS_MESSAGE',
+    ]),
     addImage(imageFile) {
       if (!imageFile) return;
       this.snapshotData.imageFile = imageFile;
@@ -177,11 +182,13 @@ export default {
       if (!this.$v.$error) {
         this.$v.$reset();
         try {
+          debugger;
           let result = await snapshotApi.getSignedPostURL({
             params: {
               imageFileName: Date.now(),
             },
           });
+          debugger;
           this.snapshotData.snapshot.imageURL = result.data.imageURL;
 
           const options = {
@@ -190,23 +197,27 @@ export default {
             },
           };
           await imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
+          debugger;
 
-          result = await snapshotApi.postSnapshot(this.snapshotData.snapshot);
+          const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+          finalSnapshot.requestId = this.requestId;
+          debugger;
+          result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
-            window.scrollTo(0, 0);
             this.reset();
-            this.submitSuccessAlert = true;
+            this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
+            this.UPDATE_SUCCESS_STATUS(true);
             setTimeout(() => {
-              this.submitSuccessAlert = false;
+              this.UPDATE_SUCCESS_STATUS(false);
             }, 4000);
           }
         } catch (error) {
-          window.scrollTo(0, 0);
           // placeholder for logging
-          this.errorAlert.message = 
-          ('So sorry, there\'s been an error - ' +
-          'please contact us or try again later');
-          this.errorAlert.active = true;
+          this.UPDATE_ERROR_MESSAGE(this.errorMessage);
+          this.UPDATE_ERROR_STATUS(true);
+          setTimeout(() => {
+            this.UPDATE_ERROR_STATUS(false);
+          }, 4000);
         }
       }
     },
@@ -220,8 +231,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-#uploadContainer {
-}
-
 </style>

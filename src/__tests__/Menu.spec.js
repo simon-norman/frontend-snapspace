@@ -1,142 +1,222 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
-import SnapshotRequestApi from '../api/snapshotRequestApi';
+import Vuex from 'vuex';
 import Menu from '../components/Menu.vue';
 
 jest.mock('axios');
 
+const createWrapper = (actions, wrapperData, getters) => {
+  const localVue = createLocalVue();
+  localVue.use(Vuetify);
+  localVue.use(Vuelidate);
+  localVue.use(Vuex);
+
+  const store = new Vuex.Store({
+    state: {},
+    actions,
+    getters,
+  });
+          
+  const wrapper = shallow(Menu, {
+    store,
+    localVue,
+  });
+
+  if (wrapperData) {
+    wrapper.setData(wrapperData);
+  } 
+  
+  return wrapper;
+};
+
 describe('Menu.vue', () => {
   describe('Tests loading successfully', () => {
-    const localVue = createLocalVue();
-    localVue.use(Vuetify);
-    localVue.use(Vuelidate);
-      
-    /* eslint no-unused-vars: 0 */
-    const wrapper = mount(Menu, {
-      localVue,
-    });
-        
     it('should have loaded a Vue instance', () => {
+      const actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      const getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
+      };
+
+      const wrapper = createWrapper(actions, undefined, getters); 
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });
 
   describe('Add client', () => {
     let wrapper; 
+    let actions;
+    let getters;
 
     beforeEach(() => {
-      mockAxios.post.mockReset();
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-          
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(Menu, {
-        localVue,
-      });
+      actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
+      };
     });
-        
-    it('should post client to server and, if successful, add client to client list', async () => {
-      const newClientName = 'Client';
-      const returnedClient = { _id: 3, name: newClientName };
-      mockAxios.post.mockImplementation(() =>
-        Promise.resolve({
-          data: returnedClient,
-        }));
-      
-      wrapper.setData({ 
-        newClientName,
-        clients: [], 
-      });
+
+    it('should save client to store', async () => {
+      wrapper = createWrapper(actions, undefined, getters);    
+
       wrapper.find('#addClient').trigger('click');
 
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.clients[0]._id).toBe(returnedClient._id);
+      expect(actions.addClientAction).toHaveBeenCalled();
+    });
+
+    it('should add new client to client list', async () => {
+      const clientActionData = { newProjectName: '', persistedClient: { name: 'Client' } };
+
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);  
+
+      wrapper.find('#addClient').trigger('click');
+
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      expect(actions.addClientAction).toHaveBeenCalled();
+      expect(actions.addClientAction.mock.calls[0][1]).toEqual(clientActionData);
       expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
     });
 
-    it('should display error request me to add name if name not populated', async () => {
+    it('should display error request to add name if name not populated', async () => {
+      getters.getNewClientName = () => '';
+      wrapper = createWrapper(actions, undefined, getters);  
       wrapper.find('#addClient').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.find('.input-group--error').exists()).toBeTruthy();
     });
 
     it('should not add client if name is not populated', async () => {
+      getters.getNewClientName = () => '';
+      wrapper = createWrapper(actions, undefined, getters);  
       wrapper.find('#addClient').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.find('#ClientListGroup').exists()).toBeFalsy();
       expect(mockAxios.post).toHaveBeenCalledTimes(0);
     });
-  });
-  describe('Error when save requests fails', () => {
-    let wrapper; 
-    let newRequests; 
-    let savedRequests;
-      
-    beforeEach(() => {
-      mockAxios.post.mockReset();
-      mockAxios.post.mockImplementation(() => {
+
+    it('should show an error if save was not successful', async () => {
+      actions.addClientAction = jest.fn(() => {
         throw new Error('Server error');
       });
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-          
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(Menu, {
-        localVue,
-      });
-    });
-  
-    it('should show an error if save was not successful', async () => {
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true);
-      const newClientName = 'Client';
-      wrapper.setData({ 
-        newClientName,
-        clients: [], 
-      });
+
+      wrapper = createWrapper(actions, undefined, getters);  
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true); 
+
       wrapper.find('#addClient').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
     });
   });
+
   describe('Add project', () => {
     let wrapper; 
+    let actions;
+    let getters;
+    let newProjectName;
 
     beforeEach(() => {
-      mockAxios.post.mockReset();
-      const localVue = createLocalVue();
-      localVue.use(Vuetify);
-      localVue.use(Vuelidate);
-          
-      /* eslint no-unused-vars: 0 */
-      wrapper = mount(Menu, {
-        localVue,
-      });
+      actions = {
+        addClientAction: jest.fn(() => Promise.resolve({})),
+        addProjectAction: jest.fn(() => Promise.resolve({})),
+        newClientNameAction: jest.fn(() => Promise.resolve({})),
+        newProjectNameAction: jest.fn(() => Promise.resolve({})),
+        loadClientsAction: jest.fn(() => Promise.resolve({})),
+      };
+
+      getters = {
+        getClients: () => [],
+        getNewClientName: () => 'Client',
+        getNewProjectName: () => () => '',
+      };
     });
         
-    it.only('should post project to server and, if successful, add project to project list', async () => {
-      const newProjectName = 'Project';
-      const returnedProject = { _id: 3, name: newProjectName };
-      mockAxios.post.mockImplementation(() =>
-        Promise.resolve({
-          data: returnedProject,
-        }));
-      
-      wrapper.setData({ 
-        clients: [{
-          name: 'Client', _id: 1, newProjectName, projects: [], 
-        }], 
-      });
-      wrapper.find('#addProject').trigger('click');
+    it('should save project with store action', async () => {
+      newProjectName = 'newProject';
+      const payload = { clientId: 1, clientIndex: 0, newProject: { name: newProjectName } };
 
+      getters.getNewProjectName = () => () => newProjectName;
+
+      const clientActionData = {
+        newProjectName, 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [],
+        }, 
+      };
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);  
+      wrapper.find('#ClientAddProject').trigger('click');
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.clients[0].projects[0]._id).toBe(returnedProject._id);
-      expect(wrapper.find('#ClientListGroup').exists()).toBeTruthy();
+      expect(actions.addProjectAction.mock.calls[0][1]).toEqual(payload);
+    });
+
+    it('should display projects in the store', async () => {
+      const projectName = 'project';
+
+      const clientActionData = { 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [{ _id: 3, name: projectName }],
+        }, 
+      };
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);     
+      expect(wrapper.find(`#${projectName}ListTile`).exists()).toBeTruthy();
+    });
+
+    it('should show an error if save was not successful', async () => {
+      actions.addProjectAction = jest.fn(() => {
+        throw new Error('Server error');
+      });
+
+      newProjectName = 'newProject';
+      getters.getNewProjectName = () => () => newProjectName;
+
+      const clientActionData = {
+        newProjectName, 
+        persistedClient: { 
+          name: 'Client', 
+          _id: 1,
+          projects: [],
+        }, 
+      };
+      getters.getClients = () => [clientActionData];
+
+      wrapper = createWrapper(actions, undefined, getters);  
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true); 
+
+      wrapper.find('#ClientAddProject').trigger('click');
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
     });
   });
 });

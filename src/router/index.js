@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import SnapshotsUpload from '@/components/SnapshotsUpload.vue';
+import SnapshotsUploadList from '@/components/SnapshotsUploadList.vue';
 import SnapshotsView from '@/components/SnapshotsView.vue';
 import Menu from '@/components/Menu.vue';
 import SnapshotRequests from '@/components/SnapshotRequests.vue';
@@ -10,9 +10,9 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'snapshots/upload',
-      component: SnapshotsUpload,
+      path: '/client/:clId/project/:prId/snapshots/upload',
+      name: 'snapshotsUpload',
+      component: SnapshotsUploadList,
     },
     {
       path: '/snapshots/view',
@@ -25,9 +25,9 @@ export default new Router({
       component: Menu,
     },
     {
-      path: '/snapshotRequests',
+      path: '/client/:clId/project/:prId/snapshotRequests',
       name: 'snapshotRequests',
-      component: SnapshotRequests,
+      components: { default: SnapshotRequests, menu: Menu },
     },
   ],
 });

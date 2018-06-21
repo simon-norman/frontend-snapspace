@@ -12,8 +12,8 @@ export default class SnapshotRequestApi extends Api {
     return finalRequestsPath.replace('projectId', projectId);
   }
 
-  getSnapshotRequests(clientId, projectId, body) {
-    return this.axios.get(this.requestsPath(clientId, projectId), body);
+  getSnapshotRequests(clientId, projectId) {
+    return this.axios.get(this.requestsPath(clientId, projectId));
   }
 
   postRequests(clientId, projectId, body) {

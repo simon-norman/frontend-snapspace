@@ -32,6 +32,8 @@ module.exports = {
     'linebreak-style': ["error", "windows"],
     "import/no-unresolved": "off",
     "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "import/prefer-default-export": 0,
+    "no-param-reassign": 0
   }
 }

@@ -45,6 +45,7 @@ const actions = {
   //     // error handle 
   //   }
   // }),
+  // Add try and catch 
   async addClientAction(context, payload) {
     try {
       const result = await clientProjectApi.postClient(payload.persistedClient);
@@ -58,10 +59,9 @@ const actions = {
   },
   addProjectAction: ({ commit }, payload) => new Promise(async (resolve, reject) => {
     try {
-      const result = await clientProjectApi.postProject(payload.clientId, payload.newProject);
-      const savedProject = result.data;
+      const { data } = await clientProjectApi.postProject(payload.clientId, payload.newProject);
       const finalPayload = payload;
-      finalPayload.savedProject = savedProject;
+      finalPayload.savedProject = data;
       commit('ADD_PROJECT', finalPayload);
       resolve();
     } catch (error) {

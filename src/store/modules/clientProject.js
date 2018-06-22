@@ -8,7 +8,7 @@ const mutations = {
   },
 
   ADD_PROJECT: (state, payload) => {
-    state.clients[payload.clientIndex].persistedClient.projects.push(payload.savedProject);
+    state.clients[payload.clientIndex].savedClient.projects.push(payload.savedProject);
   },
 
   UPDATE_NEW_CLIENT_NAME: (state, payload) => {
@@ -25,57 +25,42 @@ const mutations = {
 
 const actions = {
   loadClientsAction: async ({ commit }) => {
-    const result = await clientProjectApi.getClients();
-    const clients = result.data;
+    const { data } = await clientProjectApi.getClients();
+
     const payload = [];
-    for (const client of clients) {
-      payload.push({ newProjectName: '', persistedClient: client });
+    for (const client of data) {
+      payload.push({ newProjectName: '', savedClient: client });
     }
+
     commit('LOAD_CLIENTS', payload);
   },
 
-  // addClientAction: (context, payload) => new Promise(async (resolve, reject) => {
-  //   try {
-  //     const result = await clientProjectApi.postClient(payload.persistedClient);
-  //     payload.persistedClient = result.data;
-  //     context.commit('ADD_CLIENT', payload);
-  //     resolve();
-  //   } catch (error) {
-  //     reject(error);
-  //     // error handle 
-  //   }
-  // }),
-  // Add try and catch 
   async addClientAction(context, payload) {
     try {
-      const result = await clientProjectApi.postClient(payload.persistedClient);
-      payload.persistedClient = result.data;
-      context.commit('ADD_CLIENT', payload);
+      const { data } = await clientProjectApi.postClient(payload.newClient);
+
+      const finalPayload = Object.assign({}, payload);
+      finalPayload.savedClient = data;
+      context.commit('ADD_CLIENT', finalPayload);
+
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
-      // error handle 
     }
   },
-  addProjectAction: ({ commit }, payload) => new Promise(async (resolve, reject) => {
+
+  async addProjectAction({ commit }, payload) {
     try {
       const { data } = await clientProjectApi.postProject(payload.clientId, payload.newProject);
-      const finalPayload = payload;
+
+      const finalPayload = Object.assign({}, payload);
       finalPayload.savedProject = data;
       commit('ADD_PROJECT', finalPayload);
-      resolve();
-    } catch (error) {
-      reject(error);
-    // error handle 
-    }
-  }),
 
-  newClientNameAction: ({ commit }, payload) => {
-    commit('UPDATE_NEW_CLIENT_NAME', payload);
-  },
-  
-  newProjectNameAction: ({ commit }, payload) => {
-    commit('UPDATE_NEW_PROJECT_NAME', payload);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   },
 };
 

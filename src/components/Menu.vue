@@ -32,11 +32,11 @@
         </v-list-tile>
         <v-list-group
           v-for="(client, clientIndex) in clients"
-          :id="client.persistedClient.name + 'ListGroup'"
-          :key="client.persistedClient.name"
+          :id="client.savedClient.name + 'ListGroup'"
+          :key="client.savedClient.name"
         >
           <v-list-tile slot="activator">
-            <v-list-tile-title>{{ client.persistedClient.name }}</v-list-tile-title>
+            <v-list-tile-title>{{ client.savedClient.name }}</v-list-tile-title>
           </v-list-tile>
           <v-list-tile>
             <v-text-field 
@@ -47,17 +47,17 @@
               label="New project name"
               required
               type="text"
-              @input="newProjectNameAction({clientIndex, newProjectName: $event})"/>
+              @input="UPDATE_NEW_PROJECT_NAME({clientIndex, newProjectName: $event})"/>
             <v-icon
-              :id="client.persistedClient.name + 'AddProject'"  
+              :id="client.savedClient.name + 'AddProject'"  
               medium
               @click="addProject(clientIndex)">add</v-icon>
           </v-list-tile>
           <v-list-tile
-            v-for="project in clients[clientIndex].persistedClient.projects"
+            v-for="project in clients[clientIndex].savedClient.projects"
             :id="project.name + 'ListTile'"           
             :key="project._id"
-            :to="snapshotRequestsLink(client.persistedClient._id, project._id)">
+            :to="snapshotRequestsLink(client.savedClient._id, project._id)">
             <v-list-tile-content>
               <v-list-tile-title>{{ project.name }}</v-list-tile-title>
             </v-list-tile-content>
@@ -70,18 +70,23 @@
 <script>
 
 import { required } from 'vuelidate/lib/validators';
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
   name: 'Menu',
+
   data() {
     return {
       errorAlert: {
         active: false,
         message: '',
       },
+      errorAlertMessages: {
+        generalError: 'So sorry, there\'s been an error - please contact us or try again later',
+      },
     };
   },
+
   validations: {
     newClientName: { required },
     clients: {
@@ -90,108 +95,110 @@ export default {
       },
     },
   },
+
   computed: {
     ...mapGetters([
       'getNewClientName',
       'getNewProjectName',
       'getClients',
     ]),
-    clients() {
-      return this.getClients;
-    },
+
     newClientName: {
       get() {
         return this.getNewClientName;
       },
       set(newClientName) {
-        this.newClientNameAction(newClientName);
+        this.UPDATE_NEW_CLIENT_NAME(newClientName);
       },
     },
+
+    clients() {
+      return this.getClients;
+    },
   },
+
   created() {
     this.loadClientsAction();
-    // placeholder for mounted
   },
+
   methods: {
     ...mapActions([
       'addClientAction',
       'addProjectAction',
-      'newClientNameAction',
-      'newProjectNameAction',
       'loadClientsAction',
     ]),
+
+    ...mapMutations([
+      'UPDATE_NEW_CLIENT_NAME',
+      'UPDATE_NEW_PROJECT_NAME',
+    ]),
+
     snapshotRequestsLink(clientId, projectId) {
       return `/client/${clientId}/project/${projectId}/snapshotRequests`;
     },
+
     clientNameErrors() {
-      const errors = [];
+      const validationErrors = [];
       if (this.$v.newClientName.$error) {
-        errors.push('');
+        validationErrors.push('');
       }
-      return errors;
+      return validationErrors;
     },
+
     projectNameErrors(clientIndex) {
-      const errors = [];
+      const validationErrors = [];
       if (this.$v.clients.$each[clientIndex].newProjectName.$error) {
-        errors.push('');
+        validationErrors.push('');
       }
-      return errors;
+      return validationErrors;
     },
+
+    handleServerError(error) {
+      if (error.response) {
+        this.displayErrorAlert(error.response.data.error.message);
+      } else {
+        this.displayErrorAlert(this.errorAlertMessages.generalError);
+      }
+    },
+
+    displayErrorAlert(message) {
+      this.errorAlert.message = message;
+      this.errorAlert.active = true; 
+
+      setTimeout(() => {
+        this.errorAlert.active = false;
+      }, 4000);
+    },
+
     async addClient() {
       this.$v.newClientName.$touch();   
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
-        const newClient = { newProjectName: '', persistedClient: { name: this.newClientName } };
-
         try {
-          await this.addClientAction(newClient);
+          const newClientUi = { newProjectName: '', newClient: { name: this.newClientName } };
+          await this.addClientAction(newClientUi);
           this.newClientName = '';
         } catch (error) {
-          // placeholder for logging
-          if (error.response) {
-            this.errorAlert.message = error.response.data.error.message;
-          } else {
-            this.errorAlert.message = 
-          ('So sorry, there\'s been an error - ' +
-          'please contact us or try again later');
-          }
-          this.errorAlert.active = true; 
-          setTimeout(() => {
-            this.errorAlert.active = false;
-          }, 4000);
+          this.handleServerError(error);
         }
       }
     },
+
     async addProject(clientIndex) {
       this.$v.clients.$touch();
-      
       if (!this.$v.clients.$each[clientIndex].newProjectName.$error) {
         this.$v.$reset();
-        const newProject = { name: this.clients[clientIndex].newProjectName };
-        
         try {
+          const newProject = { name: this.clients[clientIndex].newProjectName }; 
           const payload = { 
-            clientId: this.clients[clientIndex].persistedClient._id, 
+            clientId: this.clients[clientIndex].savedClient._id, 
             clientIndex,
             newProject, 
           };
-          
           await this.addProjectAction(payload);
           this.clients[clientIndex].newProjectName = '';
         } catch (error) {
-          // placeholder for logging
-          if (error.response) {
-            this.errorAlert.message = error.response.data.error.message;
-          } else {
-            this.errorAlert.message = 
-          ('So sorry, there\'s been an error - ' +
-          'please contact us or try again later');
-          }
-
-          this.errorAlert.active = true;  
-          setTimeout(() => {
-            this.errorAlert.active = false;
-          }, 4000);
+          this.handleServerError(error);
         }
       }
     },

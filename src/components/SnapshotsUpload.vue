@@ -183,7 +183,7 @@ export default {
       
       if (!this.$v.$error) {
         this.$v.$reset();
-        
+
         try {
           let result = await snapshotApi.getSignedPostURL({
             params: {
@@ -197,7 +197,10 @@ export default {
               'Content-Type': this.snapshotData.imageFile.type,
             },
           };
-          await imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
+          imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options)
+            .catch((error) => {
+              console.log(error);
+            });
 
           const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
           finalSnapshot.requestId = this.requestId;

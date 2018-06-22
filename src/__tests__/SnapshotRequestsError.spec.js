@@ -8,7 +8,7 @@ import SnapshotRequests from '../components/SnapshotRequests.vue';
 // stops it from throwing errors in testing
 global.scrollTo = () => {};
 
-const createWrapper = (mocks) => {
+const createWrapper = (mocks, propsData) => {
   const localVue = createLocalVue();
   localVue.use(Vuetify);
   localVue.use(Vuelidate);
@@ -16,6 +16,7 @@ const createWrapper = (mocks) => {
   const wrapper = mount(SnapshotRequests, {
     localVue,
     mocks,
+    propsData,
   });
   
   return wrapper;

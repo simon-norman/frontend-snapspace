@@ -197,15 +197,21 @@ export default {
               'Content-Type': this.snapshotData.imageFile.type,
             },
           };
+          console.log('Amazon go!');
           imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options)
+            .then(() => {
+              console.log('Amazon done!');
+            })
             .catch((error) => {
               console.log(error);
             });
+          console.log('Passed Amazon!');
 
           const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
           finalSnapshot.requestId = this.requestId;
           result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
+            console.log('All done!');
             this.reset();
             this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
             this.UPDATE_SUCCESS_STATUS(true);

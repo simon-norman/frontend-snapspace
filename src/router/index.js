@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import SnapshotsUploadList from '@/components/SnapshotsUploadList.vue';
 import SnapshotsView from '@/components/SnapshotsView.vue';
 import Menu from '@/components/Menu.vue';
 import SnapshotRequests from '@/components/SnapshotRequests.vue';
+
+const SnapshotsUploadList = () => import('@/components/SnapshotsUploadList.vue');
 
 Vue.use(Router);
 

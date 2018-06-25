@@ -99,10 +99,12 @@
 import { mapMutations } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
+import LogMessageApi from '../api/logMessageApi';
 import ImageApi from '../api/imageApi';
 
 const snapshotApi = new SnapshotApi();
 const imageApi = new ImageApi();
+const logMessageApi = new LogMessageApi();
 
 function getDefaultData() {
   return {
@@ -197,20 +199,24 @@ export default {
               'Content-Type': this.snapshotData.imageFile.type,
             },
           };
-          console.log('Amazon go!');
+
+          logMessageApi.logMessageToServer('About to send image to AWS');
+
           imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options)
             .then(() => {
-              console.log('Amazon done!');
+              logMessageApi.logMessageToServer('AWS request complete');
             })
             .catch((error) => {
               console.log(error);
             });
-          console.log('Passed Amazon!');
+
+          logMessageApi.logMessageToServer('Image sent to AWS');
 
           const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
           finalSnapshot.requestId = this.requestId;
           result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
+            logMessageApi.logMessageToServer('Snapshot saved');
             console.log('All done!');
             this.reset();
             this.UPDATE_SUCCESS_MESSAGE(this.successMessage);

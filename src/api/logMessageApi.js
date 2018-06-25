@@ -8,6 +8,6 @@ export default class LogErrorApi extends Api {
   }
 
   logMessageToServer(message) {
-    return this.axios.post(this.messageLogPath, message);
+    this.axios.post(this.messageLogPath, message);
   }
 }

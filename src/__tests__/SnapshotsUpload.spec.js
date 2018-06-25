@@ -109,7 +109,7 @@ describe('SnapshotUpload.vue', () => {
           imageFile: 'data',
           localImageDisplay: '',
           snapshot: {
-            imageURL: '',
+            imageUrl: '',
             comment: '',
           },
         },

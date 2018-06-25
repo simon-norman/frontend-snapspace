@@ -12,7 +12,7 @@
         xs12 
         s4 
         md3>
-        <h2 class="request-title">{{ requestSequence }}. {{ requestName }}</h2>  
+        <h2 class="request-title">{{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">
@@ -99,19 +99,17 @@
 import { mapMutations } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
-import LogMessageApi from '../api/logMessageApi';
 import ImageApi from '../api/imageApi';
 
 const snapshotApi = new SnapshotApi();
 const imageApi = new ImageApi();
-const logMessageApi = new LogMessageApi();
 
 function getDefaultData() {
   return {
     imageFile: '',
     localImageDisplay: '',
     snapshot: {
-      imageURL: '',
+      imageUrl: '',
       comment: '',
     },
   };
@@ -187,12 +185,12 @@ export default {
         this.$v.$reset();
 
         try {
-          let result = await snapshotApi.getSignedPostURL({
+          let result = await snapshotApi.getImageUploadConfig({
             params: {
               imageFileName: Date.now(),
             },
           });
-          this.snapshotData.snapshot.imageURL = result.data.imageURL;
+          this.snapshotData.snapshot.imageUrl = result.data.imageUrl;
 
           const options = {
             headers: {
@@ -200,18 +198,11 @@ export default {
             },
           };
 
-          logMessageApi.logMessageToServer('About to send image to AWS');
-
-          imageApi.putImage(result.data.signedAWSURL, this.snapshotData.imageFile, options);
-
-          logMessageApi.logMessageToServer('Image sent to AWS');
-
+          imageApi.putImage(result.data.signedImageUploadUrl, this.snapshotData.imageFile, options);
           const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
           finalSnapshot.requestId = this.requestId;
           result = await snapshotApi.postSnapshot(finalSnapshot);
           if (result.status === 200) {
-            logMessageApi.logMessageToServer('Snapshot saved');
-            console.log('All done!');
             this.reset();
             this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
             this.UPDATE_SUCCESS_STATUS(true);

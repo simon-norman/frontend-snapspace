@@ -4,13 +4,13 @@ export default class SnapshotApi extends Api {
   constructor() {
     super({ baseURL: process.env.SNAPSPACE_API });
     
-    this.signedURLPath = '/image-aws-config';
+    this.imageUploadConfigPath = '/image-upload-config';
     this.snapshotPath = '/snapshot';
     this.snapshotsPath = '/snapshots';
   }
 
-  getSignedPostURL(params) {
-    return this.axios.get(this.signedURLPath, params);
+  getImageUploadConfig(params) {
+    return this.axios.get(this.imageUploadConfigPath, params);
   }
   
   postSnapshot(params) {

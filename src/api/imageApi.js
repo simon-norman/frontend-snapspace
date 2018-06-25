@@ -5,6 +5,6 @@ export default class ImageApi extends Api {
     super({ baseURL: '' });
   }
   putImage(URL, imageFile, params) {
-    return this.axios.put(URL, imageFile, params);
+    this.axios.put(URL, imageFile, params);
   }
 }

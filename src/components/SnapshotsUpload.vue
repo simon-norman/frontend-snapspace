@@ -12,7 +12,7 @@
         xs12 
         s4 
         md3>
-        <h2 class="request-title">{{ requestSequence }}. {{ requestName }}</h2>  
+        <h2 class="request-title">{{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">

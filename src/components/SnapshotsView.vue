@@ -16,7 +16,7 @@
             flat 
             color="transparent">
             <v-card-media 
-              :src="snapshot.imageURL" 
+              :src="snapshot.imageUrl" 
               contain 
               height="200px"/>
             <v-card-text 

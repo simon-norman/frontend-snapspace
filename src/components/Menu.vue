@@ -1,15 +1,5 @@
 <template>
   <v-layout column>
-    <div>
-      <v-alert 
-        id="errorMessage"
-        v-model="errorAlert.active" 
-        transition="v-fade-transition"
-        type="error" 
-        dismissible>
-        {{ errorAlert.message }}
-      </v-alert>
-    </div>
     <v-navigation-drawer
       fixed
       stateless
@@ -131,6 +121,8 @@ export default {
     ...mapMutations([
       'UPDATE_NEW_CLIENT_NAME',
       'UPDATE_NEW_PROJECT_NAME',
+      'UPDATE_ERROR_MESSAGE',
+      'UPDATE_ERROR_STATUS',
     ]),
 
     snapshotRequestsLink(clientId, projectId) {
@@ -162,11 +154,10 @@ export default {
     },
 
     displayErrorAlert(message) {
-      this.errorAlert.message = message;
-      this.errorAlert.active = true; 
-
+      this.UPDATE_ERROR_MESSAGE(message);
+      this.UPDATE_ERROR_STATUS(true);
       setTimeout(() => {
-        this.errorAlert.active = false;
+        this.UPDATE_ERROR_STATUS(false);
       }, 4000);
     },
 

@@ -12,16 +12,6 @@
         Success! WELL DONE YOU!!!!!!
       </v-alert>
     </div>
-    <div>
-      <v-alert 
-        id="errorMessage"
-        v-model="errorAlert.active" 
-        transition="scale-transition"
-        type="error" 
-        dismissible>
-        {{ errorAlert.message }}
-      </v-alert>
-    </div>
     <v-layout 
       align-center 
       justify-center>
@@ -64,6 +54,9 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
 import SnapshotRequestApi from '../api/snapshotRequestApi';
+import ErrorHandler from '../error_handler/ErrorHandler';
+
+const errorHandler = new ErrorHandler();
 
 const snapshotRequestApi = new SnapshotRequestApi();
 export default {
@@ -72,10 +65,6 @@ export default {
   data() {
     return {
       submitSuccessAlert: false,
-      errorAlert: {
-        active: false,
-        message: '',
-      },
       requestIdCounter: 1,
       clientId: this.$route.params.clId,
       projectId: this.$route.params.prId,
@@ -184,15 +173,7 @@ export default {
             this.submitSuccessAlert = false;
           }, 4000);
         } catch (error) {
-          window.scrollTo(0, 0);
-          // placeholder for logging
-          this.errorAlert.message = 
-          ('So sorry, there\'s been an error - ' +
-          'please contact us or try again later');
-          this.errorAlert.active = true;
-          setTimeout(() => {
-            this.errorAlert.active = false;
-          }, 4000);
+          errorHandler.handleError(error);
         }
       }
     },

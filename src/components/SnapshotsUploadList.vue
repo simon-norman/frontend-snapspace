@@ -10,15 +10,6 @@
         {{ getSuccessMessage }}
       </v-alert>
     </div>
-    <div>
-      <v-alert 
-        :value="getErrorStatus"  
-        transition="scale-transition"
-        type="error" 
-        dismissible>
-        {{ getErrorMessage }}
-      </v-alert>
-    </div>
     <div class="snapshots-upload-container">
       <snapshots-upload 
         v-for="snapshotRequest in snapshotRequests"
@@ -54,8 +45,6 @@ export default {
   },    
   computed: {
     ...mapGetters([
-      'getErrorMessage',
-      'getErrorStatus',
       'getSuccessMessage',
       'getSuccessStatus',
     ]),

@@ -105,6 +105,10 @@
       "json",
       "vue"
     ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/__tests__/__helpers__",
+      "<rootDir>/src/__tests__/__mocks__"
+    ],
     "setupTestFrameworkScriptFile": "jest-extended",
     "transform": {
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest",

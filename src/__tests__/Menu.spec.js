@@ -4,8 +4,10 @@ import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
 import Vuex from 'vuex';
 import Menu from '../components/Menu.vue';
+import mockErrorHandler from '../error_handler/ErrorHandler';
 
 jest.mock('axios');
+jest.mock('../error_handler/ErrorHandler');
 
 const createWrapper = (actions, getters, mutations) => {
   const localVue = createLocalVue();
@@ -135,18 +137,19 @@ describe('Menu.vue', () => {
       expect(mockAxios.post).toHaveBeenCalledTimes(0);
     });
 
-    it('should show an error if save was not successful', async () => {
+    it('should call error handler if save was not successful', async () => {
+      const errorMessage = 'Client server error';
       actions.addClientAction = jest.fn(() => {
-        throw new Error('Server error');
+        throw new Error(errorMessage);
       });
       wrapper = createWrapper(actions, getters, mutations);   
 
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true); 
       wrapper.find('#addClient').trigger('click');
 
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
+      const mockHandleError = mockErrorHandler.mock.instances[0].handleError;
+      expect(mockHandleError.mock.calls[0][0].message).toEqual(errorMessage);
     });
   });
 
@@ -185,9 +188,10 @@ describe('Menu.vue', () => {
       expect(wrapper.find(`#${savedProjectName}ListTile`).exists()).toBeTruthy();
     });
 
-    it('should show an error if save was not successful', async () => {
+    it('should call error handler if save was not successful', async () => {
+      const errorMessage = 'Project server error';
       actions.addProjectAction = jest.fn(() => {
-        throw new Error('Server error');
+        throw new Error(errorMessage);
       });
 
       const savedClientData = getSavedClientData();
@@ -201,7 +205,8 @@ describe('Menu.vue', () => {
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
+      const mockHandleError = mockErrorHandler.mock.instances[0].handleError;
+      expect(mockHandleError.mock.calls[1][0].message).toEqual(errorMessage);
     });
   });
 });

@@ -61,6 +61,9 @@
 
 import { required } from 'vuelidate/lib/validators';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+import ErrorHandler from '../error_handler/ErrorHandler';
+
+const errorHandler = new ErrorHandler();
 
 export default {
   name: 'Menu',
@@ -121,8 +124,6 @@ export default {
     ...mapMutations([
       'UPDATE_NEW_CLIENT_NAME',
       'UPDATE_NEW_PROJECT_NAME',
-      'UPDATE_ERROR_MESSAGE',
-      'UPDATE_ERROR_STATUS',
     ]),
 
     snapshotRequestsLink(clientId, projectId) {
@@ -145,22 +146,6 @@ export default {
       return validationErrors;
     },
 
-    handleServerError(error) {
-      if (error.response) {
-        this.displayErrorAlert(error.response.data.error.message);
-      } else {
-        this.displayErrorAlert(this.errorAlertMessages.generalError);
-      }
-    },
-
-    displayErrorAlert(message) {
-      this.UPDATE_ERROR_MESSAGE(message);
-      this.UPDATE_ERROR_STATUS(true);
-      setTimeout(() => {
-        this.UPDATE_ERROR_STATUS(false);
-      }, 4000);
-    },
-
     async addClient() {
       this.$v.newClientName.$touch();   
       if (!this.$v.newClientName.$error) {
@@ -170,7 +155,7 @@ export default {
           await this.addClientAction(newClientUi);
           this.newClientName = '';
         } catch (error) {
-          this.handleServerError(error);
+          errorHandler.handleError(error);
         }
       }
     },
@@ -189,7 +174,7 @@ export default {
           await this.addProjectAction(payload);
           this.clients[clientIndex].newProjectName = '';
         } catch (error) {
-          this.handleServerError(error);
+          errorHandler.handleError(error);
         }
       }
     },

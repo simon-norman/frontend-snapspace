@@ -100,7 +100,9 @@ import { mapMutations } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
+import ErrorHandler from '../error_handler/ErrorHandler';
 
+const errorHandler = new ErrorHandler();
 const snapshotApi = new SnapshotApi();
 const imageApi = new ImageApi();
 
@@ -135,8 +137,6 @@ export default {
   data() {
     return {
       successMessage: 'Thank you for your feedback - keep \'em coming!',
-      errorMessage: 'So sorry, there\'s been an error - ' +
-          'please contact us or try again later',
       snapshotData: getDefaultData(),
     };    
   },
@@ -161,8 +161,6 @@ export default {
   
   methods: {
     ...mapMutations([
-      'UPDATE_ERROR_MESSAGE',
-      'UPDATE_ERROR_STATUS',
       'UPDATE_SUCCESS_STATUS',
       'UPDATE_SUCCESS_MESSAGE',
     ]),
@@ -212,11 +210,7 @@ export default {
           }
         } catch (error) {
           // placeholder for logging
-          this.UPDATE_ERROR_MESSAGE(this.errorMessage);
-          this.UPDATE_ERROR_STATUS(true);
-          setTimeout(() => {
-            this.UPDATE_ERROR_STATUS(false);
-          }, 4000);
+          errorHandler.handleError(error);
         }
       }
     },

@@ -59,6 +59,34 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug Alert Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "Alert.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Error Handler Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "ErrorHandler.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug Snapshot Upload List Tests",
             "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
             "args": [

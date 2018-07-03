@@ -4,6 +4,10 @@ import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
 import SnapshotRequests from '../components/SnapshotRequests.vue';
 
+import mockErrorHandler from '../error_handler/ErrorHandler';
+
+jest.mock('../error_handler/ErrorHandler');
+
 // stubbing Window.scrollTo as scrollTo not provided in JSDOM
 // stops it from throwing errors in testing
 global.scrollTo = () => {};
@@ -37,10 +41,11 @@ describe('SnapshotRequests.vue', () => {
       };
 
       const wrapper = createWrapper(mocks);
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(true);
+
+      const errorMessage = 'Requests server error';
 
       mockAxios.post.mockImplementation(() => {
-        throw new Error('Server error');
+        throw new Error(errorMessage);
       });
 
       wrapper.find('#saveRequests').trigger('click');
@@ -48,7 +53,8 @@ describe('SnapshotRequests.vue', () => {
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
       
-      expect(wrapper.find('#errorMessage').hasStyle('display', 'none')).toBe(false);
+      const mockHandleError = mockErrorHandler.mock.instances[0].handleError;
+      expect(mockHandleError.mock.calls[0][0].message).toEqual(errorMessage);
     });
   });
 });

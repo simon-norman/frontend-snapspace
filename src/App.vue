@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-content>
+      <router-view name="alert"/>
       <router-view name="menu"/>
       <router-view/>
     </v-content>

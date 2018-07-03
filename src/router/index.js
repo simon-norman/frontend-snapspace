@@ -14,17 +14,17 @@ export default new Router({
     {
       path: '/client/:clId/project/:prId/snapshots/upload',
       name: 'snapshotsUpload',
-      components: { SnapshotsUploadList, alert: Alert },
+      components: { default: SnapshotsUploadList, alert: Alert },
     },
     {
       path: '/snapshots/view',
       name: 'snapshots/view',
-      components: { SnapshotsView, alert: Alert },
+      components: { default: SnapshotsView, alert: Alert },
     },
     {
       path: '/home',
       name: 'home',
-      components: { Menu, alert: Alert },
+      components: { default: Menu, alert: Alert },
     },
     {
       path: '/client/:clId/project/:prId/snapshotRequests',

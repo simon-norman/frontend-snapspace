@@ -112,6 +112,12 @@ export default {
 
   created() {
     this.loadClientsAction();
+    const atatusConfig = document.createElement('script');
+    atatusConfig.innerHTML = "window._atatusConfig = { apikey: 'ae8d06ae797a47cb8d9bccabeb6114e5', };";
+    document.head.appendChild(atatusConfig);
+    const atatusScript = document.createElement('script');
+    atatusScript.setAttribute('src', '//dmc1acwvwny3.cloudfront.net/atatus.js');
+    document.head.appendChild(atatusScript);
   },
 
   methods: {

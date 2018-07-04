@@ -158,7 +158,7 @@ export default {
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
         try {
-          atatus.endTransaction('key_transaction_name');
+          atatus.endTransaction('Add client');
           const newClientUi = { newProjectName: '', newClient: { name: this.newClientName } };
           await this.addClientAction(newClientUi);
           this.newClientName = '';

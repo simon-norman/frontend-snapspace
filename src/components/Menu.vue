@@ -112,12 +112,6 @@ export default {
 
   created() {
     this.loadClientsAction();
-    const atatusConfig = document.createElement('script');
-    atatusConfig.innerHTML = "window._atatusConfig = { apikey: 'ae8d06ae797a47cb8d9bccabeb6114e5', };";
-    document.head.appendChild(atatusConfig);
-    const atatusScript = document.createElement('script');
-    atatusScript.setAttribute('src', '//dmc1acwvwny3.cloudfront.net/atatus.js');
-    document.head.appendChild(atatusScript);
   },
 
   methods: {
@@ -153,12 +147,10 @@ export default {
     },
 
     async addClient() {
-      atatus.beginTransaction('Add client');
       this.$v.newClientName.$touch();   
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();
         try {
-          atatus.endTransaction('Add client');
           const newClientUi = { newProjectName: '', newClient: { name: this.newClientName } };
           await this.addClientAction(newClientUi);
           this.newClientName = '';

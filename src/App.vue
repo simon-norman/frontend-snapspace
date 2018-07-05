@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { initialiseAtatus } from './error_handler/AtatusManager';
+
 export default {
   name: 'App',
   data() {
@@ -25,6 +27,10 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js',
     };
+  },
+
+  created() {
+    initialiseAtatus();
   },
 };
 </script>

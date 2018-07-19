@@ -185,7 +185,6 @@ export default {
             this.informUserSaveSuccessful();
           }
         } catch (error) {
-          console.log(error);
           errorHandler.handleError(error);
         }
       }

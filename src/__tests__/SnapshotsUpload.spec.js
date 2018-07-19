@@ -51,6 +51,11 @@ describe('SnapshotUpload.vue', () => {
     const wrapper = createWrapper();
     
     it('should display image when user adds image', async () => {
+      // Tested behaviour is user taking photo, and seeing photo previewed on screen
+      // This is done using createObjectURL to create a local URL for photo
+      // As JSDOM doesn't support createObjectURL, have stubbed it to create a fake
+      // image URL so that test runs
+      window.URL.createObjectURL = () => 'preview_image_url';
       const imageFile = new Blob(['image'], { type: 'image/jpg' });
       wrapper.vm.addImage(imageFile);
       await flushPromises();

@@ -16,7 +16,6 @@ describe('AtatusManager.js', () => {
       
   describe('Initialise Atatus', () => {
     it('should add Atatus set up script to document head', () => {
-      debugger;
       const testVueWrapper = testUtilsWrapperFactory.createWrapper(testVueComponent);
       expect(testVueWrapper.vm.$el.ownerDocument.head.innerHTML.includes('window._atatusConfig')).toBeTruthy();
     });

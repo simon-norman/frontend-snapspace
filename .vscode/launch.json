@@ -73,6 +73,20 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug Atatus Manager Tests",
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
+            "args": [
+                "-i",
+                "AtatusManager.spec"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "outFiles": [
+                "${workspaceRoot}/dist/**/*"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug Error Handler Tests",
             "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js",
             "args": [

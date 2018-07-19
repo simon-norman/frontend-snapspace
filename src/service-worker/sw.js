@@ -1,6 +1,11 @@
-import workbox from 'workbox-sw';
+
+workbox.skipWaiting();
+workbox.clientsClaim();
 
 workbox.routing.registerRoute(
-  new RegExp('/index.html'),
+  new RegExp('.*\.js'),
   workbox.strategies.networkFirst(),
 );
+
+workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
+

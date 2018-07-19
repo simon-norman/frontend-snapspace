@@ -136,7 +136,7 @@ export default {
 
   data() {
     return {
-      successMessage: 'Thank you for your feedback - keep \'em coming! ',
+      successMessage: 'Thank you for your feedback - keep \'em coming!',
       snapshotData: getDefaultData(),
     };    
   },

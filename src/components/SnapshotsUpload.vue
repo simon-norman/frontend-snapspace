@@ -180,11 +180,12 @@ export default {
           this.uploadImage(imageUploadConfig.signedImageUploadUrl);
 
           this.snapshotData.snapshot.imageUrl = imageUploadConfig.imageUrl;
-          const result = this.saveFullSnapshotRecord();
+          const result = await this.saveFullSnapshotRecord();
           if (result.status === 200) {
             this.informUserSaveSuccessful();
           }
         } catch (error) {
+          console.log(error);
           errorHandler.handleError(error);
         }
       }

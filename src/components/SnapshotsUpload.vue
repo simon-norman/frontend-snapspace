@@ -168,12 +168,8 @@ export default {
     addImage(imageFile) {
       if (!imageFile) return;
       this.snapshotData.imageFile = imageFile;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.snapshotData.localImageDisplay = e.target.result;
-      };
-      reader.readAsDataURL(imageFile);
+      const url = URL.createObjectURL(imageFile);
+      this.snapshotData.localImageDisplay = url;
     },
 
     async saveSnapshot() {

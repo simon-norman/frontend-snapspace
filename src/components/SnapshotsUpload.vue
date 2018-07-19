@@ -213,7 +213,7 @@ export default {
       }
     },
 
-    saveImage(signedImageUploadUrl) {
+    uploadImage(signedImageUploadUrl) {
       const options = {
         headers: {
           'Content-Type': this.snapshotData.imageFile.type,

@@ -172,44 +172,77 @@ export default {
       this.snapshotData.localImageDisplay = url;
     },
 
-    async saveSnapshot() {
-      this.$v.$touch();
-      
-      if (!this.$v.$error) {
-        this.$v.$reset();
-
+    async saveSnapshot() {    
+      if (this.areSnapshotParametersValid()) {
         try {
-          let result = await snapshotApi.getImageUploadConfig({
-            params: {
-              imageFileName: Date.now(),
-            },
-          });
-          this.snapshotData.snapshot.imageUrl = result.data.imageUrl;
+          const imageUploadConfig = await this.getImageUploadConfig();
+          this.snapshotData.snapshot.imageUrl = imageUploadConfig.imageUrl;
 
-          const options = {
-            headers: {
-              'Content-Type': this.snapshotData.imageFile.type,
-            },
-          };
+          this.uploadImage(imageUploadConfig.signedImageUploadUrl);
 
-          imageApi.putImage(result.data.signedImageUploadUrl, this.snapshotData.imageFile, options);
-          const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
-          finalSnapshot.requestId = this.requestId;
-          result = await snapshotApi.postSnapshot(finalSnapshot);
+          const result = this.saveFullSnapshotRecord();
           if (result.status === 200) {
-            this.reset();
-            this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
-            this.UPDATE_SUCCESS_STATUS(true);
-            setTimeout(() => {
-              this.UPDATE_SUCCESS_STATUS(false);
-            }, 4000);
+            this.informUserSaveSuccessful();
           }
         } catch (error) {
-          // placeholder for logging
           errorHandler.handleError(error);
         }
       }
     },
+
+    areSnapshotParametersValid() {
+      this.$v.$touch();
+      if (!this.$v.$error) {
+        this.$v.$reset();
+        return true;
+      }
+      return false;
+    },
+
+    async getImageUploadConfig() {
+      try {
+        const result = await snapshotApi.getImageUploadConfig({
+          params: {
+            imageFileName: Date.now(),
+          },
+        });
+
+        return result.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    saveImage(signedImageUploadUrl) {
+      const options = {
+        headers: {
+          'Content-Type': this.snapshotData.imageFile.type,
+        },
+      };
+
+      imageApi.putImage(signedImageUploadUrl, this.snapshotData.imageFile, options);
+    },
+
+    async saveFullSnapshotRecord() {
+      try {
+        const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+        finalSnapshot.requestId = this.requestId;
+        const result = await snapshotApi.postSnapshot(finalSnapshot);
+        return result;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    informUserSaveSuccessful() {
+      this.reset();
+      this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
+      this.UPDATE_SUCCESS_STATUS(true);
+      setTimeout(() => {
+        this.UPDATE_SUCCESS_STATUS(false);
+      }, 4000);
+    },
+
     reset() {
       const defaultData = getDefaultData();
       Object.assign(this.$data.snapshotData, defaultData);

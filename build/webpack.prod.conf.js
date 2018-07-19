@@ -11,7 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const WorkboxPlugin = require('workbox-webpack-plugin')
+const {InjectManifest} = require('workbox-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const loadMinified = require('./load-minified')
 
@@ -103,14 +103,11 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       }
     ]),
-    // service worker caching
-    new SWPrecacheWebpackPlugin({
-      cacheId: 'client',
-      filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
-      minify: true,
-      stripPrefix: 'dist/'
-    })
+
+    new InjectManifest({
+      swSrc: './src/service-worker/sw.js',
+      swDest: './service-worker.js',
+    }),
   ]
 })
 

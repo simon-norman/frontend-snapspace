@@ -176,10 +176,10 @@ export default {
       if (this.areSnapshotParametersValid()) {
         try {
           const imageUploadConfig = await this.getImageUploadConfig();
-          this.snapshotData.snapshot.imageUrl = imageUploadConfig.imageUrl;
 
           this.uploadImage(imageUploadConfig.signedImageUploadUrl);
 
+          this.snapshotData.snapshot.imageUrl = imageUploadConfig.imageUrl;
           const result = this.saveFullSnapshotRecord();
           if (result.status === 200) {
             this.informUserSaveSuccessful();

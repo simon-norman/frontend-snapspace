@@ -21,8 +21,8 @@
             id="snapshotImage"
             :src="snapshotData.localImageDisplay" 
             contain
-            height="200px"/></v-card>
-      </v-flex>
+            height="200px"/>
+      </v-card></v-flex>
     </v-layout>
     <v-layout 
       row 
@@ -37,13 +37,17 @@
           :id="requestId"
           class="btn btn-file btn--block secondary">
           Tap here to take a photo of your space
-          <input 
-            id="addImage" 
-            type="file" 
-            accept="image/*" 
-            capture="camera"
-            style="display: none;" 
-            @change="addImage($event.target.files[0])">
+          <image-uploader
+            :debug="1"
+            :max-width="512"
+            :quality="0.7"
+            :auto-rotate="true"
+            :preview="false"
+            :class-name="'fileinput'"
+            output-format="verbose"
+            capture="environment"
+            @input="addImage"
+          />
         </label>
         <div 
           v-if="$v.snapshotData.imageFile.$error"
@@ -97,6 +101,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import { ImageUploader } from 'vue-image-upload-resize';
 import { required } from 'vuelidate/lib/validators';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
@@ -119,6 +124,10 @@ function getDefaultData() {
 
 export default {
   name: 'SnapshotsUpload',
+
+  components: {
+    ImageUploader,
+  },
   props: {
     'request-id': { 
       type: String,
@@ -166,10 +175,8 @@ export default {
     ]),
 
     addImage(imageFile) {
-      if (!imageFile) return;
-      this.snapshotData.imageFile = imageFile;
-      const url = URL.createObjectURL(imageFile);
-      this.snapshotData.localImageDisplay = url;
+      console.log(imageFile);
+      this.snapshotData.localImageDisplay = imageFile.dataUrl;
     },
 
     async saveSnapshot() {    

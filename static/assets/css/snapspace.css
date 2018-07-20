@@ -30,6 +30,10 @@
     margin-bottom: 50px;
 }
 
+.fileinput {
+    display: none;
+}
+
 .spacelabThin {
     font-family: radikal_thin;
     border-radius: 0;

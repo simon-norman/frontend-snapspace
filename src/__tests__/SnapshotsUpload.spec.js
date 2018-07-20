@@ -71,7 +71,7 @@ describe('SnapshotUpload.vue', () => {
       wrapper = createWrapper();
     });
   
-    it('should display error, on submit, if comment not populated', (done) => {
+    it('should display error, on save snapshot, if comment not populated', (done) => {
       wrapper.find('#submitSnapshot').trigger('click');
       wrapper.vm.$nextTick(() => {
         expect(Array.isArray(wrapper.vm.commentErrors)).toBeTrue();
@@ -80,7 +80,7 @@ describe('SnapshotUpload.vue', () => {
       });
     });
   
-    it('should display error, on submit, if image not provided', (done) => {
+    it('should display error, on save snapshot, if image not provided', (done) => {
       wrapper.find('#submitSnapshot').trigger('click');
       wrapper.vm.$nextTick(() => {
         expect(wrapper.find('#imageError').exists()).toBeTruthy();
@@ -88,7 +88,7 @@ describe('SnapshotUpload.vue', () => {
       });
     });
   
-    it('should be no error if comment is populated', (done) => {
+    it('should be no error, on save snapshot, if comment is populated', (done) => {
       expect(Array.isArray(wrapper.vm.commentErrors)).toBeTrue();
       expect(wrapper.vm.commentErrors).toBeEmpty();
 
@@ -106,7 +106,7 @@ describe('SnapshotUpload.vue', () => {
       });
     });
   
-    it('should be no error if image is provided', (done) => {
+    it('should be no error, on save snapshot, if image is provided', (done) => {
       expect(wrapper.find('#imageError').exists()).toBeFalsy();
 
       wrapper.setData({

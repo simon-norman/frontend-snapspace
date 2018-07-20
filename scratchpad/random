@@ -1,0 +1,8 @@
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'client',
+      filename: 'service-worker.js',
+      staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      minify: true,
+      stripPrefix: 'dist/'
+    })

@@ -9,6 +9,7 @@ export default class ErrorHandler {
   }
 
   handleError(error) {
+    console.log(error);
     this.atatus = window.atatus;
     this[_logErrorToAtatus](error);
     this[_displayErrorAlert](error);

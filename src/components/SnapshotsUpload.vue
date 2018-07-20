@@ -1,6 +1,5 @@
 <template>
   <v-container
-    id="uploadContainer" 
     fluid
     grid-list-lg>
     <v-layout 
@@ -19,9 +18,10 @@
           <v-card-media 
             v-if="snapshotData.imageFile"
             id="snapshotImage"
-            :src="snapshotData.imageFile" 
-            contain
-            height="200px"/>
+            :src="snapshotData.imageFile"
+            contain 
+            height="200px"
+            @click="clickOnImageUploaderButton()"/>
       </v-card></v-flex>
     </v-layout>
     <v-layout 
@@ -33,10 +33,17 @@
         xs12 
         s4 
         md3>
-        <label 
-          :id="requestId"
-          class="btn btn-file btn--block secondary">
-          Tap here to take a photo of your space
+        <v-layout 
+          row 
+          justify-center 
+          align-center 
+          wrap>
+          <img 
+            v-show="preImageUpload"
+            :id="requestId"
+            class="btn-image-upload"
+            src="../../static/img/icons/camera.gif"
+            @click="clickOnImageUploaderButton()">
           <image-uploader
             :debug="1"
             :max-width="512"
@@ -47,15 +54,32 @@
             output-format="verbose"
             capture="environment"
             @input="addImage"
+            @onUpload="informUserImageLoading()"
           />
-        </label>
-        <div 
-          v-if="$v.snapshotData.imageFile.$error"
-          id="imageError"
-          class="input-group__messages 
+          <v-progress-circular
+            v-show="isImageLoadingActive"
+            id="imageLoadingView"
+            :size="120"
+            :width="12"
+            class="loading-circle"
+            color="primary"
+            indeterminate
+          />
+          <div 
+            v-if="$v.snapshotData.imageFile.$error"
+            id="imageError"
+            class="input-group__messages 
       input-group__error input-group__details input-group--error 
       input-group--required error--text">
-          Please add a photo</div>
+            Please add a photo</div>
+        </v-layout>
+        <v-layout 
+          row 
+          justify-center 
+          align-center>
+          <div
+            class="medium-title">{{ instructionsOnTakingPhoto }}</div>
+        </v-layout>
       </v-flex>
     </v-layout>
     <v-layout 
@@ -145,6 +169,8 @@ export default {
 
   data() {
     return {
+      preImageUpload: true,
+      isImageLoadingActive: false,
       successMessage: 'Thank you for your feedback - keep \'em coming!',
       snapshotData: getDefaultData(),
     };    
@@ -159,6 +185,20 @@ export default {
   },
 
   computed: {
+    instructionsOnTakingPhoto() {
+      let photoInstructions;
+
+      if (this.preImageUpload) {
+        photoInstructions = 'Tap to take a photo';
+      }
+
+      if (this.snapshotData.imageFile) {
+        photoInstructions = 'Tap your photo to retake it';
+      }
+
+      return photoInstructions;
+    },
+
     commentErrors() {
       const errors = [];
       if (this.$v.snapshotData.snapshot.comment.$error) {
@@ -174,8 +214,18 @@ export default {
       'UPDATE_SUCCESS_MESSAGE',
     ]),
 
+    clickOnImageUploaderButton() {
+      document.getElementById('fileInput').click();
+    },
+
+    informUserImageLoading() {
+      this.snapshotData.imageFile = '';
+      this.preImageUpload = false;
+      this.isImageLoadingActive = true;
+    },
+
     addImage(imageFile) {
-      console.log(imageFile);
+      this.isImageLoadingActive = false;
       this.snapshotData.imageFile = imageFile.dataUrl;
     },
 
@@ -190,6 +240,7 @@ export default {
           const result = await this.saveFullSnapshotRecord();
           if (result.status === 200) {
             this.informUserSaveSuccessful();
+            this.clearSnapshotUploadForm();
           }
         } catch (error) {
           errorHandler.handleError(error);
@@ -248,7 +299,6 @@ export default {
     },
 
     informUserSaveSuccessful() {
-      this.reset();
       this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
       this.UPDATE_SUCCESS_STATUS(true);
       setTimeout(() => {
@@ -256,7 +306,7 @@ export default {
       }, 4000);
     },
 
-    reset() {
+    clearSnapshotUploadForm() {
       const defaultData = getDefaultData();
       Object.assign(this.$data.snapshotData, defaultData);
     },

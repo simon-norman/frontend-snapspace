@@ -17,9 +17,9 @@
           flat
           color="transparent">
           <v-card-media 
-            v-if="snapshotData.localImageDisplay"
+            v-if="snapshotData.imageFile"
             id="snapshotImage"
-            :src="snapshotData.localImageDisplay" 
+            :src="snapshotData.imageFile" 
             contain
             height="200px"/>
       </v-card></v-flex>
@@ -103,6 +103,7 @@
 import { mapMutations } from 'vuex';
 import { ImageUploader } from 'vue-image-upload-resize';
 import { required } from 'vuelidate/lib/validators';
+import { readBase64MimeType, removeMimeType } from '../helpers/base64StringHelper';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
 import ErrorHandler from '../error_handler/ErrorHandler';
@@ -114,7 +115,6 @@ const imageApi = new ImageApi();
 function getDefaultData() {
   return {
     imageFile: '',
-    localImageDisplay: '',
     snapshot: {
       imageUrl: '',
       comment: '',
@@ -176,7 +176,7 @@ export default {
 
     addImage(imageFile) {
       console.log(imageFile);
-      this.snapshotData.localImageDisplay = imageFile.dataUrl;
+      this.snapshotData.imageFile = imageFile.dataUrl;
     },
 
     async saveSnapshot() {    
@@ -221,14 +221,20 @@ export default {
     },
 
     uploadImage(signedImageUploadUrl) {
+      const imageBase64WithContentType = this.snapshotData.imageFile;
+
+      const contentType = readBase64MimeType(imageBase64WithContentType);
+      const imageBase64Only = removeMimeType(imageBase64WithContentType);
       const options = {
         headers: {
-          'Content-Type': this.snapshotData.imageFile.type,
+          'Content-Type': contentType,
+          'Content-Encoding': 'base64',
         },
       };
 
-      imageApi.putImage(signedImageUploadUrl, this.snapshotData.imageFile, options);
+      imageApi.putImage(signedImageUploadUrl, imageBase64Only, options);
     },
+
 
     async saveFullSnapshotRecord() {
       try {

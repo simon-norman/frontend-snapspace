@@ -147,7 +147,7 @@ export default {
     },
 
     async addClient() {
-      console.log('another testsssssss');
+      console.log('and one final one');
       this.$v.newClientName.$touch();   
       if (!this.$v.newClientName.$error) {
         this.$v.$reset();

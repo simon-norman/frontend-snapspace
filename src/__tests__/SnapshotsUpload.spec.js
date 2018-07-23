@@ -22,11 +22,16 @@ const createWrapper = (propsData, wrapperData) => {
 };
 
 describe('SnapshotUpload.vue', () => {
-  describe('Tests loading successfully', () => {
-    const propsData = {
+  let propsData;
+
+  beforeEach(() => {
+    propsData = {
       requestId: 'ab27c74f73ba26561c61cbcc',
-      requestName: 'name', 
+      requestName: 'Show us a problem with your workspace', 
     };
+  });
+
+  describe('Tests loading successfully', () => {
     const wrapper = createWrapper(propsData);
     
     it('should have loaded a Vue instance', () => {
@@ -36,14 +41,10 @@ describe('SnapshotUpload.vue', () => {
 
   describe('Load snapshot request', () => {
     it('should display the snapshot request name', async () => {
-      const propsData = {
-        requestId: 'ab27c74f73ba26561c61cbcc',
-        requestName: 'Show us a problem with your workspace', 
-      };
       const wrapper = createWrapper(propsData);
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
-      
+
       expect(wrapper.find(`#${propsData.requestId}RequestName`).element.innerHTML).toEqual(propsData.requestName);
     });
   });
@@ -58,20 +59,6 @@ describe('SnapshotUpload.vue', () => {
       await flushPromises();
       await flushPromises();
       expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
-    });
-
-    it('should inform user that image is loading, then close loading view ', async () => {
-      const wrapper = createWrapper();
-      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(true);
-
-      wrapper.vm.informUserImageLoading();
-      await flushPromises();
-      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(false);
-
-      const VueImageUploadObject = { dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD' };
-      wrapper.vm.addImage(VueImageUploadObject);
-      await flushPromises();
-      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(true);
     });
   });
   

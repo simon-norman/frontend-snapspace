@@ -20,6 +20,12 @@
     color: black;
 }
 
+.btn-image-upload {
+    width: 50%;
+    height: 0%;
+    object-fit: contain;
+}
+
 .request-title {
     font-family: radikal_regular;
     font-size: 24px;
@@ -32,6 +38,12 @@
 
 .fileinput {
     display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.loading-circle {
+    margin: 15px;
 }
 
 .spacelabThin {
@@ -42,10 +54,6 @@
 
 .list {
     background: transparent !important;
-}
-
-.snapshots-upload-container {
-    margin-top: 50px;
 }
 
 .alert {

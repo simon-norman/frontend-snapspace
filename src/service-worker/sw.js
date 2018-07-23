@@ -7,5 +7,10 @@ workbox.routing.registerRoute(
   workbox.strategies.networkFirst(),
 );
 
+workbox.routing.registerRoute(
+  new RegExp('.*\.css'),
+  workbox.strategies.networkFirst(),
+);
+
 workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
 

@@ -37,5 +37,11 @@ module.exports = {
     "no-param-reassign": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
+    "prefer-destructuring": ["error", {
+      "AssignmentExpression": {
+        "array": false,
+        "object": true
+      }
+    },]
   }
 }

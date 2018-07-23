@@ -47,17 +47,30 @@ describe('SnapshotUpload.vue', () => {
     });
   });
 
-  describe('Display image', () => {
-    const wrapper = createWrapper();
-    
+  describe('Display image', () => {    
     it('should display image when user adds image', async () => {
       // Vue Image Upload object produced by 3rd party image uploader (Vue Image Upload)
       // Here providing stubbed version of that object
+      const wrapper = createWrapper();
       const VueImageUploadObject = { dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD' };
       wrapper.vm.addImage(VueImageUploadObject);
       await flushPromises();
       await flushPromises();
       expect(wrapper.find('#snapshotImage').exists()).toBeTruthy();
+    });
+
+    it('should inform user that image is loading, then close loading view ', async () => {
+      const wrapper = createWrapper();
+      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(true);
+
+      wrapper.vm.informUserImageLoading();
+      await flushPromises();
+      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(false);
+
+      const VueImageUploadObject = { dataUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD' };
+      wrapper.vm.addImage(VueImageUploadObject);
+      await flushPromises();
+      expect(wrapper.find('#imageLoadingView').hasStyle('display', 'none')).toBe(true);
     });
   });
   

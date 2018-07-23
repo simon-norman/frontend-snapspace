@@ -46,6 +46,10 @@
     margin: 15px;
 }
 
+.hidden.loading-circle {
+    display: none;
+}
+
 .spacelabThin {
     font-family: radikal_thin;
     border-radius: 0;

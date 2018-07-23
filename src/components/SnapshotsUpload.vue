@@ -46,26 +46,16 @@
             src="../../static/img/icons/camera.gif"
             @click="clickOnImageUploaderButton()">
           <image-uploader
+            ref="imageUploadBtn"
             :debug="1"
             :max-width="512"
             :quality="0.7"
             :auto-rotate="true"
             :preview="false"
             :class-name="'fileinput'"
-            :id="requestId + 'FileInput'"
             output-format="verbose"
             capture="environment"
             @input="addImage"
-            @onUpload="informUserImageLoading()"
-          />
-          <v-progress-circular
-            v-show="isImageLoadingActive"
-            id="imageLoadingView"
-            :size="120"
-            :width="12"
-            class="loading-circle"
-            color="primary"
-            indeterminate
           />
           <div 
             v-if="$v.snapshotData.imageFile.$error"
@@ -172,7 +162,6 @@ export default {
   data() {
     return {
       preImageUpload: true,
-      isImageLoadingActive: false,
       successMessage: 'Thank you for your feedback - keep \'em coming!',
       snapshotData: getDefaultData(),
     };    
@@ -217,19 +206,10 @@ export default {
     ]),
 
     clickOnImageUploaderButton() {
-      document.getElementById(`${this.requestId}FileInput`).click();
-    },
-
-    informUserImageLoading() {
-      console.log('inform user loading...');
-      this.snapshotData.imageFile = '';
-      this.preImageUpload = false;
-      this.isImageLoadingActive = true;
-      console.log('user informed');
+      this.$refs.imageUploadBtn.$el.children[1].click();
     },
 
     addImage(imageFile) {
-      this.isImageLoadingActive = false;
       this.snapshotData.imageFile = imageFile.dataUrl;
     },
 

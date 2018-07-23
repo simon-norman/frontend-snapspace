@@ -11,7 +11,9 @@
         xs12 
         s4 
         md3>
-        <h2 class="request-title">{{ requestName }}</h2>  
+        <h2 
+          :id="requestId + 'RequestName'" 
+          class="request-title">{{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">
@@ -40,7 +42,6 @@
           wrap>
           <img 
             v-show="preImageUpload"
-            :id="requestId"
             class="btn-image-upload"
             src="../../static/img/icons/camera.gif"
             @click="clickOnImageUploaderButton()">
@@ -51,6 +52,7 @@
             :auto-rotate="true"
             :preview="false"
             :class-name="'fileinput'"
+            :id="requestId + 'FileInput'"
             output-format="verbose"
             capture="environment"
             @input="addImage"
@@ -215,7 +217,7 @@ export default {
     ]),
 
     clickOnImageUploaderButton() {
-      document.getElementById('fileInput').click();
+      document.getElementById(`${this.requestId}FileInput`).click();
     },
 
     informUserImageLoading() {
@@ -240,7 +242,7 @@ export default {
           const result = await this.saveFullSnapshotRecord();
           if (result.status === 200) {
             this.informUserSaveSuccessful();
-            this.clearSnapshotUploadForm();
+            this.resetSnapshotUploadForm();
           }
         } catch (error) {
           errorHandler.handleError(error);
@@ -306,7 +308,7 @@ export default {
       }, 4000);
     },
 
-    clearSnapshotUploadForm() {
+    resetSnapshotUploadForm() {
       const defaultData = getDefaultData();
       Object.assign(this.$data.snapshotData, defaultData);
     },

@@ -38,12 +38,13 @@ describe('SnapshotUpload.vue', () => {
     it('should display the snapshot request name', async () => {
       const propsData = {
         requestId: 'ab27c74f73ba26561c61cbcc',
-        requestName: 'name', 
+        requestName: 'Show us a problem with your workspace', 
       };
       const wrapper = createWrapper(propsData);
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
-      expect(wrapper.find(`#${propsData.requestId}`).exists()).toBeTruthy();
+      debugger;
+      expect(wrapper.find(`#${propsData.requestId}RequestName`).element.innerHTML).toEqual(propsData.requestName);
     });
   });
 

@@ -210,6 +210,7 @@ export default {
     },
 
     addImage(imageFile) {
+      this.preImageUpload = false;
       this.snapshotData.imageFile = imageFile.dataUrl;
     },
 

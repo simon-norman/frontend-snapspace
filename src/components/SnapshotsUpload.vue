@@ -221,9 +221,11 @@ export default {
     },
 
     informUserImageLoading() {
+      console.log('inform user loading...');
       this.snapshotData.imageFile = '';
       this.preImageUpload = false;
       this.isImageLoadingActive = true;
+      console.log('user informed');
     },
 
     addImage(imageFile) {

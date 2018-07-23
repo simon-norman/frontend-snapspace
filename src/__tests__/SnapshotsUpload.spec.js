@@ -43,7 +43,7 @@ describe('SnapshotUpload.vue', () => {
       const wrapper = createWrapper(propsData);
       await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
-      debugger;
+      
       expect(wrapper.find(`#${propsData.requestId}RequestName`).element.innerHTML).toEqual(propsData.requestName);
     });
   });

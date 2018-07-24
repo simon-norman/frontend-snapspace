@@ -4,6 +4,7 @@
     <div>
       <v-alert 
         :value="getSuccessStatus" 
+        class="page-top-alert"
         transition="scale-transition"
         type="success" 
         dismissible>

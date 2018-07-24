@@ -5,7 +5,6 @@ export default class ImageApi extends Api {
     super({ baseURL: '' });
   }
   putImage(URL, imageFile, params) {
-    debugger;
     this.axios.put(URL, imageFile, params);
   }
 }

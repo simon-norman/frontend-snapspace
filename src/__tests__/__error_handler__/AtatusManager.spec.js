@@ -13,15 +13,19 @@ describe('AtatusManager.js', () => {
       initialiseAtatus();
     },
   };
+
+  const vueTestWrapperElements = {
+    componentToTest: testVueComponent,
+  };
       
   describe('Initialise Atatus', () => {
     it('should add Atatus set up script to document head', () => {
-      const testVueWrapper = testUtilsWrapperFactory.createWrapper(testVueComponent);
+      const testVueWrapper = testUtilsWrapperFactory.createWrapper(vueTestWrapperElements);
       expect(testVueWrapper.vm.$el.ownerDocument.head.innerHTML.includes('window._atatusConfig')).toBeTruthy();
     });
 
     it('should add Atatus configuration script to document head', () => {
-      const testVueWrapper = testUtilsWrapperFactory.createWrapper(testVueComponent);
+      const testVueWrapper = testUtilsWrapperFactory.createWrapper(vueTestWrapperElements);
       expect(testVueWrapper.vm.$el.ownerDocument.head.innerHTML.includes('atatus.js')).toBeTruthy();
     });
   });

@@ -2,6 +2,7 @@
   <v-alert 
     id="errorAlert"  
     v-model="errorStatus"
+    class="page-top-alert"
     transition="scale-transition"
     type="error"
     dismissible>

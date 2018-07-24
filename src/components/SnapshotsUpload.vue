@@ -243,17 +243,12 @@ export default {
     },
 
     async getImageUploadConfig() {
-      try {
-        const result = await snapshotApi.getImageUploadConfig({
-          params: {
-            imageFileName: Date.now(),
-          },
-        });
-
-        return result.data;
-      } catch (error) {
-        throw error;
-      }
+      const result = await snapshotApi.getImageUploadConfig({
+        params: {
+          imageFileName: Date.now(),
+        },
+      });
+      return result.data;
     },
 
     uploadImage(signedImageUploadUrl) {
@@ -274,14 +269,10 @@ export default {
 
 
     async saveFullSnapshotRecord() {
-      try {
-        const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
-        finalSnapshot.requestId = this.requestId;
-        const result = await snapshotApi.postSnapshot(finalSnapshot);
-        return result;
-      } catch (error) {
-        throw error;
-      }
+      const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+      finalSnapshot.requestId = this.requestId;
+      const result = await snapshotApi.postSnapshot(finalSnapshot);
+      return result;
     },
 
     informUserSaveSuccessful() {

@@ -195,6 +195,7 @@ export default {
       if (this.$v.snapshotData.snapshot.comment.$error) {
         errors.push('Please provide a comment');
       }
+      
       return errors;
     },
   },

@@ -41,7 +41,7 @@
           align-center 
           wrap>
           <img 
-            v-show="preImageUpload"
+            v-show="snapshotData.preImageUpload"
             class="btn-image-upload"
             src="../../static/img/icons/camera.gif"
             @click="clickOnImageUploaderButton()">
@@ -84,7 +84,7 @@
         s4 
         md3>
         <v-text-field
-          id="snapshotComment"
+          :id="requestId + 'SnapshotComment'"
           v-model="snapshotData.snapshot.comment"
           :error-messages="commentErrors"
           class="spacelabThin"
@@ -106,7 +106,7 @@
         s4 
         md3>
         <v-btn 
-          id="submitSnapshot"
+          id="submitSnapshotBtn"
           class="secondary"
           block 
           @click="saveSnapshot()">Submit</v-btn>
@@ -130,6 +130,7 @@ const imageApi = new ImageApi();
 
 function getDefaultData() {
   return {
+    preImageUpload: true,
     imageFile: '',
     snapshot: {
       imageUrl: '',
@@ -161,7 +162,6 @@ export default {
 
   data() {
     return {
-      preImageUpload: true,
       successMessage: 'Thank you for your feedback - keep \'em coming!',
       snapshotData: getDefaultData(),
     };    
@@ -179,7 +179,7 @@ export default {
     instructionsOnTakingPhoto() {
       let photoInstructions;
 
-      if (this.preImageUpload) {
+      if (this.snapshotData.preImageUpload) {
         photoInstructions = 'Tap to take a photo';
       }
 
@@ -210,7 +210,7 @@ export default {
     },
 
     addImage(imageFile) {
-      this.preImageUpload = false;
+      this.snapshotData.preImageUpload = false;
       this.snapshotData.imageFile = imageFile.dataUrl;
     },
 
@@ -243,17 +243,12 @@ export default {
     },
 
     async getImageUploadConfig() {
-      try {
-        const result = await snapshotApi.getImageUploadConfig({
-          params: {
-            imageFileName: Date.now(),
-          },
-        });
-
-        return result.data;
-      } catch (error) {
-        throw error;
-      }
+      const result = await snapshotApi.getImageUploadConfig({
+        params: {
+          imageFileName: Date.now(),
+        },
+      });
+      return result.data;
     },
 
     uploadImage(signedImageUploadUrl) {
@@ -261,6 +256,7 @@ export default {
 
       const contentType = readBase64MimeType(imageBase64WithContentType);
       const imageBase64Only = removeMimeType(imageBase64WithContentType);
+
       const options = {
         headers: {
           'Content-Type': contentType,
@@ -273,14 +269,10 @@ export default {
 
 
     async saveFullSnapshotRecord() {
-      try {
-        const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
-        finalSnapshot.requestId = this.requestId;
-        const result = await snapshotApi.postSnapshot(finalSnapshot);
-        return result;
-      } catch (error) {
-        throw error;
-      }
+      const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+      finalSnapshot.requestId = this.requestId;
+      const result = await snapshotApi.postSnapshot(finalSnapshot);
+      return result;
     },
 
     informUserSaveSuccessful() {

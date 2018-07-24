@@ -21,7 +21,7 @@
 }
 
 .btn-image-upload {
-    width: 50%;
+    width: 40%;
     height: 0%;
     object-fit: contain;
 }
@@ -60,7 +60,7 @@
     background: transparent !important;
 }
 
-.alert {
+.alert.page-top-alert {
     z-index: 1000;
     margin: 0;
     position: fixed;

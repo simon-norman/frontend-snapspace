@@ -12,11 +12,22 @@
     font-style: normal;
 }
 
-.btn {
+.secondary.btn {
     font-family: radikal_regular;
     border-radius: 0;
     text-transform: none;
-    /* background-color: #ffcb05 !important; */
+    background-color: #ffcb05 !important;
+    color: black;
+}
+
+.request-title {
+    font-family: radikal_regular;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.snapshot-upload {
+    margin-bottom: 50px;
 }
 
 .spacelabThin {
@@ -27,4 +38,16 @@
 
 .list {
     background: transparent !important;
+}
+
+.snapshots-upload-container {
+    margin-top: 50px;
+}
+
+.alert {
+    z-index: 1000;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
 }

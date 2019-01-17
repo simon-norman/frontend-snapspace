@@ -13,14 +13,17 @@ window.requestAnimationFrame = jest.fn().mockImplementation(query => ({
   removeListener: jest.fn(),
 }));
 
-const createStore = (stubbedActions, stubbedGetters, stubbedMutations) => new Vuex.Store({
-  state: {},
-  actions: stubbedActions,
-  getters: stubbedGetters,
-  mutations: stubbedMutations,
-});
+const createVuexStore = (vuexStoreStubs) => {  
+  const store = new Vuex.Store({
+    state: {},
+    mutations: vuexStoreStubs.stubbedVuexMutations, 
+    actions: vuexStoreStubs.stubbedVuexActions,
+    getters: vuexStoreStubs.stubbedVuexGetters,
+  });
+  return store;
+};
 
-const createConfiguredLocalVue = () => {
+const createdConfiguredLocalVue = () => {
   const localVue = createLocalVue();
   localVue.use(Vuetify);
   localVue.use(Vuelidate);
@@ -28,16 +31,25 @@ const createConfiguredLocalVue = () => {
   return localVue;
 };
 
-const createWrapper = (componentToTest, stubbedActions, stubbedGetters, stubbedMutations) => {
-  const localVue = createConfiguredLocalVue();
-  
-  const store = createStore(stubbedActions, stubbedGetters, stubbedMutations);
+const createWrapper = (vueTestWrapperElements) => {
+  let store;
 
-  const wrapper = mount(componentToTest, {
+  const configuredLocalVue = createdConfiguredLocalVue();
+
+  if (vueTestWrapperElements.vuexStoreStubs) {
+    store = createVuexStore(vueTestWrapperElements.vuexStoreStubs);
+  }
+
+  const wrapper = mount(vueTestWrapperElements.componentToTest, {
     store,
-    localVue,
+    localVue: configuredLocalVue,
+    propsData: vueTestWrapperElements.propsData,
   });
-    
+
+  if (vueTestWrapperElements.componentTestData) {
+    wrapper.setData(vueTestWrapperElements.componentTestData);
+  }
+
   return wrapper;
 };
 

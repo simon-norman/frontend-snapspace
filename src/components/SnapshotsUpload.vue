@@ -1,6 +1,5 @@
 <template>
   <v-container
-    id="uploadContainer" 
     fluid
     grid-list-lg>
     <v-layout 
@@ -12,17 +11,20 @@
         xs12 
         s4 
         md3>
-        <h2 class="request-title">{{ requestName }}</h2>  
+        <h2 
+          :id="requestId + 'RequestName'" 
+          class="request-title">{{ requestName }}</h2>  
         <v-card 
           flat
           color="transparent">
           <v-card-media 
-            v-if="snapshotData.localImageDisplay"
+            v-if="snapshotData.imageFile"
             id="snapshotImage"
-            :src="snapshotData.localImageDisplay" 
-            contain
-            height="200px"/></v-card>
-      </v-flex>
+            :src="snapshotData.imageFile"
+            contain 
+            height="200px"
+            @click="clickOnImageUploaderButton()"/>
+      </v-card></v-flex>
     </v-layout>
     <v-layout 
       row 
@@ -33,25 +35,43 @@
         xs12 
         s4 
         md3>
-        <label 
-          :id="requestId"
-          class="btn btn-file btn--block secondary">
-          Tap here to take a photo of your space
-          <input 
-            id="addImage" 
-            type="file" 
-            accept="image/*" 
-            capture="camera"
-            style="display: none;" 
-            @change="addImage($event.target.files[0])">
-        </label>
-        <div 
-          v-if="$v.snapshotData.imageFile.$error"
-          id="imageError"
-          class="input-group__messages 
+        <v-layout 
+          row 
+          justify-center 
+          align-center 
+          wrap>
+          <img 
+            v-show="snapshotData.preImageUpload"
+            class="btn-image-upload"
+            src="../../static/img/icons/camera.gif"
+            @click="clickOnImageUploaderButton()">
+          <image-uploader
+            ref="imageUploadBtn"
+            :debug="1"
+            :max-width="512"
+            :quality="0.7"
+            :auto-rotate="true"
+            :preview="false"
+            :class-name="'fileinput'"
+            output-format="verbose"
+            capture="environment"
+            @input="addImage"
+          />
+          <div 
+            v-if="$v.snapshotData.imageFile.$error"
+            id="imageError"
+            class="input-group__messages 
       input-group__error input-group__details input-group--error 
       input-group--required error--text">
-          Please add a photo</div>
+            Please add a photo</div>
+        </v-layout>
+        <v-layout 
+          row 
+          justify-center 
+          align-center>
+          <div
+            class="medium-title">{{ instructionsOnTakingPhoto }}</div>
+        </v-layout>
       </v-flex>
     </v-layout>
     <v-layout 
@@ -64,7 +84,7 @@
         s4 
         md3>
         <v-text-field
-          id="snapshotComment"
+          :id="requestId + 'SnapshotComment'"
           v-model="snapshotData.snapshot.comment"
           :error-messages="commentErrors"
           class="spacelabThin"
@@ -86,7 +106,7 @@
         s4 
         md3>
         <v-btn 
-          id="submitSnapshot"
+          id="submitSnapshotBtn"
           class="secondary"
           block 
           @click="saveSnapshot()">Submit</v-btn>
@@ -97,7 +117,9 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import { ImageUploader } from 'vue-image-upload-resize';
 import { required } from 'vuelidate/lib/validators';
+import { readBase64MimeType, removeMimeType } from '../helpers/base64StringHelper';
 import SnapshotApi from '../api/snapshotApi';
 import ImageApi from '../api/imageApi';
 import ErrorHandler from '../error_handler/ErrorHandler';
@@ -108,8 +130,8 @@ const imageApi = new ImageApi();
 
 function getDefaultData() {
   return {
+    preImageUpload: true,
     imageFile: '',
-    localImageDisplay: '',
     snapshot: {
       imageUrl: '',
       comment: '',
@@ -119,6 +141,10 @@ function getDefaultData() {
 
 export default {
   name: 'SnapshotsUpload',
+
+  components: {
+    ImageUploader,
+  },
   props: {
     'request-id': { 
       type: String,
@@ -150,11 +176,26 @@ export default {
   },
 
   computed: {
+    instructionsOnTakingPhoto() {
+      let photoInstructions;
+
+      if (this.snapshotData.preImageUpload) {
+        photoInstructions = 'Tap to take a photo';
+      }
+
+      if (this.snapshotData.imageFile) {
+        photoInstructions = 'Tap your photo to retake it';
+      }
+
+      return photoInstructions;
+    },
+
     commentErrors() {
       const errors = [];
       if (this.$v.snapshotData.snapshot.comment.$error) {
         errors.push('Please provide a comment');
       }
+      
       return errors;
     },
   },
@@ -165,52 +206,85 @@ export default {
       'UPDATE_SUCCESS_MESSAGE',
     ]),
 
-    addImage(imageFile) {
-      if (!imageFile) return;
-      this.snapshotData.imageFile = imageFile;
-      const url = URL.createObjectURL(imageFile);
-      this.snapshotData.localImageDisplay = url;
+    clickOnImageUploaderButton() {
+      this.$refs.imageUploadBtn.$el.children[1].click();
     },
 
-    async saveSnapshot() {
-      this.$v.$touch();
-      
-      if (!this.$v.$error) {
-        this.$v.$reset();
+    addImage(imageFile) {
+      this.snapshotData.preImageUpload = false;
+      this.snapshotData.imageFile = imageFile.dataUrl;
+    },
 
+    async saveSnapshot() {    
+      if (this.areSnapshotParametersValid()) {
         try {
-          let result = await snapshotApi.getImageUploadConfig({
-            params: {
-              imageFileName: Date.now(),
-            },
-          });
-          this.snapshotData.snapshot.imageUrl = result.data.imageUrl;
+          const imageUploadConfig = await this.getImageUploadConfig();
 
-          const options = {
-            headers: {
-              'Content-Type': this.snapshotData.imageFile.type,
-            },
-          };
+          this.uploadImage(imageUploadConfig.signedImageUploadUrl);
 
-          imageApi.putImage(result.data.signedImageUploadUrl, this.snapshotData.imageFile, options);
-          const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
-          finalSnapshot.requestId = this.requestId;
-          result = await snapshotApi.postSnapshot(finalSnapshot);
+          this.snapshotData.snapshot.imageUrl = imageUploadConfig.imageUrl;
+          const result = await this.saveFullSnapshotRecord();
           if (result.status === 200) {
-            this.reset();
-            this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
-            this.UPDATE_SUCCESS_STATUS(true);
-            setTimeout(() => {
-              this.UPDATE_SUCCESS_STATUS(false);
-            }, 4000);
+            this.informUserSaveSuccessful();
+            this.resetSnapshotUploadForm();
           }
         } catch (error) {
-          // placeholder for logging
           errorHandler.handleError(error);
         }
       }
     },
-    reset() {
+
+    areSnapshotParametersValid() {
+      this.$v.$touch();
+      if (!this.$v.$error) {
+        this.$v.$reset();
+        return true;
+      }
+      return false;
+    },
+
+    async getImageUploadConfig() {
+      const result = await snapshotApi.getImageUploadConfig({
+        params: {
+          imageFileName: Date.now(),
+        },
+      });
+      return result.data;
+    },
+
+    uploadImage(signedImageUploadUrl) {
+      const imageBase64WithContentType = this.snapshotData.imageFile;
+
+      const contentType = readBase64MimeType(imageBase64WithContentType);
+      const imageBase64Only = removeMimeType(imageBase64WithContentType);
+
+      const options = {
+        headers: {
+          'Content-Type': contentType,
+          'Content-Encoding': 'base64',
+        },
+      };
+
+      imageApi.putImage(signedImageUploadUrl, imageBase64Only, options);
+    },
+
+
+    async saveFullSnapshotRecord() {
+      const finalSnapshot = Object.assign({}, this.snapshotData.snapshot);
+      finalSnapshot.requestId = this.requestId;
+      const result = await snapshotApi.postSnapshot(finalSnapshot);
+      return result;
+    },
+
+    informUserSaveSuccessful() {
+      this.UPDATE_SUCCESS_MESSAGE(this.successMessage);
+      this.UPDATE_SUCCESS_STATUS(true);
+      setTimeout(() => {
+        this.UPDATE_SUCCESS_STATUS(false);
+      }, 4000);
+    },
+
+    resetSnapshotUploadForm() {
       const defaultData = getDefaultData();
       Object.assign(this.$data.snapshotData, defaultData);
     },

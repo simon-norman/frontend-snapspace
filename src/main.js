@@ -25,6 +25,7 @@ import { store } from './store/store';
 
 import '../static/assets/css/snapspace.css';
 import '../node_modules/vuetify/src/stylus/app.styl';
+import '../static/assets/stylus/main.styl';
 
 Vue.use(Vuelidate);
 
@@ -46,7 +47,7 @@ Vue.use(Vuetify, {
     transitions,
   },
   theme: {
-    primary: '#ee44aa',
+    primary: '#ffcb05',
     secondary: '#424242',
     accent: '#82B1FF',
     error: '#FF5252',

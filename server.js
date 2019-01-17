@@ -8,5 +8,5 @@ app.use("/", serveStatic ( path.join (__dirname, '/dist') ) );
 
 const port = process.env.PORT || 5000
 app.listen(port)
-// Log to feedback that this is actually running
+// Log to feedback that this is actually running 
 console.log('Server started on port ' + port);

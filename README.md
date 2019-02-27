@@ -1,30 +1,9 @@
-# client
+# Snapspace
 
-> A Vue.js project
+A mobile web app used by Spacelab’s clients to tell us about their space (what they like and don’t like), by taking photos of the space, adding comments, and sending them. It also includes an administrator section for the designers to customise which questions get sent to clients (e.g. ‘Show us your favourite space to work’), and view the responses. 
 
-## Build Setup
+### How to run tests
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Clone repository and cd into it
+Run ‘npm install’ to install all dependencies (requires Node to be installed)
+Run ‘npm run unit’ to run tests

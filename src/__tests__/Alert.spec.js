@@ -1,6 +1,6 @@
 
 import testUtilsWrapperFactory from './__helpers__/test_utils_wrapper_factory';
-import Alert from '../components/Alert.vue';
+import Alert from '../components/administrator_backend/Alert';
 
 jest.mock('axios');
 

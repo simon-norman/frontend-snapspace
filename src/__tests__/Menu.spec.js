@@ -3,7 +3,7 @@ import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
 import Vuex from 'vuex';
-import Menu from '../components/Menu.vue';
+import Menu from '../components/administrator_backend/Menu.vue';
 import mockErrorHandler from '../error_handler/ErrorHandler';
 
 jest.mock('axios');

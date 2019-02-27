@@ -1,6 +1,6 @@
 import mockAxios from 'axios';
 import { createWrapper } from './__helpers__/test_utils_wrapper_factory';
-import SnapshotsUpload from '../components/SnapshotsUpload.vue';
+import SnapshotsUpload from '../components/snapshots_upload/SnapshotsUpload.vue';
 
 jest.mock('axios');
 

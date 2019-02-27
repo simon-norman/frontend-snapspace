@@ -119,10 +119,10 @@
 import { mapMutations } from 'vuex';
 import { ImageUploader } from 'vue-image-upload-resize';
 import { required } from 'vuelidate/lib/validators';
-import { readBase64MimeType, removeMimeType } from '../helpers/base64StringHelper';
-import SnapshotApi from '../api/snapshotApi';
-import ImageApi from '../api/imageApi';
-import ErrorHandler from '../error_handler/ErrorHandler';
+import { readBase64MimeType, removeMimeType } from '../../helpers/base64StringHelper';
+import SnapshotApi from '../../api/snapshotApi';
+import ImageApi from '../../api/imageApi';
+import ErrorHandler from '../../error_handler/ErrorHandler';
 
 const errorHandler = new ErrorHandler();
 const snapshotApi = new SnapshotApi();

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import SnapshotApi from '../api/snapshotApi';
+import SnapshotApi from '../../api/snapshotApi';
 
 const snapshotApi = new SnapshotApi();
 export default {

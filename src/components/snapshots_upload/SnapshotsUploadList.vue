@@ -28,7 +28,7 @@
 
 import { mapGetters } from 'vuex';
 import SnapshotsUpload from './SnapshotsUpload.vue';
-import SnapshotRequestApi from '../api/snapshotRequestApi';
+import SnapshotRequestApi from '../../api/snapshotRequestApi';
 
 const snapshotRequestApi = new SnapshotRequestApi();
 

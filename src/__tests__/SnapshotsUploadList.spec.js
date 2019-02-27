@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import mockAxios from 'axios';
 import Vuex from 'vuex';
-import SnapshotsUploadList from '../components/SnapshotsUploadList.vue';
+import SnapshotsUploadList from '../components/snapshots_upload/SnapshotsUploadList.vue';
 
 jest.mock('axios');
 

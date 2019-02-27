@@ -2,7 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import Vuetify from 'vuetify';
 import Vuelidate from 'vuelidate';
 import mockAxios from 'axios';
-import SnapshotRequests from '../components/SnapshotRequests.vue';
+import SnapshotRequests from '../components/administrator_backend/SnapshotRequests.vue';
 
 import mockErrorHandler from '../error_handler/ErrorHandler';
 

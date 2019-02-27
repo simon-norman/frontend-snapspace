@@ -53,8 +53,8 @@
 </template>
 <script>
 import { required } from 'vuelidate/lib/validators';
-import SnapshotRequestApi from '../api/snapshotRequestApi';
-import ErrorHandler from '../error_handler/ErrorHandler';
+import SnapshotRequestApi from '../../api/snapshotRequestApi';
+import ErrorHandler from '../../error_handler/ErrorHandler';
 
 const errorHandler = new ErrorHandler();
 

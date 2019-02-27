@@ -61,7 +61,7 @@
 
 import { required } from 'vuelidate/lib/validators';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import ErrorHandler from '../error_handler/ErrorHandler';
+import ErrorHandler from '../../error_handler/ErrorHandler';
 
 const errorHandler = new ErrorHandler();
 
